@@ -151,27 +151,55 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
   <div style="position:absolute;inset:0" onclick="cl()"></div>
   <div class="dr" id="dr"></div>
 </div>
-
 <div class="md" id="addM">
-  <div>
-    <h3 style="margin-top:0">Add audit finding</h3>
-    <input class="in" id="n1" placeholder="Audit title">
+  <div style="width:min(620px,100%)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h3 style="margin:0">Add audit finding</h3>
+      <button class="btn" onclick="hide('addM')">✕</button>
+    </div>
+
+    <input class="in" id="n1" placeholder="Audit title *">
+
     <div class="row">
       <input class="in" id="n2" placeholder="Cycle (e.g. Q4 2026)">
-      <input class="in" id="n3" placeholder="Dept">
+      <input class="in" id="n3" placeholder="Department *">
     </div>
+
     <div class="row">
-      <input class="in" id="n4" placeholder="Responsible party">
-      <input class="in" id="n5" placeholder="Deadline (e.g. Quarter 4 2026)">
+      <input class="in" id="n4" placeholder="Responsible party (Owner) *">
+      <input class="in" id="n5" placeholder="Deadline (e.g. Quarter 4 2026) *">
     </div>
-    <textarea class="in" id="n6" rows="3" placeholder="Details of open issues and risk" style="margin-top:8px"></textarea>
+
     <div class="row">
+      <select class="in" id="n_st">
+        <option value="Open" selected>Status: Open</option>
+        <option value="In Progress">Status: In Progress</option>
+        <option value="Extended">Status: Extended</option>
+        <option value="Overdue">Status: Overdue</option>
+        <option value="Closed">Status: Closed</option>
+      </select>
+      <select class="in" id="n_lk">
+        <option value="Low">Likelihood: Low</option>
+        <option value="Medium" selected>Likelihood: Medium</option>
+        <option value="High">Likelihood: High</option>
+      </select>
+      <select class="in" id="n_im">
+        <option value="Low">Impact: Low</option>
+        <option value="Medium" selected>Impact: Medium</option>
+        <option value="High">Impact: High</option>
+      </select>
+    </div>
+
+    <textarea class="in" id="n6" rows="3" placeholder="Details of open issues and risk *" style="margin-top:8px"></textarea>
+    <textarea class="in" id="n_rec" rows="3" placeholder="Recommendations made *" style="margin-top:8px"></textarea>
+    <textarea class="in" id="n_rm" rows="2" placeholder="IAD remarks (optional)" style="margin-top:8px"></textarea>
+
+    <div class="row" style="margin-top:12px">
       <button class="btn" onclick="hide('addM')">Cancel</button>
       <button class="btn p" onclick="add()">Save finding</button>
     </div>
   </div>
 </div>
-
 <!-- Import Historical Data Modal -->
 <div class="md" id="impM">
   <div style="width:min(760px,100%);max-height:92vh;overflow:auto">
@@ -443,9 +471,43 @@ function ext(){var r=cur_(),d=g("xd").value.trim(),x=g("xr").value.trim();if(!d|
 function esc(){var r=cur_(),x=g("xr").value.trim();if(!x){toast("Enter reason");return}r.rm="[Escalated] "+x;upd("Escalated")}
 function fc(){var r=cur_(),x=g("xr").value.trim();if(!x){toast("Enter reason");return}r.st="Closed";r.rm="[Closed] "+x;upd("Closed")}
 function mail(){var r=cur_(),to=g("em").value.trim();if(!to){toast("Enter recipient email");return}toast("Email dispatch initiated via Power Automate");}
-function add(){var t=g("n1").value.trim();if(!t){toast("Title required");return}
- var nr={id:"AUD-2026-"+("00"+(D.length+10)).slice(-3),cy:g("n2").value||"-",t:t.toUpperCase(),iss:g("n6").value||"-",rec:"-",st:"Open",own:g("n4").value||"-",dep:g("n3").value||"-",dl:g("n5").value||"-",ag:"0 mth",lk:"Medium",im:"Medium",rm:"-",lg:[],at:[]};D.unshift(nr);
- sv();hide("addM");rd();toast("Finding added");spCreate(nr)}
+function add(){
+  var t = g("n1").value.trim();
+  if(!t){ toast("Audit title is required"); return; }
+
+  var st = g("n_st").value || "Open";
+  var nr = {
+    id: "AUD-2026-" + ("00" + (D.length + 10)).slice(-3),
+    cy: g("n2").value.trim() || "-",
+    t: t.toUpperCase(),
+    dep: g("n3").value.trim() || "-",
+    own: g("n4").value.trim() || "-",
+    dl: g("n5").value.trim() || "-",
+    st: st,
+    lk: g("n_lk").value || "Medium",
+    im: g("n_im").value || "Medium",
+    iss: g("n6").value.trim() || "-",
+    rec: g("n_rec").value.trim() || "-",
+    rm: g("n_rm").value.trim() || "-",
+    ag: "0 mth",
+    hist: st === "Closed",
+    lg: [],
+    at: []
+  };
+
+  D.unshift(nr);
+  sv();
+  
+  ["n1","n2","n3","n4","n5","n6","n_rec","n_rm"].forEach(function(id){ g(id).value = ""; });
+  g("n_st").value = "Open";
+  g("n_lk").value = "Medium";
+  g("n_im").value = "Medium";
+
+  hide("addM");
+  rd();
+  toast("Finding added");
+  spCreate(nr);
+}
 
 function csv(){var h=["ID","Cycle","Title","Issue","Status","Owner","Dept","Deadline"];
  var rows=V().map(function(r){return[r.id,r.cy,r.t,r.iss,r.st,r.own,r.dep,r.dl].map(function(c){return'"'+String(c).replace(/"/g,'""')+'"'}).join(",")});
