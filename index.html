@@ -82,7 +82,27 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
       <p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p>
     </div>
     <div id="lemw"><input class="in" id="lem" placeholder="Work email (demo sign-in)" autocomplete="off"></div>
-    <input class="in" id="ldp" list="dpl" placeholder="Department (IAD admins can leave blank)" style="margin-top:8px"><datalist id="dpl"></datalist>
+    <select class="in" id="ldp" style="margin-top:8px">
+  <option value="">Select your department (IAD admins leave blank)</option>
+  <option value="Legal & Company Secretarial Department (LCS)">Legal &amp; Company Secretarial Department (LCS)</option>
+  <option value="Corporate Strategy Department (CSD)">Corporate Strategy Department (CSD)</option>
+  <option value="Corporate Security Management Unit (CSM)">Corporate Security Management Unit (CSM)</option>
+  <option value="Corporate Administration Unit (CAU)">Corporate Administration Unit (CAU)</option>
+  <option value="Finance Department (FD)">Finance Department (FD)</option>
+  <option value="Support Services Department (SSD)">Support Services Department (SSD)</option>
+  <option value="Corporate Communications Unit (CCU)">Corporate Communications Unit (CCU)</option>
+  <option value="Information Technology Unit (ITU)">Information Technology Unit (ITU)</option>
+  <option value="People Development & Capabilities Unit (PDC)">People Development &amp; Capabilities Unit (PDC)</option>
+  <option value="Human Resources Unit (HRU)">Human Resources Unit (HRU)</option>
+  <option value="Contract & Procurement Management Department (CPM)">Contract &amp; Procurement Management Department (CPM)</option>
+  <option value="Risk, Compliance & Integrity Management Department (RCI)">Risk, Compliance &amp; Integrity Management Department (RCI)</option>
+  <option value="Investment Department (ID)">Investment Department (ID)</option>
+  <option value="Property Development Department (PDD)">Property Development Department (PDD)</option>
+  <option value="Internal Audit Department (IAD)">Internal Audit Department (IAD)</option>
+  <option value="PHB Asset Management (PAM)">PHB Asset Management (PAM)</option>
+  <option value="PHB Facility Management (PFM)">PHB Facility Management (PFM)</option>
+  <option value="PHB Property Ventures (PPV)">PHB Property Ventures (PPV)</option>
+</select>
     <button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in with Microsoft</button>
     <div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
     <div style="font-size:12px;color:var(--mut);margin-top:6px">IAD access is granted only to <b>Admin</b> users listed in <b>AuditUserDirectory</b>. All other staff sign in under their own department.</div>
@@ -221,7 +241,7 @@ var KEY="iar_v3",P="ADMIN",cur=null,tab="d",F={};
 var U=null,CFG={
   DEMO_MODE: false,
   TENANT_ID: "cc9afa77-5900-4c38-8262-c226c4c2e27d",
-  CLIENT_ID: "3d36f5d5-4070-44f3-9bbf-a65429c401a0",
+  CLIENT_ID: "33869e2e-8bac-4522-bf68-947e2055eb29",
   REDIRECT_URI: "https://poduxiptv2021-hash.github.io/ar-dashboard-portal/",
   SP_SITE_ID: "https://phbcommy-my.sharepoint.com/personal/haliza_phb_com_my",
   LIST_AUDIT_ID: "AuditRegisterList",
