@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Internal Audit Register Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
+<style>
+:root{--bg:#eef1f8;--card:#fff;--tx:#0f172a;--mut:#64748b;--bd:#e5e9f2;--soft:#f6f8fc;--pri:#4f46e5;--sh:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.06);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1020;--card:#121a2e;--tx:#e8edf8;--mut:#94a3c0;--bd:#223052;--soft:#0f172b;--sh:0 8px 24px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a1020;--card:#121a2e;--tx:#e8edf8;--mut:#94a3c0;--bd:#223052;--soft:#0f172b;--sh:0 8px 24px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,"Segoe UI",system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:var(--tx)}
+.hero{background:linear-gradient(120deg,#0b1b3f,#1e3a8a 55%,#4338ca);color:#fff;padding:22px 28px 70px}
+.wrap{max-width:1240px;margin:0 auto}
+.hrow{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{display:flex;gap:12px;align-items:center}
+.mark{width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);display:grid;place-items:center;font-size:21px}
+.logo h1{margin:0;font-size:19px;font-weight:700;letter-spacing:-.2px}.logo p{margin:2px 0 0;font-size:12px;opacity:.7}
+.seg{display:flex;background:rgba(255,255,255,.12);padding:3px;border-radius:10px}
+.seg button{border:0;background:none;color:#cfd8ff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600}
+.seg button.on{background:#fff;color:#1e1b4b}
+.btn{border:1px solid var(--bd);background:var(--card);border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:13px}
+.btn.p{background:var(--pri);border-color:var(--pri);color:#fff}.btn.h{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff}
+.btn.d{background:#dc2626;border-color:#dc2626;color:#fff}.btn.v{background:#7c3aed;border-color:#7c3aed;color:#fff}
+.main{max-width:1240px;margin:-48px auto 40px;padding:0 20px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:16px}
+.k{background:var(--card);border-radius:16px;padding:16px 18px;box-shadow:var(--sh);border-top:4px solid var(--c)}
+.k small{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.6px}.k b{display:block;font-size:30px;font-weight:800;margin-top:2px;color:var(--c)}
+.alert{display:none;align-items:center;gap:12px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:14px;padding:12px 16px;margin-bottom:16px;justify-content:space-between}
+@media (prefers-color-scheme:dark){.alert{background:#3b1217;border-color:#7f1d1d;color:#fecaca}}
+.card{background:var(--card);border-radius:16px;box-shadow:var(--sh);border:1px solid var(--bd)}
+.bar{display:flex;gap:10px;padding:14px;flex-wrap:wrap;border-bottom:1px solid var(--bd)}
+.bar input,.bar select,.in{background:var(--soft);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;width:100%}
+.bar input{flex:1;min-width:200px;width:auto}.bar select{width:auto}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);padding:12px 16px;background:var(--soft);white-space:nowrap}
+td{padding:14px 16px;border-top:1px solid var(--bd);vertical-align:top}
+tr.r{cursor:pointer;transition:.15s}tr.r:hover{background:var(--soft)}
+.t{font-weight:700}.id{font-size:11px;color:var(--mut);font-family:ui-monospace,monospace}
+.cl{max-width:340px;color:var(--mut);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pill{display:inline-block;padding:3px 11px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
+.s-Open{background:#fef3c7;color:#92400e}.s-In-Progress{background:#dbeafe;color:#1d4ed8}.s-Extended{background:#ede9fe;color:#6d28d9}.s-Overdue{background:#fee2e2;color:#b91c1c}.s-Closed{background:#d1fae5;color:#047857}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+.ov{position:fixed;inset:0;background:rgba(8,13,30,.55);backdrop-filter:blur(3px);display:none;z-index:30}
+.ov.show{display:grid;place-items:center;padding:16px}
+.dr{position:relative;width:min(840px,100%);max-height:90vh;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.4);background:var(--card);display:flex;flex-direction:column}
+.dh{background:linear-gradient(120deg,#0b1b3f,#3730a3);color:#fff;padding:18px 22px;display:flex;justify-content:space-between;gap:12px}
+.tabs{display:flex;gap:4px;padding:0 16px;border-bottom:1px solid var(--bd)}
+.tabs button{border:0;background:none;padding:12px 12px;cursor:pointer;font-weight:600;color:var(--mut);border-bottom:2px solid transparent}
+.tabs button.on{color:var(--pri);border-color:var(--pri)}
+.db{flex:1;min-height:0;overflow:auto;padding:20px 22px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.f{background:var(--soft);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}.f small{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;font-weight:600}
+h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
+.box{background:var(--soft);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}
+.adm{background:#faf5ff;border:1px solid #e9d5ff;border-radius:14px;padding:14px;margin-top:14px}
+.adm.od{background:#fef2f2;border-color:#fecaca}
+@media (prefers-color-scheme:dark){.adm{background:#241338;border-color:#4c1d95}.adm.od{background:#3b1217;border-color:#7f1d1d}}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.row>*{flex:1}
+.tl{border-left:2px solid var(--bd);margin-left:6px;padding-left:20px}
+.tl>div{position:relative;margin-bottom:18px}.tl>div:before{content:"";position:absolute;left:-27px;top:5px;width:12px;height:12px;border-radius:4px;background:var(--pri)}
+.att{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;margin-top:8px}
+.drop{border:2px dashed var(--bd);border-radius:14px;padding:16px;text-align:center;background:var(--soft)}
+.md{position:fixed;inset:0;z-index:40;display:none;place-items:center;background:rgba(8,13,30,.55);padding:16px}.md.show{display:grid}
+.md>div{background:var(--card);border-radius:16px;padding:22px;width:min(520px,100%);max-height:92vh;overflow:auto}
+#toast{position:fixed;bottom:20px;right:20px;background:#0f172a;color:#fff;padding:11px 16px;border-radius:12px;display:none;z-index:90;box-shadow:var(--sh)}
+@media(max-width:700px){.hero{padding:18px 16px 70px}.main{padding:0 12px}}
+#lgn{position:fixed;inset:0;z-index:60;background:linear-gradient(120deg,#0b1b3f,#1e3a8a 55%,#4338ca);display:grid;place-items:center;padding:16px;overflow:auto}
+.lc{background:var(--card);border-radius:20px;padding:30px;width:min(420px,100%);box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.msb{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);cursor:pointer;font-weight:600}
+.msb i{display:grid;grid-template-columns:repeat(2,9px);gap:2px}.msb i b{width:9px;height:9px;display:block}
+.chip{background:rgba(255,255,255,.14);border-radius:10px;padding:6px 12px;font-size:12px;line-height:1.35}
+#cfgM{z-index:70}
+</style>
+</head>
+<body>
+<div id="lgn">
+  <div class="lc">
+    <div style="text-align:center;margin-bottom:20px">
+      <div class="mark" style="margin:0 auto 12px;background:#4f46e5;color:#fff">🛡</div>
+      <h2 style="margin:0;font-size:20px">Internal Audit Register</h2>
+      <p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p>
+    </div>
+    <div id="lemw"><input class="in" id="lem" placeholder="Work email (demo sign-in)" autocomplete="off"></div>
+    <input class="in" id="ldp" list="dpl" placeholder="Department (IAD admins can leave blank)" style="margin-top:8px"><datalist id="dpl"></datalist>
+    <button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in with Microsoft</button>
+    <div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
+    <div style="font-size:12px;color:var(--mut);margin-top:6px">IAD access is granted only to <b>Admin</b> users listed in <b>AuditUserDirectory</b>. All other staff sign in under their own department.</div>
+    <div id="lNote" style="font-size:11px;color:var(--mut);margin-top:8px"></div>
+    <div style="text-align:center;margin-top:14px"><a href="#" onclick="cfgOpen();return false" style="font-size:12px;color:var(--pri)">⚙ Connection settings (Graph &amp; flows)</a></div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="wrap hrow">
+    <div class="logo">
+      <div class="mark">🛡</div>
+      <div><h1>Internal Audit Register Portal</h1><p>Internal Audit Department · Risk, Tracking &amp; Governance · Microsoft 365 access</p></div>
+    </div>
+    <div class="hrow" style="gap:10px">
+      <div class="chip" id="uchip"></div>
+      <button class="btn h" id="addB" onclick="show('addM')">+ Add finding</button>
+      <button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button>
+      <button class="btn h" onclick="csv()">Export CSV</button>
+      <button class="btn h" onclick="xl()">Export Excel</button>
+      <button class="btn h" id="cfgB" onclick="cfgOpen()">⚙ Settings</button>
+      <button class="btn h" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="alert" id="al">
+    <div><b id="alT"></b><div style="font-size:13px;opacity:.85">Deadlines have passed. Admin can extend, escalate to the Audit Committee, or close with a reason.</div></div>
+    <button class="btn d" onclick="g('fs').value='Overdue';rd()">View overdue</button>
+  </div>
+  <div class="kpis" id="kp"></div>
+  <div class="card">
+    <div class="bar">
+      <input id="q" placeholder="Search title, issue, department, owner..." oninput="rd()">
+      <select id="fs" onchange="rd()">
+        <option value="">All statuses</option>
+        <option>Open</option>
+        <option>In Progress</option>
+        <option>Extended</option>
+        <option>Overdue</option>
+        <option>Closed</option>
+      </select>
+      <select id="fd" onchange="rd()"></select>
+      <select id="fv" onchange="rd()">
+        <option value="">Active + historical</option>
+        <option value="A">Active only</option>
+        <option value="H">Historical only</option>
+      </select>
+    </div>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Audit</th><th>Audit cycle</th><th>Open issue</th><th>Dept</th><th>Owner</th><th>Status</th><th>Risk</th><th>Deadline</th><th>Files</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="ov">
+  <div style="position:absolute;inset:0" onclick="cl()"></div>
+  <div class="dr" id="dr"></div>
+</div>
+
+<div class="md" id="addM">
+  <div>
+    <h3 style="margin-top:0">Add audit finding</h3>
+    <input class="in" id="n1" placeholder="Audit title">
+    <div class="row">
+      <input class="in" id="n2" placeholder="Cycle (e.g. Q4 2026)">
+      <input class="in" id="n3" placeholder="Dept">
+    </div>
+    <div class="row">
+      <input class="in" id="n4" placeholder="Responsible party">
+      <input class="in" id="n5" placeholder="Deadline (e.g. Quarter 4 2026)">
+    </div>
+    <textarea class="in" id="n6" rows="3" placeholder="Details of open issues and risk" style="margin-top:8px"></textarea>
+    <div class="row">
+      <button class="btn" onclick="hide('addM')">Cancel</button>
+      <button class="btn p" onclick="add()">Save finding</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import Historical Data Modal -->
+<div class="md" id="impM">
+  <div style="width:min(760px,100%);max-height:92vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;position:sticky;top:0;background:var(--card);padding-bottom:10px;z-index:1">
+      <h3 style="margin:0;display:flex;align-items:center;gap:8px">⬆ Import Historical Audit Data <span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600">Admin only</span></h3>
+      <button class="btn" onclick="hide('impM')">✕</button>
+    </div>
+
+    <div style="display:flex;gap:2px;background:var(--soft);border-radius:10px;padding:3px;margin-bottom:16px">
+      <button id="itab1" onclick="itab(1)" style="flex:1;border:0;border-radius:8px;padding:8px;cursor:pointer;font-weight:600;font-size:12px;background:var(--pri);color:#fff">📊 Upload Excel / CSV</button>
+      <button id="itab2" onclick="itab(2)" style="flex:1;border:0;border-radius:8px;padding:8px;cursor:pointer;font-weight:600;font-size:12px;background:none;color:var(--mut)">📋 Manual entry</button>
+      <button id="itab3" onclick="itab(3)" style="flex:1;border:0;border-radius:8px;padding:8px;cursor:pointer;font-weight:600;font-size:12px;background:none;color:var(--mut)">🗄 Database &amp; PA guide</button>
+    </div>
+
+    <!-- Tab 1 -->
+    <div id="ip1">
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px">
+        <b style="color:#1d4ed8">How it works:</b>
+        <ul style="margin:6px 0 0;padding-left:18px;color:#1e3a8a;line-height:1.9">
+          <li>Rows where <b>Status = Closed</b> → automatically saved to the <b>Historical archive</b></li>
+          <li>Rows where Status = Open / In Progress / Extended / Overdue → <b>populate active Findings register</b></li>
+          <li>Monthly log entries are read from <b>MonthlyUpdate1 / 2 / 3</b> columns in format: <code>Period | Status | Narrative | Author</code></li>
+        </ul>
+      </div>
+      <div class="drop" id="xlDrop" ondragover="event.preventDefault()" ondrop="xlDropEvt(event)" style="margin-bottom:12px">
+        <div style="font-size:32px;margin-bottom:6px">📂</div>
+        <b>Drag &amp; drop your Excel (.xlsx) or CSV file here</b>
+        <div style="color:var(--mut);font-size:12px;margin:4px 0 10px">Uses the IMPORT_DATA sheet. Required columns: Title, Cycle, Department, Owner, Deadline, Status, Likelihood, Impact, OpenIssues, Recommendations</div>
+        <input type="file" id="xlFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="readXL(this)">
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+          <button class="btn p" onclick="g('xlFile').click()">Browse file</button>
+          <button class="btn" onclick="dlXLTemplate()" style="background:#059669;border-color:#059669;color:#fff">⬇ Download Excel template</button>
+        </div>
+      </div>
+      <div id="xlPreview" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+          <div>
+            <b id="xlCount" style="color:#059669;display:block"></b>
+            <span id="xlSplit" style="font-size:12px;color:var(--mut)"></span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn" onclick="g('xlPreview').style.display='none';g('xlFile').value=''">Clear</button>
+            <button class="btn p" onclick="importXL()">✓ Import all rows</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;border:1px solid var(--bd);border-radius:10px;max-height:260px;overflow-y:auto">
+          <table style="font-size:11px"><thead><tr id="xlHead"></tr></thead><tbody id="xlBody"></tbody></table>
+        </div>
+      </div>
+      <div id="impLog" style="display:none;margin-top:12px;background:var(--soft);border:1px solid var(--bd);border-radius:10px;padding:12px;font-size:12px;max-height:140px;overflow-y:auto"></div>
+    </div>
+
+    <!-- Tab 2 -->
+    <div id="ip2" style="display:none">
+      <div style="font-size:12px;color:var(--mut);margin-bottom:10px">Add a single historical or active audit finding manually.</div>
+      <div class="row"><input class="in" id="hf1" placeholder="Audit title *"><input class="in" id="hf2" placeholder="Cycle (e.g. Q1 2024)"></div>
+      <div class="row" style="margin-top:8px"><input class="in" id="hf3" placeholder="Department *"><input class="in" id="hf4" placeholder="Responsible party *"></div>
+      <div class="row" style="margin-top:8px">
+        <input class="in" id="hf5" placeholder="Deadline (e.g. Quarter 2 2024)">
+        <select class="in" id="hf6"><option value="Closed">Closed (historical)</option><option value="Open">Open</option><option value="In Progress">In Progress</option><option value="Extended">Extended</option><option value="Overdue">Overdue</option></select>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <select class="in" id="hf7"><option value="Low">Likelihood: Low</option><option value="Medium" selected>Likelihood: Medium</option><option value="High">Likelihood: High</option></select>
+        <select class="in" id="hf8"><option value="Low">Impact: Low</option><option value="Medium" selected>Impact: Medium</option><option value="High">Impact: High</option></select>
+      </div>
+      <textarea class="in" id="hf9" rows="2" placeholder="Details of open issues and risk *" style="margin-top:8px"></textarea>
+      <textarea class="in" id="hf10" rows="2" placeholder="Recommendations made *" style="margin-top:8px"></textarea>
+      <textarea class="in" id="hf11" rows="2" placeholder="IAD remarks" style="margin-top:8px"></textarea>
+      <div class="row" style="margin-top:10px"><button class="btn" onclick="hide('impM')">Cancel</button><button class="btn p" onclick="importManual()">✓ Save record</button></div>
+    </div>
+
+    <!-- Tab 3 -->
+    <div id="ip3" style="display:none;font-size:13px">
+      <div style="display:flex;flex-direction:column;gap:14px;font-size:13px">
+        <div style="border:1px solid var(--bd);border-radius:12px;overflow:hidden">
+          <div style="background:linear-gradient(90deg,#0f172a,#1e3a8a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:8px">
+            <span style="background:rgba(255,255,255,.18);border-radius:6px;padding:2px 9px;font-size:11px;font-weight:700">STEP 1</span>
+            <b>SharePoint List Setup</b>
+          </div>
+          <div style="padding:12px 14px;line-height:1.8">
+            <div>Create list named <code style="background:var(--soft);padding:1px 6px;border-radius:4px">AuditRegisterList</code> with columns: AuditCycle, AuditTitle, OpenIssues, Recommendations, Status, Department, ResponsibleParty, Deadline, Likelihood, Impact, IADRemarks, IsHistorical.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="md" id="cfgM"><div style="width:min(720px,100%)" id="cfgBody"></div></div>
+<div id="toast"></div>
+
+<script>
+// --- FULLY DEVELOPED CONFIGURATION WITH "please input the api" PLACEHOLDERS ---
+var KEY="iar_v3",P="ADMIN",cur=null,tab="d",F={};
+var U=null,CFG={
+  DEMO_MODE: true,
+  TENANT_ID: "please input the api",
+  CLIENT_ID: "please input the api",
+  REDIRECT_URI: "please input the api",
+  SP_SITE_ID: "please input the api",
+  LIST_AUDIT_ID: "please input the api",
+  LIST_USERS_ID: "please input the api",
+  DRIVE_ID: "please input the api",
+  F_GET_USER_ROLE: "please input the api",
+  F_SEND_EMAIL: "please input the api",
+  F_EXCEL_IMPORT: "please input the api",
+  F_EXTENSION_ALERT: "please input the api",
+  F_OVERDUE_CHECK: "please input the api"
+};
+var PH=JSON.parse(JSON.stringify(CFG));
+try{var sc_=JSON.parse(localStorage.getItem("iar_cfg"));if(sc_)for(var k_ in sc_)CFG[k_]=sc_[k_]}catch(x){}
+
+var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"ResponsibleParty",dl:"Deadline",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog"};
+var DEMO_DIR=[{email:"iad.admin@yourcompany.com",name:"IAD Admin",role:"Admin",active:true},{email:"finance.user@yourcompany.com",name:"Finance Officer",role:"User",active:true,dep:"Finance"}];
+function ready(u){return!!u&&String(u).indexOf("http")===0}
+function live(){return!CFG.DEMO_MODE}
+function isH(r){return!!r.hist||r.st==="Closed"}
+function vis(r){return!!U&&(U.admin||String(r.dep||"").toLowerCase()===String(U.dep||"").toLowerCase())}
+function V(){return D.filter(vis)}
+
+async function saveFile(name,data){
+ var d=null;try{d=window.claude&&claude.use?await claude.use("downloads"):null}catch(x){d=null}
+ if(d){try{await d.save({filename:name,data:data});toast("Saved "+name)}catch(x){if(x&&x.code==="declined")return;toast("Could not save "+name)}return}
+ var b=data instanceof Blob?data:new Blob([data]),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Downloaded "+name)}
+
+function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,Deadline:r.dl,Status:r.st,Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
+ XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(function(r){return!isH(r)}).map(m)),"Active");
+ XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(isH).map(m)),"Historical");
+ saveFile("audit_register_"+new Date().toISOString().slice(0,10)+".xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}))}
+
+async function callFlow(n,p){var u=CFG["F_"+n];if(CFG.DEMO_MODE||!ready(u))return{demo:true};
+ var r=await fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p||{})});
+ if(!r.ok)throw new Error(n+" flow returned "+r.status);
+ var t=await r.text();try{return JSON.parse(t)}catch(x){return{raw:t}}}
+
+var MS=null;
+async function getToken(scp){
+ if(typeof msal==="undefined")throw new Error("MSAL library did not load");
+ if(CFG.CLIENT_ID.indexOf("please input")===0||CFG.TENANT_ID.indexOf("please input")===0)throw new Error("Set Tenant ID and Client ID in Connection settings");
+ if(!MS)MS=new msal.PublicClientApplication({auth:{clientId:CFG.CLIENT_ID,authority:"https://login.microsoftonline.com/"+CFG.TENANT_ID,redirectUri:CFG.REDIRECT_URI.indexOf("please input")===0?location.origin+location.pathname:CFG.REDIRECT_URI},cache:{cacheLocation:"sessionStorage"}});
+ var req={scopes:scp||["User.Read","Sites.ReadWrite.All","Files.ReadWrite.All"]},a=MS.getAllAccounts()[0];
+ if(!a){a=(await MS.loginPopup(req)).account}
+ try{return(await MS.acquireTokenSilent({scopes:req.scopes,account:a})).accessToken}catch(x){return(await MS.acquireTokenPopup(req)).accessToken}}
+
+async function graph(path,o){o=o||{};var t=await getToken();
+ var r=await fetch("https://graph.microsoft.com/v1.0"+path,{method:o.method||"GET",headers:Object.assign({Authorization:"Bearer "+t,"Content-Type":"application/json"},o.headers||{}),body:o.body});
+ if(!r.ok)throw new Error("Graph "+r.status);
+ if(o.raw)return r.blob();return r.status===204?{}:r.json()}
+
+function spBase(){return"/sites/"+CFG.SP_SITE_ID+"/lists/"+CFG.LIST_AUDIT_ID}
+function fromSP(i){var f=i.fields||{},o={spId:i.id,at:[]};for(var k in FM)o[k]=f[FM[k]]!=null?f[FM[k]]:"";
+ o.id=o.id||"SP-"+i.id;try{o.lg=JSON.parse(f[FM.lg]||"[]")}catch(x){o.lg=[]}
+ o.hist=!!f[FM.hist]||o.st==="Closed";o.lk=o.lk||"Medium";o.im=o.im||"Medium";o.ag=o.ag||"-";return o}
+function toSP(r){var f={};for(var k in FM){if(k==="lg")f[FM.lg]=JSON.stringify(r.lg||[]);else if(k==="hist")f[FM.hist]=!!r.hist;else f[FM[k]]=r[k]}return f}
+async function spLoad(){var all=[],u=spBase()+"/items?expand=fields&$top=500";
+ while(u){var d=await graph(u.replace("https://graph.microsoft.com/v1.0",""));all=all.concat(d.value||[]);u=d["@odata.nextLink"]||null}
+ D=all.map(fromSP);sv()}
+async function spCreate(r){if(!live())return;try{var d=await graph(spBase()+"/items",{method:"POST",body:JSON.stringify({fields:toSP(r)})});r.spId=d.id;sv()}catch(x){toast("SharePoint save failed: "+x.message)}}
+async function spUpdate(r){if(!live()||!r||!r.spId)return;try{await graph(spBase()+"/items/"+r.spId+"/fields",{method:"PATCH",body:JSON.stringify(toSP(r))})}catch(x){toast("SharePoint update failed: "+x.message)}}
+async function spDelete(r){if(!live()||!r||!r.spId)return;try{await graph(spBase()+"/items/"+r.spId,{method:"DELETE"})}catch(x){toast("SharePoint delete failed: "+x.message)}}
+async function spUpload(r,f){return graph("/drives/"+CFG.DRIVE_ID+"/root:/"+encodeURIComponent(r.id)+"/"+encodeURIComponent(f.name)+":/content",{method:"PUT",body:f,headers:{"Content-Type":f.type||"application/octet-stream"}})}
+async function spAttList(r){var d=await graph("/drives/"+CFG.DRIVE_ID+"/root:/"+encodeURIComponent(r.id)+":/children");r.at=(d.value||[]).map(function(i){return{n:i.name,ms:"Evidence",sz:Math.round((i.size||0)/1024)+" KB",d:(i.lastModifiedDateTime||"").slice(0,10),did:i.id}})}
+
+async function getRole(email){
+ if(CFG.DEMO_MODE){var m=DEMO_DIR.find(function(x){return x.email===email});return m?{found:true,role:m.role,active:m.active,name:m.name,dep:m.dep||""}:{found:false}}
+ if(!ready(CFG.F_GET_USER_ROLE))throw new Error("Set Audit-GetUserRole flow URL in Connection settings");
+ var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;
+ return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
+
+async function login(){var er=g("lErr");er.textContent="";
+ try{var email,name,dep=g("ldp").value.trim();
+  if(CFG.DEMO_MODE){email=g("lem").value.trim().toLowerCase();if(email.indexOf("@")<1){er.textContent="Enter your work email.";return}name=email.split("@")[0]}
+  else{await getToken();var a=MS.getAllAccounts()[0];email=(a.username||"").toLowerCase();name=a.name||email;
+   try{var me=await graph("/me?$select=displayName,department");name=me.displayName||name;dep=dep||me.department||""}catch(x){}}
+  var ro=await getRole(email),isA=ro.found&&String(ro.role).toLowerCase()==="admin";
+  if(isA&&!ro.active){er.textContent="Your IAD admin account is inactive.";return}
+  dep=ro.dep||dep;
+  if(!isA&&!dep){er.textContent="Please enter your department to continue.";return}
+  U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};
+  try{sessionStorage.setItem("iar_user",JSON.stringify(U))}catch(x){}
+  await enter()}catch(x){er.textContent=x.message||String(x)}}
+
+async function enter(){g("lgn").style.display="none";
+ g("uchip").innerHTML="<b>"+e(U.name)+"</b><br><span style='opacity:.75'>"+(U.admin?"IAD Admin":"Department · "+e(U.dep))+"</span>";
+ setP(U.admin?"ADMIN":"PIC");
+ if(live()){try{await spLoad()}catch(x){toast("SharePoint load failed: "+x.message)}}
+ rd();toast("Signed in as "+(U.admin?"IAD Admin":U.dep))}
+
+function logout(){try{sessionStorage.removeItem("iar_user")}catch(x){}
+ try{if(MS&&MS.getAllAccounts()[0])MS.logoutPopup({account:MS.getAllAccounts()[0]})}catch(x){}
+ U=null;cur=null;hide("ov");g("lgn").style.display="grid";g("lem").value="";g("ldp").value="";rd()}
+
+function boot2(){g("lemw").style.display=CFG.DEMO_MODE?"":"none";
+ g("lNote").textContent=CFG.DEMO_MODE?"Demo mode active.":"Live mode active."}
+function boot(){var dl=[];D.forEach(function(r){if(r.dep&&dl.indexOf(r.dep)<0)dl.push(r.dep)});
+ g("dpl").innerHTML=dl.map(function(d){return"<option value='"+e(d)+"'>"}).join("");boot2();
+ try{var s=JSON.parse(sessionStorage.getItem("iar_user"));if(s&&s.email){U=s;enter()}}catch(x){}}
+
+var CS=[["Mode"],["DEMO_MODE","Demo mode (offline, no live connection)","chk"],["Microsoft Entra ID (MSAL)"],["TENANT_ID","Tenant ID"],["CLIENT_ID","Application (client) ID"],["REDIRECT_URI","Redirect URI"],["SharePoint via Microsoft Graph"],["SP_SITE_ID","Site ID"],["LIST_AUDIT_ID","AuditRegisterList ID"],["LIST_USERS_ID","AuditUserDirectory list ID"],["DRIVE_ID","Evidence document library drive ID"],["Power Automate HTTP triggers"],["F_GET_USER_ROLE","Audit-GetUserRole URL"],["F_SEND_EMAIL","IAD - Send Audit Report Email URL"],["F_EXCEL_IMPORT","IAD - Excel Import URL"],["F_EXTENSION_ALERT","IAD - Extension and Escalation URL"],["F_OVERDUE_CHECK","IAD - Daily Overdue Check URL"]];
+
+function cfgOpen(){var h="<div style='display:flex;justify-content:space-between;align-items:center'><h3 style='margin:0'>⚙ Connection settings</h3><button class='btn' onclick=\"hide('cfgM')\">✕</button></div><p style='color:var(--mut);font-size:12px;margin:6px 0 4px'>Replace each placeholder with your real value.</p>";
+ CS.forEach(function(c){var k=c[0];
+  if(c.length===1){h+="<h4 style='margin:14px 0 6px'>"+e(k)+"</h4>";return}
+  if(c[2]==="chk"){h+="<label style='display:flex;gap:8px;align-items:center;font-weight:600'><input type='checkbox' id='c_"+k+"'"+(CFG[k]?" checked":"")+">"+e(c[1])+"</label>";return}
+  var v=String(CFG[k]).indexOf("please input")===0?"":CFG[k];
+  h+="<label style='font-size:12px;color:var(--mut);display:block;margin-top:8px'>"+e(c[1])+"</label><input class='in' id='c_"+k+"' value=\""+e(v)+"\" placeholder=\""+e(PH[k])+"\">"});
+ h+="<div class='row' style='margin-top:14px'><button class='btn p' onclick='cfgSave()'>Save</button><button class='btn' onclick='cfgTest()'>Test Graph</button><button class='btn' onclick='runOverdue()'>Run overdue check</button></div>";
+ g("cfgBody").innerHTML=h;show("cfgM")}
+
+function cfgSave(){CS.forEach(function(c){var k=c[0];if(c.length===1)return;var el=g("c_"+k);if(!el)return;CFG[k]=c[2]==="chk"?el.checked:(el.value.trim()||PH[k])});
+ try{localStorage.setItem("iar_cfg",JSON.stringify(CFG))}catch(x){}
+ hide("cfgM");boot2();toast("Settings saved")}
+
+async function cfgTest(){cfgSave();if(CFG.DEMO_MODE){toast("Demo mode is on");return}
+ try{var m=await graph("/me"),l=await graph(spBase()+"/items?$top=1");toast("OK: connected successfully")}catch(x){toast("Test failed: "+x.message)}}
+
+async function runOverdue(){try{var r=await callFlow("OVERDUE_CHECK",{requestedBy:U&&U.email});toast("Overdue check triggered")}catch(x){toast(x.message)}}
+
+var D0=[
+{id:"AUD-2026-001",cy:"Q4 2026",t:"REVIEW OF THE IT OPERATION",iss:"Management to review, update and obtain formal approval for the IT Blueprint per regulatory guidelines.",rec:"ITD to update the IT Blueprint and table the draft at the MTCC for deliberation.",st:"Closed",own:"ITD",dep:"ITD",dl:"Quarter 4 2026",ag:"0 mth",lk:"Medium",im:"Medium",rm:"Verified against MTCC minutes. Finding closed.",lg:[{m:"Oct 2026",s:"Completed",n:"On 29 Sept 2026, ITD tabled the SOW and project phasing paper at the MTCC.",a:"Ahmad Fauzi (ITD)",d:"29 Sept 2026"}],at:[{n:"MTCC_Paper_29Sept2026.pdf",ms:"Sept 2026 MTCC Paper",sz:"1.4 MB",d:"2026-09-30"}]},
+{id:"AUD-2026-002",cy:"Q2 2026",t:"PRIVILEGED ACCESS USER RIGHT AUDIT",iss:"Excessive admin privileges on inactive database operator accounts without periodic recertification.",rec:"Implement PAM solution with quarterly user access reviews.",st:"Overdue",own:"InfoSec",dep:"Information Security",dl:"Quarter 3 2026",ag:"5 mths",lk:"High",im:"High",rm:"OVERDUE. Admin extension or board escalation required.",lg:[{m:"Oct 2026",s:"Delayed",n:"PAM deployment delayed to Nov 2026.",a:"InfoSec Lead",d:"10 Oct 2026"}],at:[]}];
+
+var D=null;try{D=JSON.parse(localStorage.getItem(KEY))}catch(x){}
+if(!D)D=JSON.parse(JSON.stringify(D0));
+function sv(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(x){}}
+function g(i){return document.getElementById(i)}
+function e(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function sc(s){return"s-"+s.replace(" ","-")}
+function pill(s){return'<span class="pill '+sc(s)+'">'+s+'</span>'}
+function rk(l,i){var h=l==="High"||i==="High",m=l==="Medium"||i==="Medium";return'<span class="dot" style="background:'+(h?"#dc2626":m?"#f59e0b":"#10b981")+'"></span>'+l[0]+" / "+i[0]}
+function toast(m){var t=g("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},2800)}
+function show(i){g(i).classList.add("show")}function hide(i){g(i).classList.remove("show")}
+function setP(p){P=p;var a=p==="ADMIN";["addB","impB","cfgB"].forEach(function(i){if(g(i))g(i).style.display=a?"":"none"});if(cur)dr()}
+
+function rd(){
+ var q=g("q").value.toLowerCase(),fs=g("fs").value,fd=g("fd").value,fv=g("fv").value;
+ var deps=[];V().forEach(function(r){if(deps.indexOf(r.dep)<0)deps.push(r.dep)});
+ g("fd").innerHTML='<option value="">All departments</option>'+deps.map(function(d){return'<option'+(d===fd?" selected":"")+'>'+e(d)+'</option>'}).join("");
+ var c=function(s){return V().filter(function(r){return r.st===s}).length};
+ var K=[["Total findings",V().length,"#4f46e5"],["In progress",c("Open")+c("In Progress"),"#2563eb"],["Extended",c("Extended"),"#7c3aed"],["Overdue",c("Overdue"),"#dc2626"],["Closed",c("Closed"),"#059669"]];
+ g("kp").innerHTML=K.map(function(k){return'<div class="k" style="--c:'+k[2]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join("");
+ var o=c("Overdue");g("al").style.display=o?"flex":"none";g("alT").textContent="Action required: "+o+" overdue finding"+(o>1?"s":"");
+ var L=D.filter(function(r){return(!fs||r.st===fs)&&(!fd||r.dep===fd)&&(r.t+r.iss+r.dep+r.own+r.id).toLowerCase().indexOf(q)>-1&&vis(r)&&(!fv||(fv==="H")===isH(r))});
+ g("tb").innerHTML=L.map(function(r){return'<tr class="r" onclick="op(\''+r.id+'\')"><td><div class="t">'+e(r.t)+'</div><div class="id">'+r.id+'</div></td><td style="white-space:nowrap"><b>'+e(r.cy)+'</b></td><td><div class="cl">'+e(r.iss)+'</div></td><td>'+e(r.dep)+'</td><td>'+e(r.own)+'</td><td>'+pill(r.st)+'</td><td style="white-space:nowrap">'+rk(r.lk,r.im)+'</td><td style="white-space:nowrap">'+e(r.dl)+'</td><td>📎 '+r.at.length+'</td></tr>'}).join("")||'<tr><td colspan="9" style="text-align:center;color:var(--mut);padding:36px">No findings match your filters.</td></tr>';
+}
+
+function cur_(){return D.find(function(r){return r.id===cur})}
+function op(id,t){cur=id;tab=t||"d";dr();show("ov");if(live()&&CFG.DRIVE_ID.indexOf("please input")!==0){spAttList(cur_()).then(dr).catch(function(){})}}
+function cl(){hide("ov");cur=null}
+
+function dr(){
+ var r=cur_();if(!r)return;var ad=P==="ADMIN",body="",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
+ body='<div class="g4"><div class="f"><small>Dept</small>'+e(r.dep)+'</div><div class="f"><small>Owner</small>'+e(r.own)+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Aging</small>'+e(r.ag)+'</div></div>'
+ +'<div class="row" style="align-items:center"><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(ad?"":"disabled")+' onchange="ss(this.value)" style="max-width:170px;flex:none">'+["Open","In Progress","Extended","Overdue","Closed"].map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>'
+ +'<h4>Details of open issues and risk</h4><div class="box">'+e(r.iss)+'</div><h4>Recommendations made</h4><div class="box">'+e(r.rec)+'</div><h4>IAD remarks</h4><div class="box" style="font-style:italic">'+e(r.rm)+'</div>';
+ if(r.st!=="Closed"&&ad){
+  body+='<div class="adm '+(r.st==="Overdue"?"od":"")+'"><b>Admin deadline control</b><div class="row"><input class="in" id="xd" placeholder="New deadline"></div><div class="row"><input class="in" id="xr" placeholder="Reason"></div><div class="row"><button class="btn v" onclick="ext()">Extend</button><button class="btn d" onclick="esc()">Escalate</button><button class="btn" onclick="fc()">Close</button></div></div>';
+ }
+ body+='<h4>Send by email</h4><div class="row"><input class="in" id="em" placeholder="recipient@company.com"><button class="btn p" style="flex:none" onclick="mail()">Send email</button></div>';
+ body+='<h4>Monthly status log</h4><div class="tl">'+(r.lg.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")||'<div style="color:var(--mut)">No updates yet.</div>')+'</div>';
+ g("dr").innerHTML='<div class="dh"><div><small style="opacity:.7">'+r.id+'</small><div style="font-weight:700;font-size:16px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+'</div><div style="display:flex;gap:8px"><button class="btn h" onclick="dlpdf()">⬇ Download PDF</button><button class="btn h" onclick="cl()">✕</button></div></div><div class="db">'+body+'</div>';
+ var n=g("dr").querySelector(".db");if(n)n.scrollTop=y;
+}
+
+function upd(m){sv();rd();dr();toast(m);spUpdate(cur_())}
+function ss(v){var r=cur_();r.st=v;upd("Status set to "+v)}
+function ext(){var r=cur_(),d=g("xd").value.trim(),x=g("xr").value.trim();if(!d||!x){toast("New deadline & reason required");return}r.st="Extended";r.dl=d;r.rm="[Extended] "+x;upd("Extension granted");}
+function esc(){var r=cur_(),x=g("xr").value.trim();if(!x){toast("Enter reason");return}r.rm="[Escalated] "+x;upd("Escalated")}
+function fc(){var r=cur_(),x=g("xr").value.trim();if(!x){toast("Enter reason");return}r.st="Closed";r.rm="[Closed] "+x;upd("Closed")}
+function mail(){var r=cur_(),to=g("em").value.trim();if(!to){toast("Enter recipient email");return}toast("Email dispatch initiated via Power Automate");}
+function add(){var t=g("n1").value.trim();if(!t){toast("Title required");return}
+ var nr={id:"AUD-2026-"+("00"+(D.length+10)).slice(-3),cy:g("n2").value||"-",t:t.toUpperCase(),iss:g("n6").value||"-",rec:"-",st:"Open",own:g("n4").value||"-",dep:g("n3").value||"-",dl:g("n5").value||"-",ag:"0 mth",lk:"Medium",im:"Medium",rm:"-",lg:[],at:[]};D.unshift(nr);
+ sv();hide("addM");rd();toast("Finding added");spCreate(nr)}
+
+function csv(){var h=["ID","Cycle","Title","Issue","Status","Owner","Dept","Deadline"];
+ var rows=V().map(function(r){return[r.id,r.cy,r.t,r.iss,r.st,r.own,r.dep,r.dl].map(function(c){return'"'+String(c).replace(/"/g,'""')+'"'}).join(",")});
+ saveFile("audit_register.csv",h.join(",")+"\n"+rows.join("\n"))}
+
+function dlpdf(){
+ var r=cur_();if(!r)return;toast("Generating PDF…");
+ var doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+ doc.text("Audit Report: "+r.id, 18, 20);
+ doc.text(r.t, 18, 30);
+ saveFile(r.id+"_AuditReport.pdf",doc.output("blob"));
+}
+
+rd();boot();
+</script>
+</body>
+</html>
