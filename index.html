@@ -241,7 +241,7 @@ var KEY="iar_v3",P="ADMIN",cur=null,tab="d",F={};
 var U=null,CFG={
   DEMO_MODE: false,
   TENANT_ID: "cc9afa77-5900-4c38-8262-c226c4c2e27d",
-  CLIENT_ID: "https://login.microsoftonline.com/common/adminconsent?client_id=33869e2e-8bac-4522-bf68-947e2055eb29",
+  CLIENT_ID: "33869e2e-8bac-4522-bf68-947e2055eb29",
   REDIRECT_URI: "https://poduxiptv2021-hash.github.io/ar-dashboard-portal/",
   SP_SITE_ID: "https://phbcommy-my.sharepoint.com/personal/haliza_phb_com_my",
   LIST_AUDIT_ID: "AuditRegisterList",
@@ -285,7 +285,7 @@ async function getToken(scp){
  if(typeof msal==="undefined")throw new Error("MSAL library did not load");
  if(CFG.CLIENT_ID.indexOf("please input")===0||CFG.TENANT_ID.indexOf("please input")===0)throw new Error("Set Tenant ID and Client ID in Connection settings");
  if(!MS)MS=new msal.PublicClientApplication({auth:{clientId:CFG.CLIENT_ID,authority:"https://login.microsoftonline.com/"+CFG.TENANT_ID,redirectUri:CFG.REDIRECT_URI},cache:{cacheLocation:"sessionStorage"}});
- var req={scopes:scp||["User.Read","Sites.ReadWrite.All","Files.ReadWrite.All"]},a=MS.getAllAccounts()[0];
+ var req={scopes:scp||["User.Read"]},a=MS.getAllAccounts()[0];
  if(!a){a=(await MS.loginPopup(req)).account}
  try{return(await MS.acquireTokenSilent({scopes:req.scopes,account:a})).accessToken}catch(x){return(await MS.acquireTokenPopup(req)).accessToken}}
 
