@@ -78,8 +78,9 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 <div style="text-align:center;margin-bottom:20px"><div class="mark" style="margin:0 auto 12px;background:#4f46e5;color:#fff">🛡</div><h2 style="margin:0;font-size:20px">Internal Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company email</p></div>
 
 <!-- ADD THIS EMAIL INPUT BOX -->
-<input class="in" id="lem" placeholder="Work email (e.g. nurhaliza@phb.com.my)" autocomplete="email" style="margin-bottom:8px">
-
+<div id="lemw" style="margin-bottom:8px;">
+  <input class="in" id="lem" placeholder="Work email (e.g. nurhaliza@phb.com.my)" autocomplete="email">
+</div>
 <input class="in" id="ldp" list="dpl" placeholder="Department (IAD admins can leave blank)" style="margin-top:8px"><datalist id="dpl"></datalist>
 <button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in to Portal</button>
 <div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
