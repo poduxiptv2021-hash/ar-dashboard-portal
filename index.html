@@ -284,7 +284,11 @@ async function callFlow(n,p){var u=CFG["F_"+n];if(!isSet(u))throw new Error("F_"
 async function getToken(){
  if(typeof msal==="undefined")throw new Error("MSAL library did not load");
  if(!MS)MS=new msal.PublicClientApplication({auth:{clientId:CFG.CLIENT_ID,authority:"https://login.microsoftonline.com/"+CFG.TENANT_ID,redirectUri:isSet(CFG.REDIRECT_URI)?CFG.REDIRECT_URI:location.origin+location.pathname},cache:{cacheLocation:"sessionStorage"}});
- var req={scopes:["User.Read","Sites.ReadWrite.All","Files.ReadWrite.All"]},a=MS.getAllAccounts()[0];
+ var req={
+ scopes:[
+  "User.Read"
+ ]
+},a=MS.getAllAccounts()[0];
  if(!a){a=(await MS.loginPopup(req)).account}
  try{return(await MS.acquireTokenSilent({scopes:req.scopes,account:a})).accessToken}catch(x){return(await MS.acquireTokenPopup(req)).accessToken}}
 async function graph(path,o){o=o||{};var t=await getToken();
