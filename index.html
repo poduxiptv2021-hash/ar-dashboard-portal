@@ -97,7 +97,14 @@ body.auth #lgn{display:none!important}
 <div class="ov" id="ov"><div style="position:absolute;inset:0" onclick="cl()"></div><div class="dr" id="dr"></div></div>
 <div class="md" id="addM"><div style="width:min(640px,100%)"><h3 style="margin-top:0" id="addT">Add audit finding</h3><input type="hidden" id="n0">
 <input class="in" id="n1" placeholder="Audit title *">
-<div class="row"><input class="in" id="n2" placeholder="Audit cycle (e.g. Q4 2026)"><input class="in" id="n3" list="dpl" placeholder="Department *"></div>
+<div class="row">
+    <input class="in" id="n2" placeholder="Audit cycle (e.g. Q4 2026)">
+
+    <select class="in" id="n3">
+        <option value="">Select Department</option>
+    </select>
+</div>
+
 <div class="row"><input class="in" id="n4" placeholder="Responsible party"><input class="in" id="n5" placeholder="Deadline text (e.g. Quarter 4 2026)"></div>
 <input class="in" id="n13" type="email" placeholder="Responsible person email (for reminders / approvals)" style="margin-top:8px"><div class="row"><div><label style="font-size:11px;color:var(--mut)">Due date (used by the overdue check)</label><input class="in" type="date" id="n7"></div><div><label style="font-size:11px;color:var(--mut)">Status</label><select class="in" id="n8"><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select></div></div>
 <div class="row"><div><label style="font-size:11px;color:var(--mut)">Likelihood</label><select class="in" id="n9"><option>Low</option><option>Medium</option><option>High</option></select></div><div><label style="font-size:11px;color:var(--mut)">Impact</label><select class="in" id="n10"><option>Low</option><option>Medium</option><option>High</option></select></div></div>
@@ -348,7 +355,43 @@ async function enter(){document.body.classList.add("auth");g("lgn").style.displa
 function logout(){try{sessionStorage.removeItem("iar_user")}catch(x){}
  var a=MS&&MS.getAllAccounts()[0];try{if(a)MS.logoutPopup({account:a})}catch(x){}
  U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
-function fillDeps(){var l=[];if(isSet(CFG.DEPARTMENTS))String(CFG.DEPARTMENTS).split(",").forEach(function(d){d=d.trim();if(d&&l.indexOf(d)<0)l.push(d)});D.forEach(function(r){if(r.dep&&r.dep!=="-"&&l.indexOf(r.dep)<0)l.push(r.dep)});g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join("")}
+function fillDeps(){
+
+    var l = [
+        "Finance",
+        "ITD",
+        "Human Resource",
+        "Corporate Communication",
+        "Legal",
+        "Investment",
+        "Property",
+        "Internal Audit",
+        "Risk Management",
+        "Company Secretary"
+    ];
+
+    g("dpl").innerHTML =
+        l.map(function(d){
+            return "<option value='"+d+"'>";
+        }).join("");
+
+    if(g("n3")){
+
+        g("n3").innerHTML =
+            '<option value="">Select Department</option>' +
+
+            l.map(function(d){
+
+                return '<option value="' +
+                       d +
+                       '">' +
+                       d +
+                       '</option>';
+
+            }).join("");
+    }
+}
+
 function boot(){fillDeps();var m=missing();
  g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", ")+" in the CONFIG block at the top of the script (currently &quot;please input the api&quot;).":"Sign in with your Microsoft 365 account.";
  try{var s=JSON.parse(sessionStorage.getItem("iar_user"));if(s&&s.email&&!m.length){U=s;enter()}}catch(x){}}
