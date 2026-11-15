@@ -211,7 +211,9 @@ var CFG={
  IA_BOSS_EMAIL:"please input the api",    // Boss email (final approval)
  F_NOTIFY:"please input the api",         // HTTP URL of the generic email flow (IAD - Notify)
  F_UPLOAD_EVIDENCE:"please input the api",// optional HTTP URL of flow that saves uploaded evidence (use if DRIVE_ID is not set)
- DEPARTMENTS:"please input the api"       // comma-separated department names, e.g. Finance,HR,ITD (shown as suggestions in login and Add finding)
+ DEPARTMENTS:"please input the api",       // comma-separated department names, e.g. Finance,HR,ITD (shown as suggestions in login and Add finding)
+ F_CREATE_AUDIT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/7a3ac887fec64e5a8d91b2be22b1a32f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=L7O2irMPKHRsEownjU0aZCI1MMLuV4gQYm1JFJ_tNrI",
+F_LOAD_AUDITS:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/13/workflows/9f307d1051824ed995418800e63e1b6d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ecF8GXONXCPn1bMlhJqisMsALTP6Y8KSjBHy2JBXxns"
 };
 /* SharePoint internal column names in AuditRegisterList (edit if yours differ). Use text columns, not Person, for ResponsibleParty. DueDate = Date column. */
 var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
@@ -308,10 +310,103 @@ function fromSP(i){var f=i.fields||{},o={spId:i.id,at:[]};for(var k in FM)o[k]=f
  o.id=o.id||"SP-"+i.id;try{o.lg=JSON.parse(f[FM.lg]||"[]")}catch(x){o.lg=[]}try{o.at=JSON.parse(f[FM.at]||"[]")}catch(x){o.at=[]}o.ex=Number(o.ex)||0;
  o.due=o.due?String(o.due).slice(0,10):"";o.hist=!!f[FM.hist]||o.st==="Closed";o.lk=o.lk||"Medium";o.im=o.im||"Medium";o.ag=o.ag||"-";return o}
 function toSP(r){var f={};for(var k in FM){if(k==="lg")f[FM.lg]=JSON.stringify(r.lg||[]);else if(k==="at")f[FM.at]=JSON.stringify(r.at||[]);else if(k==="ex")f[FM.ex]=r.ex||0;else if(k==="hist")f[FM.hist]=!!r.hist;else if(k==="due")f[FM.due]=r.due||null;else f[FM[k]]=r[k]}return f}
-async function spLoad(){var all=[],u=(await spBase())+"/items?expand=fields&$top=500";
- while(u){var d=await graph(u.replace("https://graph.microsoft.com/v1.0",""));all=all.concat(d.value||[]);u=d["@odata.nextLink"]||null}
- D=all.map(fromSP)}
-async function spCreate(r){try{var d=await graph((await spBase())+"/items",{method:"POST",body:JSON.stringify({fields:toSP(r)})});r.spId=d.id;return true}catch(x){toast("SharePoint save failed: "+x.message);return false}}
+async function spLoad(){
+    var result = await callFlow("LOAD_AUDITS", {
+        requestedBy: U ? U.email : "",
+        department: U ? U.dep : "",
+        isAdmin: !!(U && U.admin)
+    });
+
+    if(!Array.isArray(result)){
+        throw new Error(
+            "Load flow returned an invalid response. Expected an array."
+        );
+    }
+
+    D = result.map(function(r){
+        var item = {
+            spId: String(r.spId || ""),
+            id: r.id || ("SP-" + String(r.spId || "")),
+            t: r.t || "",
+            cy: r.cy || "-",
+            dep: r.dep || "",
+            own: r.own || "-",
+            oe: r.oe || "",
+            dl: r.dl || "-",
+            due: r.due ? String(r.due).slice(0,10) : "",
+            st: r.st || "Open",
+            lk: r.lk || "Medium",
+            im: r.im || "Medium",
+            iss: r.iss || "-",
+            rec: r.rec || "-",
+            rm: r.rm || "-",
+            hist:
+                r.hist === true ||
+                r.hist === "true" ||
+                r.st === "Closed",
+            ap: r.ap || "",
+            rv: r.rv || "",
+            mk: r.mk || "",
+            ex: Number(r.ex) || 0,
+            lg: [],
+            at: []
+        };
+
+        try{
+            item.lg = Array.isArray(r.lg)
+                ? r.lg
+                : JSON.parse(r.lg || "[]");
+        }catch(x){
+            item.lg = [];
+        }
+
+        try{
+            item.at = Array.isArray(r.at)
+                ? r.at
+                : JSON.parse(r.at || "[]");
+        }catch(x){
+            item.at = [];
+        }
+
+        return item;
+    });
+}
+async function spCreate(r){
+    try{
+        var result = await callFlow("CREATE_AUDIT", {
+            record: r,
+            user: U ? U.email : ""
+        });
+
+        if(!result || result.success !== true){
+            throw new Error(
+                result && result.message
+                    ? result.message
+                    : "Create flow did not confirm success"
+            );
+        }
+
+        r.spId = String(result.spId || "");
+
+        if(!r.spId){
+            throw new Error(
+                "SharePoint item was created but no item ID was returned"
+            );
+        }
+
+        return true;
+
+    }catch(x){
+        console.error("Create finding failed:", x);
+
+        toast(
+            "Save finding failed: " +
+            (x.message || String(x))
+        );
+
+        return false;
+    }
+}
 async function spUpdate(r){if(!r||!r.spId)return;try{await graph((await spBase())+"/items/"+r.spId+"/fields",{method:"PATCH",body:JSON.stringify(toSP(r))})}catch(x){toast("SharePoint update failed: "+x.message)}}
 async function spDelete(r){if(!r||!r.spId)return;try{await graph((await spBase())+"/items/"+r.spId,{method:"DELETE"})}catch(x){toast("SharePoint delete failed: "+x.message)}}
 async function spUpload(r,f){return graph("/drives/"+CFG.DRIVE_ID+"/root:/"+encodeURIComponent(r.id)+"/"+encodeURIComponent(f.name)+":/content",{method:"PUT",body:f,headers:{"Content-Type":f.type||"application/octet-stream"}})}
@@ -378,26 +473,7 @@ function fillDeps(){
         "PHB Property Development (PPD)"
     ];
 
-    g("dpl").innerHTML =
-        l.map(function(d){
-            return "<option value='"+d+"'>";
-        }).join("");
-
-    if(g("n3")){
-
-        g("n3").innerHTML =
-            '<option value="">Select Department</option>' +
-
-            l.map(function(d){
-
-                return '<option value="' +
-                       d +
-                       '">' +
-                       d +
-                       '</option>';
-
-            }).join("");
-    }
+   
 }
 
 
