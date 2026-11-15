@@ -364,77 +364,67 @@ async function spLoad(){
 
 async function spCreate(r){
     try {
-        console.log("Creating audit record:", r);
-        if(isSet(CFG.F_CREATE_AUDIT)){
-            var payload = {
-                auditId: r.id,
-                title: r.t,
-                cycle: r.cy,
-                department: r.dep,
-                owner: r.own,
-                deadline: r.dl,
-                dueDate: r.due,
-                status: r.st,
-                likelihood: r.lk,
-                impact: r.im,
-                openIssues: r.iss,
-                recommendations: r.rec,
-                iadRemarks: r.rm,
-                ownerEmail: r.oe,
-                makerEmail: r.mk,
-                approvalStage: r.ap,
-                reviewStage: r.rv,
-                extensionCount: r.ex,
-                isHistorical: r.hist
-            };
-            console.log("Sending to F_CREATE_AUDIT flow:", payload);
-            var res = await callFlow("CREATE_AUDIT", payload);
-            console.log("F_CREATE_AUDIT response:", res);
-            if(res && (res.spId || res.ID || res.id)) {
-                r.spId = res.spId || res.ID || res.id;
-            }
-        } else {
-            var graphPayload = {fields: toSP(r)};
-            console.log("Sending to SharePoint via Graph API:", graphPayload);
-            var data = await graph((await spBase())+"/items",{method:"POST",body:JSON.stringify(graphPayload)});
-            r.spId = data.id;
-            console.log("SharePoint Graph create success, ID:", data.id);
+        var payload = {
+            auditId: r.id,
+            title: r.t,
+            cycle: r.cy,
+            department: r.dep,
+            owner: r.own,
+            deadline: r.dl,
+            dueDate: r.due || "",
+            status: r.st,
+            likelihood: r.lk,
+            impact: r.im,
+            openIssues: r.iss,
+            recommendations: r.rec,
+            iadRemarks: r.rm,
+            ownerEmail: r.oe,
+            makerEmail: r.mk,
+            approvalStage: r.ap || "",
+            reviewStage: r.rv || "Checker Review",
+            extensionCount: r.ex || 0,
+            isHistorical: !!r.hist
+        };
+        console.log("Sending to F_CREATE_AUDIT:", payload);
+        var res = await callFlow("CREATE_AUDIT", payload);
+        console.log("F_CREATE_AUDIT response:", res);
+
+        if(res && (res.spId || res.ID || res.id)) {
+            r.spId = String(res.spId || res.ID || res.id);
         }
         sv();
         return true;
     } catch(x) {
         console.error("spCreate error:", x);
         toast("SharePoint save failed: " + x.message);
-        throw x;
+        return false;
     }
 }
 
 async function spUpdate(r){
     if(!r) return;
+    sv(); // Always save to local cache immediately
+    if(!isSet(CFG.F_UPDATE_AUDIT)) {
+        console.warn("F_UPDATE_AUDIT flow URL not configured in CFG.");
+        return;
+    }
     try {
-        console.log("Updating audit record:", r);
-        if(r.spId && !String(r.spId).startsWith("SP-") && isSet(CFG.SP_SITE_ID)){
-            var patchBody = {fields: toSP(r)};
-            console.log("Patching SharePoint via Graph API:", patchBody);
-            await graph((await spBase())+"/items/"+r.spId+"/fields",{method:"PATCH",body:JSON.stringify(patchBody)});
-            console.log("SharePoint Graph update success");
-        } else if(isSet(CFG.F_UPDATE_AUDIT)){
-            console.log("Sending to F_UPDATE_AUDIT flow:", r);
-            await callFlow("UPDATE_AUDIT", r);
-            console.log("F_UPDATE_AUDIT success");
-        }
-    } catch(x) { 
+        await callFlow("UPDATE_AUDIT", r);
+        console.log("F_UPDATE_AUDIT success");
+    } catch(x) {
         console.error("spUpdate error:", x);
-        toast("Update sync failed: " + x.message); 
+        toast("Sync warning: " + x.message);
     }
 }
+
 async function spDelete(r){
-    if(!r) return;
+    sv();
+    if(!r || !isSet(CFG.F_DELETE_AUDIT)) return;
     try {
-        if(r.spId && !String(r.spId).startsWith("SP-")){
-            await graph((await spBase())+"/items/"+r.spId,{method:"DELETE"});
-        }
-    } catch(x) {}
+        await callFlow("DELETE_AUDIT", { spId: r.spId, auditId: r.id });
+    } catch(x) {
+        console.error("spDelete error:", x);
+    }
 }
 
 async function reload(){try{await spLoad();rd();toast("Data refreshed")}catch(x){toast("Refresh failed: "+x.message)}}
@@ -444,12 +434,34 @@ function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v
  s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
 
 async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
- var id=g("n0").value,r=id?D.find(function(x){return x.id===id}):null,isNew=!r;
- if(isNew)r={id:nextId(),lg:[],at:[]};
- r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.ag=r.ag||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
- if(isNew){r.rv="Checker Review";r.mk=U.email;r.ex=0;await spCreate(r);D.unshift(r);if(isSet(CFG.IA_PIC_EMAIL))notify(CFG.IA_PIC_EMAIL,"[Audit "+r.id+"] New finding awaiting your review","<p>A new finding was created by "+e(U.name)+": <b>"+e(r.t)+"</b> ("+e(r.dep)+"). Please review it in the AR Dashboard.</p>").catch(function(){})}
- else await spUpdate(r);
- hide("addM");sv();rd();toast(isNew?"Finding added":"Finding updated")}
+async function add(){
+    var t=g("n1").value.trim();
+    if(!t){toast("Title is required");return}
+    if(!g("n3").value.trim()){toast("Department is required");return}
+    var id=g("n0").value, r=id?D.find(function(x){return x.id===id}):null, isNew=!r;
+    if(isNew) r={id:nextId(),lg:[],at:[]};
+    
+    r.t=t.toUpperCase(); r.cy=g("n2").value.trim()||"-"; r.dep=g("n3").value.trim()||"-";
+    r.own=g("n4").value.trim()||"-"; r.dl=g("n5").value.trim()||"-"; r.due=g("n7").value;
+    r.st=g("n8").value; r.lk=g("n9").value; r.im=g("n10").value;
+    r.iss=g("n6").value.trim()||"-"; r.rec=g("n11").value.trim()||"-";
+    r.rm=g("n12").value.trim()||"-"; r.ag=r.ag||"-"; r.oe=g("n13").value.trim();
+    r.hist=r.st==="Closed";
+
+    if(isNew){
+        r.rv="Checker Review"; r.mk=U.email; r.ex=0;
+        var ok = await spCreate(r);
+        if(!ok) return;
+        D.unshift(r);
+        if(isSet(CFG.IA_PIC_EMAIL)){
+            notify(CFG.IA_PIC_EMAIL,"[Audit "+r.id+"] New finding awaiting your review","<p>A new finding was created by "+e(U.name)+": <b>"+e(r.t)+"</b> ("+e(r.dep)+").</p>").catch(function(){});
+        }
+    } else {
+        await spUpdate(r);
+    }
+    hide("addM"); sv(); rd();
+    toast(isNew ? "Finding saved to SharePoint" : "Finding updated");
+}
 
 async function mail(){var r=cur_(),to=g("em").value.trim();if(!to||to.indexOf("@")<1){toast("Enter a valid recipient email");return}
  var p={auditId:r.spId||r.id,auditRef:r.id,toEmail:to,ccEmail:"",senderName:U&&U.name,senderEmail:U&&U.email,subject:"Audit "+r.id+" - "+r.t,title:r.t,status:r.st,deadline:r.dl,dueDate:r.due,issue:r.iss,recommendation:r.rec,remarks:r.rm};
