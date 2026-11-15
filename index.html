@@ -364,31 +364,70 @@ async function spLoad(){
 
 async function spCreate(r){
     try {
+        console.log("Creating audit record:", r);
         if(isSet(CFG.F_CREATE_AUDIT)){
-            var res = await callFlow("CREATE_AUDIT", {auditId: r.id, title: r.t, cycle: r.cy, department: r.dep, owner: r.own, deadline: r.dl, dueDate: r.due, status: r.st, likelihood: r.lk, impact: r.im, openIssues: r.iss, recommendations: r.rec, iadRemarks: r.rm, ownerEmail: r.oe, makerEmail: r.mk, approvalStage: r.ap, reviewStage: r.rv, extensionCount: r.ex, isHistorical: r.hist});
-            if(res && res.spId) r.spId = res.spId;
+            var payload = {
+                auditId: r.id,
+                title: r.t,
+                cycle: r.cy,
+                department: r.dep,
+                owner: r.own,
+                deadline: r.dl,
+                dueDate: r.due,
+                status: r.st,
+                likelihood: r.lk,
+                impact: r.im,
+                openIssues: r.iss,
+                recommendations: r.rec,
+                iadRemarks: r.rm,
+                ownerEmail: r.oe,
+                makerEmail: r.mk,
+                approvalStage: r.ap,
+                reviewStage: r.rv,
+                extensionCount: r.ex,
+                isHistorical: r.hist
+            };
+            console.log("Sending to F_CREATE_AUDIT flow:", payload);
+            var res = await callFlow("CREATE_AUDIT", payload);
+            console.log("F_CREATE_AUDIT response:", res);
+            if(res && (res.spId || res.ID || res.id)) {
+                r.spId = res.spId || res.ID || res.id;
+            }
         } else {
-            var data = await graph((await spBase())+"/items",{method:"POST",body:JSON.stringify({fields:toSP(r)})});
+            var graphPayload = {fields: toSP(r)};
+            console.log("Sending to SharePoint via Graph API:", graphPayload);
+            var data = await graph((await spBase())+"/items",{method:"POST",body:JSON.stringify(graphPayload)});
             r.spId = data.id;
+            console.log("SharePoint Graph create success, ID:", data.id);
         }
+        sv();
         return true;
     } catch(x) {
-        toast("SharePoint create warning: " + x.message);
-        return true;
+        console.error("spCreate error:", x);
+        toast("SharePoint save failed: " + x.message);
+        throw x;
     }
 }
 
 async function spUpdate(r){
     if(!r) return;
     try {
+        console.log("Updating audit record:", r);
         if(r.spId && !String(r.spId).startsWith("SP-") && isSet(CFG.SP_SITE_ID)){
-            await graph((await spBase())+"/items/"+r.spId+"/fields",{method:"PATCH",body:JSON.stringify(toSP(r))});
+            var patchBody = {fields: toSP(r)};
+            console.log("Patching SharePoint via Graph API:", patchBody);
+            await graph((await spBase())+"/items/"+r.spId+"/fields",{method:"PATCH",body:JSON.stringify(patchBody)});
+            console.log("SharePoint Graph update success");
         } else if(isSet(CFG.F_UPDATE_AUDIT)){
+            console.log("Sending to F_UPDATE_AUDIT flow:", r);
             await callFlow("UPDATE_AUDIT", r);
+            console.log("F_UPDATE_AUDIT success");
         }
-    } catch(x) { console.warn("Update sync failed:", x.message); }
+    } catch(x) { 
+        console.error("spUpdate error:", x);
+        toast("Update sync failed: " + x.message); 
+    }
 }
-
 async function spDelete(r){
     if(!r) return;
     try {
