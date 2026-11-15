@@ -321,17 +321,45 @@ async function mail(){var r=cur_(),to=g("em").value.trim();if(!to||to.indexOf("@
 async function getRole(email){
  var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;
  return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
-async function login(){var er=g("lErr");er.textContent="";
- var m=missing();if(m.length){er.textContent="Please input the api for: "+m.join(", ");return}
- try{await getToken();var a=MS.getAllAccounts()[0],email=(a.username||"").toLowerCase(),name=a.name||email,dep=g("ldp").value.trim();
-  try{var me=await graph("/me?$select=displayName,department");name=me.displayName||name;dep=dep||me.department||""}catch(x){}
-  var ro=await getRole(email),isA=ro.found&&String(ro.role).toLowerCase()==="admin";
-  if(isA&&!ro.active){er.textContent="Your IAD admin account is inactive. Please contact Internal Audit.";return}
-  dep=ro.dep||dep;
-  if(!isA&&!dep){er.textContent="Please enter your department to continue.";return}
-  U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};
-  try{sessionStorage.setItem("iar_user",JSON.stringify(U))}catch(x){}
-  await enter()}catch(x){er.textContent=x.message||String(x)}}
+async function login() {
+  var er = g("lErr");
+  er.textContent = "";
+  var email = g("lem").value.trim().toLowerCase();
+  var dep = g("ldp").value.trim();
+
+  if (email.indexOf("@") < 1) {
+    er.textContent = "Please enter your PHB work email.";
+    return;
+  }
+
+  try {
+    var ro = await getRole(email);
+    var isA = ro.found && String(ro.role).toLowerCase() === "admin";
+
+    if (isA && !ro.active) {
+      er.textContent = "Your IAD admin account is inactive. Please contact Internal Audit.";
+      return;
+    }
+
+    dep = ro.dep || dep;
+    if (!isA && !dep) {
+      er.textContent = "Please select your department from the dropdown.";
+      return;
+    }
+
+    U = {
+      email: email,
+      name: ro.name || email.split("@")[0],
+      dep: isA ? "" : dep,
+      admin: isA
+    };
+
+    try { sessionStorage.setItem("iar_user", JSON.stringify(U)); } catch (x) {}
+    await enter();
+  } catch (x) {
+    er.textContent = x.message || String(x);
+  }
+}
 async function enter(){g("lgn").style.display="none";
  g("uchip").innerHTML="<b>"+e(U.name)+"</b><br><span style='opacity:.75'>"+(U.admin?"IAD Admin":"Department · "+e(U.dep))+"</span>";
  setP(U.admin?"ADMIN":"PIC");
@@ -341,9 +369,14 @@ async function enter(){g("lgn").style.display="none";
 function logout(){try{sessionStorage.removeItem("iar_user")}catch(x){}
  var a=MS&&MS.getAllAccounts()[0];try{if(a)MS.logoutPopup({account:a})}catch(x){}
  U=null;D=[];cur=null;hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
-function boot(){var m=missing();
- g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", ")+" in the CONFIG block at the top of the script (currently &quot;please input the api&quot;).":"Sign in with your Microsoft 365 account.";
- try{var s=JSON.parse(sessionStorage.getItem("iar_user"));if(s&&s.email&&!m.length){U=s;enter()}}catch(x){}}
+function boot() {
+  if (g("lemw")) g("lemw").style.display = "";
+  g("lNote").textContent = "Enter your PHB work email to sign in.";
+  try {
+    var s = JSON.parse(sessionStorage.getItem("iar_user"));
+    if (s && s.email) { U = s; enter(); }
+  } catch (x) {}
+}
 async function runOverdue(){try{await callFlow("OVERDUE_CHECK",{requestedBy:U&&U.email});toast("Overdue check started")}catch(x){toast(x.message)}}
 
 var D=[];
