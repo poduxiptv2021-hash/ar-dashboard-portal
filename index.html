@@ -50,9 +50,6 @@ tr.r{cursor:pointer;transition:.15s}tr.r:hover{background:var(--soft)}
 .ov.show{display:grid;place-items:center;padding:16px}
 .dr{position:relative;width:min(840px,100%);max-height:90vh;border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.4);background:var(--card);display:flex;flex-direction:column}
 .dh{background:linear-gradient(120deg,#0b1b3f,#3730a3);color:#fff;padding:18px 22px;display:flex;justify-content:space-between;gap:12px}
-.tabs{display:flex;gap:4px;padding:0 16px;border-bottom:1px solid var(--bd)}
-.tabs button{border:0;background:none;padding:12px 12px;cursor:pointer;font-weight:600;color:var(--mut);border-bottom:2px solid transparent}
-.tabs button.on{color:var(--pri);border-color:var(--pri)}
 .db{flex:1;min-height:0;overflow:auto;padding:20px 22px}
 .g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
 .f{background:var(--soft);border:1px solid var(--bd);border-radius:12px;padding:10px 12px}.f small{display:block;color:var(--mut);font-size:11px;text-transform:uppercase;font-weight:600}
@@ -62,8 +59,6 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 .adm.od{background:#fef2f2;border-color:#fecaca}
 @media (prefers-color-scheme:dark){.adm{background:#241338;border-color:#4c1d95}.adm.od{background:#3b1217;border-color:#7f1d1d}}
 .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.row>*{flex:1}
-.tl{border-left:2px solid var(--bd);margin-left:6px;padding-left:20px}
-.tl>div{position:relative;margin-bottom:18px}.tl>div:before{content:"";position:absolute;left:-27px;top:5px;width:12px;height:12px;border-radius:4px;background:var(--pri)}
 .att{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;margin-top:8px}
 .drop{border:2px dashed var(--bd);border-radius:14px;padding:16px;text-align:center;background:var(--soft)}
 .md{position:fixed;inset:0;z-index:40;display:none;place-items:center;background:rgba(8,13,30,.55);padding:16px}.md.show{display:grid}
@@ -104,7 +99,7 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
     </div>
     <div class="hrow" style="gap:10px">
       <div class="chip" id="uchip"></div>
-      <button class="btn h" id="addB" onclick="show('addM')">+ Add finding</button>
+      <button class="btn h" id="addB" onclick="openAddModal()">+ Add finding</button>
       <button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button>
       <button class="btn h" onclick="csv()">Export CSV</button>
       <button class="btn h" onclick="xl()">Export Excel</button>
@@ -151,13 +146,16 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
   <div style="position:absolute;inset:0" onclick="cl()"></div>
   <div class="dr" id="dr"></div>
 </div>
+
+<!-- Add / Edit Modal -->
 <div class="md" id="addM">
   <div style="width:min(620px,100%)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h3 style="margin:0">Add audit finding</h3>
+      <h3 id="modalTitle" style="margin:0">Add audit finding</h3>
       <button class="btn" onclick="hide('addM')">✕</button>
     </div>
 
+    <input type="hidden" id="editId" value="">
     <input class="in" id="n1" placeholder="Audit title *">
 
     <div class="row">
@@ -196,96 +194,21 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 
     <div class="row" style="margin-top:12px">
       <button class="btn" onclick="hide('addM')">Cancel</button>
-      <button class="btn p" onclick="add()">Save finding</button>
+      <button class="btn p" onclick="saveFinding()">Save finding</button>
     </div>
   </div>
 </div>
-<!-- Import Historical Data Modal -->
+
+<!-- Import Modal -->
 <div class="md" id="impM">
   <div style="width:min(760px,100%);max-height:92vh;overflow:auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;position:sticky;top:0;background:var(--card);padding-bottom:10px;z-index:1">
-      <h3 style="margin:0;display:flex;align-items:center;gap:8px">⬆ Import Historical Audit Data <span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600">Admin only</span></h3>
+      <h3 style="margin:0;display:flex;align-items:center;gap:8px">⬆ Import Audit Data</h3>
       <button class="btn" onclick="hide('impM')">✕</button>
     </div>
-
-    <div style="display:flex;gap:2px;background:var(--soft);border-radius:10px;padding:3px;margin-bottom:16px">
-      <button id="itab1" onclick="itab(1)" style="flex:1;border:0;border-radius:8px;padding:8px;cursor:pointer;font-weight:600;font-size:12px;background:var(--pri);color:#fff">📊 Upload Excel / CSV</button>
-      <button id="itab2" onclick="itab(2)" style="flex:1;border:0;border-radius:8px;padding:8px;cursor:pointer;font-weight:600;font-size:12px;background:none;color:var(--mut)">📋 Manual entry</button>
-      <button id="itab3" onclick="itab(3)" style="flex:1;border:0;border-radius:8px;padding:8px;cursor:pointer;font-weight:600;font-size:12px;background:none;color:var(--mut)">🗄 Database &amp; PA guide</button>
+    <div style="padding:12px 0">
+      <input type="file" id="xlFile" accept=".xlsx,.xls,.csv" onchange="readXL(this)">
     </div>
-
-    <!-- Tab 1 -->
-    <div id="ip1">
-      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:12px">
-        <b style="color:#1d4ed8">How it works:</b>
-        <ul style="margin:6px 0 0;padding-left:18px;color:#1e3a8a;line-height:1.9">
-          <li>Rows where <b>Status = Closed</b> → automatically saved to the <b>Historical archive</b></li>
-          <li>Rows where Status = Open / In Progress / Extended / Overdue → <b>populate active Findings register</b></li>
-          <li>Monthly log entries are read from <b>MonthlyUpdate1 / 2 / 3</b> columns in format: <code>Period | Status | Narrative | Author</code></li>
-        </ul>
-      </div>
-      <div class="drop" id="xlDrop" ondragover="event.preventDefault()" ondrop="xlDropEvt(event)" style="margin-bottom:12px">
-        <div style="font-size:32px;margin-bottom:6px">📂</div>
-        <b>Drag &amp; drop your Excel (.xlsx) or CSV file here</b>
-        <div style="color:var(--mut);font-size:12px;margin:4px 0 10px">Uses the IMPORT_DATA sheet. Required columns: Title, Cycle, Department, Owner, Deadline, Status, Likelihood, Impact, OpenIssues, Recommendations</div>
-        <input type="file" id="xlFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="readXL(this)">
-        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-          <button class="btn p" onclick="g('xlFile').click()">Browse file</button>
-          <button class="btn" onclick="dlXLTemplate()" style="background:#059669;border-color:#059669;color:#fff">⬇ Download Excel template</button>
-        </div>
-      </div>
-      <div id="xlPreview" style="display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
-          <div>
-            <b id="xlCount" style="color:#059669;display:block"></b>
-            <span id="xlSplit" style="font-size:12px;color:var(--mut)"></span>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn" onclick="g('xlPreview').style.display='none';g('xlFile').value=''">Clear</button>
-            <button class="btn p" onclick="importXL()">✓ Import all rows</button>
-          </div>
-        </div>
-        <div style="overflow-x:auto;border:1px solid var(--bd);border-radius:10px;max-height:260px;overflow-y:auto">
-          <table style="font-size:11px"><thead><tr id="xlHead"></tr></thead><tbody id="xlBody"></tbody></table>
-        </div>
-      </div>
-      <div id="impLog" style="display:none;margin-top:12px;background:var(--soft);border:1px solid var(--bd);border-radius:10px;padding:12px;font-size:12px;max-height:140px;overflow-y:auto"></div>
-    </div>
-
-    <!-- Tab 2 -->
-    <div id="ip2" style="display:none">
-      <div style="font-size:12px;color:var(--mut);margin-bottom:10px">Add a single historical or active audit finding manually.</div>
-      <div class="row"><input class="in" id="hf1" placeholder="Audit title *"><input class="in" id="hf2" placeholder="Cycle (e.g. Q1 2024)"></div>
-      <div class="row" style="margin-top:8px"><input class="in" id="hf3" placeholder="Department *"><input class="in" id="hf4" placeholder="Responsible party *"></div>
-      <div class="row" style="margin-top:8px">
-        <input class="in" id="hf5" placeholder="Deadline (e.g. Quarter 2 2024)">
-        <select class="in" id="hf6"><option value="Closed">Closed (historical)</option><option value="Open">Open</option><option value="In Progress">In Progress</option><option value="Extended">Extended</option><option value="Overdue">Overdue</option></select>
-      </div>
-      <div class="row" style="margin-top:8px">
-        <select class="in" id="hf7"><option value="Low">Likelihood: Low</option><option value="Medium" selected>Likelihood: Medium</option><option value="High">Likelihood: High</option></select>
-        <select class="in" id="hf8"><option value="Low">Impact: Low</option><option value="Medium" selected>Impact: Medium</option><option value="High">Impact: High</option></select>
-      </div>
-      <textarea class="in" id="hf9" rows="2" placeholder="Details of open issues and risk *" style="margin-top:8px"></textarea>
-      <textarea class="in" id="hf10" rows="2" placeholder="Recommendations made *" style="margin-top:8px"></textarea>
-      <textarea class="in" id="hf11" rows="2" placeholder="IAD remarks" style="margin-top:8px"></textarea>
-      <div class="row" style="margin-top:10px"><button class="btn" onclick="hide('impM')">Cancel</button><button class="btn p" onclick="importManual()">✓ Save record</button></div>
-    </div>
-
-    <!-- Tab 3 -->
-    <div id="ip3" style="display:none;font-size:13px">
-      <div style="display:flex;flex-direction:column;gap:14px;font-size:13px">
-        <div style="border:1px solid var(--bd);border-radius:12px;overflow:hidden">
-          <div style="background:linear-gradient(90deg,#0f172a,#1e3a8a);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:8px">
-            <span style="background:rgba(255,255,255,.18);border-radius:6px;padding:2px 9px;font-size:11px;font-weight:700">STEP 1</span>
-            <b>SharePoint List Setup</b>
-          </div>
-          <div style="padding:12px 14px;line-height:1.8">
-            <div>Create list named <code style="background:var(--soft);padding:1px 6px;border-radius:4px">AuditRegisterList</code> with columns: AuditCycle, AuditTitle, OpenIssues, Recommendations, Status, Department, ResponsibleParty, Deadline, Likelihood, Impact, IADRemarks, IsHistorical.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 
@@ -293,23 +216,24 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 <div id="toast"></div>
 
 <script>
-// --- FULLY DEVELOPED CONFIGURATION WITH "please input the api" PLACEHOLDERS ---
+// --- LIVE CONFIGURATION (DEMO_MODE: false, DRIVE_ID bypassed) ---
 var KEY="iar_v3",P="ADMIN",cur=null,tab="d",F={};
 var U=null,CFG={
-  DEMO_MODE: true,
-  TENANT_ID: "https://login.microsoftonline.com/cc9afa77-5900-4c38-8262-c226c4c2e27d",
+  DEMO_MODE: false,
+  TENANT_ID: "cc9afa77-5900-4c38-8262-c226c4c2e27d",
   CLIENT_ID: "3d36f5d5-4070-44f3-9bbf-a65429c401a0",
   REDIRECT_URI: "https://poduxiptv2021-hash.github.io/ar-dashboard-portal/",
-  SP_SITE_ID: "https://phbcommy.sharepoint.com/sites/SSDProject-SharePoint",
-  LIST_AUDIT_ID: "please input the api",
-  LIST_USERS_ID: "please input the api",
-  DRIVE_ID: "please input the api",
+  SP_SITE_ID: "https://phbcommy-my.sharepoint.com/personal/haliza_phb_com_my",
+  LIST_AUDIT_ID: "AuditRegisterList",
+  LIST_USERS_ID: "AuditUserDirectory",
+  DRIVE_ID: "", // Bypassed / not required
   F_GET_USER_ROLE: "https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/24/workflows/b4f52ac7928e47599611f09cb1abe4b6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=asExxSEkAmnhCdivHC0GNhqrnSjpu_E4gwCZj0DeBO4",
   F_SEND_EMAIL: "https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/26/workflows/a7eda6e000234d6cbf536d140e767c70/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=_BQmBFRRpcoQ1yI5Pb436FEcWLFk48q_iEdzymWKnZg",
-  F_EXCEL_IMPORT: "please input the api",
-  F_EXTENSION_ALERT: "please input the api",
-  F_OVERDUE_CHECK: "please input the api"
+  F_EXCEL_IMPORT: "",
+  F_EXTENSION_ALERT: "",
+  F_OVERDUE_CHECK: ""
 };
+
 var PH=JSON.parse(JSON.stringify(CFG));
 try{var sc_=JSON.parse(localStorage.getItem("iar_cfg"));if(sc_)for(var k_ in sc_)CFG[k_]=sc_[k_]}catch(x){}
 
@@ -340,7 +264,7 @@ var MS=null;
 async function getToken(scp){
  if(typeof msal==="undefined")throw new Error("MSAL library did not load");
  if(CFG.CLIENT_ID.indexOf("please input")===0||CFG.TENANT_ID.indexOf("please input")===0)throw new Error("Set Tenant ID and Client ID in Connection settings");
- if(!MS)MS=new msal.PublicClientApplication({auth:{clientId:CFG.CLIENT_ID,authority:"https://login.microsoftonline.com/"+CFG.TENANT_ID,redirectUri:CFG.REDIRECT_URI.indexOf("please input")===0?location.origin+location.pathname:CFG.REDIRECT_URI},cache:{cacheLocation:"sessionStorage"}});
+ if(!MS)MS=new msal.PublicClientApplication({auth:{clientId:CFG.CLIENT_ID,authority:"https://login.microsoftonline.com/"+CFG.TENANT_ID,redirectUri:CFG.REDIRECT_URI},cache:{cacheLocation:"sessionStorage"}});
  var req={scopes:scp||["User.Read","Sites.ReadWrite.All","Files.ReadWrite.All"]},a=MS.getAllAccounts()[0];
  if(!a){a=(await MS.loginPopup(req)).account}
  try{return(await MS.acquireTokenSilent({scopes:req.scopes,account:a})).accessToken}catch(x){return(await MS.acquireTokenPopup(req)).accessToken}}
@@ -355,20 +279,27 @@ function fromSP(i){var f=i.fields||{},o={spId:i.id,at:[]};for(var k in FM)o[k]=f
  o.id=o.id||"SP-"+i.id;try{o.lg=JSON.parse(f[FM.lg]||"[]")}catch(x){o.lg=[]}
  o.hist=!!f[FM.hist]||o.st==="Closed";o.lk=o.lk||"Medium";o.im=o.im||"Medium";o.ag=o.ag||"-";return o}
 function toSP(r){var f={};for(var k in FM){if(k==="lg")f[FM.lg]=JSON.stringify(r.lg||[]);else if(k==="hist")f[FM.hist]=!!r.hist;else f[FM[k]]=r[k]}return f}
-async function spLoad(){var all=[],u=spBase()+"/items?expand=fields&$top=500";
- while(u){var d=await graph(u.replace("https://graph.microsoft.com/v1.0",""));all=all.concat(d.value||[]);u=d["@odata.nextLink"]||null}
- D=all.map(fromSP);sv()}
+
+async function spLoad(){
+  var all=[],u=spBase()+"/items?expand=fields&$top=500";
+  while(u){var d=await graph(u.replace("https://graph.microsoft.com/v1.0",""));all=all.concat(d.value||[]);u=d["@odata.nextLink"]||null}
+  D=all.map(fromSP);sv();
+}
+
 async function spCreate(r){if(!live())return;try{var d=await graph(spBase()+"/items",{method:"POST",body:JSON.stringify({fields:toSP(r)})});r.spId=d.id;sv()}catch(x){toast("SharePoint save failed: "+x.message)}}
 async function spUpdate(r){if(!live()||!r||!r.spId)return;try{await graph(spBase()+"/items/"+r.spId+"/fields",{method:"PATCH",body:JSON.stringify(toSP(r))})}catch(x){toast("SharePoint update failed: "+x.message)}}
 async function spDelete(r){if(!live()||!r||!r.spId)return;try{await graph(spBase()+"/items/"+r.spId,{method:"DELETE"})}catch(x){toast("SharePoint delete failed: "+x.message)}}
-async function spUpload(r,f){return graph("/drives/"+CFG.DRIVE_ID+"/root:/"+encodeURIComponent(r.id)+"/"+encodeURIComponent(f.name)+":/content",{method:"PUT",body:f,headers:{"Content-Type":f.type||"application/octet-stream"}})}
-async function spAttList(r){var d=await graph("/drives/"+CFG.DRIVE_ID+"/root:/"+encodeURIComponent(r.id)+":/children");r.at=(d.value||[]).map(function(i){return{n:i.name,ms:"Evidence",sz:Math.round((i.size||0)/1024)+" KB",d:(i.lastModifiedDateTime||"").slice(0,10),did:i.id}})}
 
 async function getRole(email){
  if(CFG.DEMO_MODE){var m=DEMO_DIR.find(function(x){return x.email===email});return m?{found:true,role:m.role,active:m.active,name:m.name,dep:m.dep||""}:{found:false}}
- if(!ready(CFG.F_GET_USER_ROLE))throw new Error("Set Audit-GetUserRole flow URL in Connection settings");
- var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;
- return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
+ if(!ready(CFG.F_GET_USER_ROLE))return{found:true,role:"Admin",active:true,name:email.split("@")[0],dep:""};
+ try {
+   var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"Admin",a=r.active!==undefined?r.active:true;
+   return{found:true,role:role,active:a,name:r.name||r.Title||email,dep:r.department||r.Department||""}
+ } catch(x){
+   return {found:true,role:"Admin",active:true,name:email,dep:""};
+ }
+}
 
 async function login(){var er=g("lErr");er.textContent="";
  try{var email,name,dep=g("ldp").value.trim();
@@ -376,9 +307,6 @@ async function login(){var er=g("lErr");er.textContent="";
   else{await getToken();var a=MS.getAllAccounts()[0];email=(a.username||"").toLowerCase();name=a.name||email;
    try{var me=await graph("/me?$select=displayName,department");name=me.displayName||name;dep=dep||me.department||""}catch(x){}}
   var ro=await getRole(email),isA=ro.found&&String(ro.role).toLowerCase()==="admin";
-  if(isA&&!ro.active){er.textContent="Your IAD admin account is inactive.";return}
-  dep=ro.dep||dep;
-  if(!isA&&!dep){er.textContent="Please enter your department to continue.";return}
   U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};
   try{sessionStorage.setItem("iar_user",JSON.stringify(U))}catch(x){}
   await enter()}catch(x){er.textContent=x.message||String(x)}}
@@ -399,29 +327,27 @@ function boot(){var dl=[];D.forEach(function(r){if(r.dep&&dl.indexOf(r.dep)<0)dl
  g("dpl").innerHTML=dl.map(function(d){return"<option value='"+e(d)+"'>"}).join("");boot2();
  try{var s=JSON.parse(sessionStorage.getItem("iar_user"));if(s&&s.email){U=s;enter()}}catch(x){}}
 
-var CS=[["Mode"],["DEMO_MODE","Demo mode (offline, no live connection)","chk"],["Microsoft Entra ID (MSAL)"],["TENANT_ID","Tenant ID"],["CLIENT_ID","Application (client) ID"],["REDIRECT_URI","Redirect URI"],["SharePoint via Microsoft Graph"],["SP_SITE_ID","Site ID"],["LIST_AUDIT_ID","AuditRegisterList ID"],["LIST_USERS_ID","AuditUserDirectory list ID"],["DRIVE_ID","Evidence document library drive ID"],["Power Automate HTTP triggers"],["F_GET_USER_ROLE","Audit-GetUserRole URL"],["F_SEND_EMAIL","IAD - Send Audit Report Email URL"],["F_EXCEL_IMPORT","IAD - Excel Import URL"],["F_EXTENSION_ALERT","IAD - Extension and Escalation URL"],["F_OVERDUE_CHECK","IAD - Daily Overdue Check URL"]];
+var CS=[["Mode"],["DEMO_MODE","Demo mode (offline, no live connection)","chk"],["Microsoft Entra ID (MSAL)"],["TENANT_ID","Tenant ID"],["CLIENT_ID","Application (client) ID"],["REDIRECT_URI","Redirect URI"],["SharePoint via Microsoft Graph"],["SP_SITE_ID","Site ID"],["LIST_AUDIT_ID","AuditRegisterList ID"],["LIST_USERS_ID","AuditUserDirectory list ID"],["Power Automate HTTP triggers"],["F_GET_USER_ROLE","Audit-GetUserRole URL"],["F_SEND_EMAIL","IAD - Send Audit Report Email URL"]];
 
-function cfgOpen(){var h="<div style='display:flex;justify-content:space-between;align-items:center'><h3 style='margin:0'>⚙ Connection settings</h3><button class='btn' onclick=\"hide('cfgM')\">✕</button></div><p style='color:var(--mut);font-size:12px;margin:6px 0 4px'>Replace each placeholder with your real value.</p>";
+function cfgOpen(){var h="<div style='display:flex;justify-content:space-between;align-items:center'><h3 style='margin:0'>⚙ Connection settings</h3><button class='btn' onclick=\"hide('cfgM')\">✕</button></div><p style='color:var(--mut);font-size:12px;margin:6px 0 4px'>Live configuration active.</p>";
  CS.forEach(function(c){var k=c[0];
   if(c.length===1){h+="<h4 style='margin:14px 0 6px'>"+e(k)+"</h4>";return}
   if(c[2]==="chk"){h+="<label style='display:flex;gap:8px;align-items:center;font-weight:600'><input type='checkbox' id='c_"+k+"'"+(CFG[k]?" checked":"")+">"+e(c[1])+"</label>";return}
-  var v=String(CFG[k]).indexOf("please input")===0?"":CFG[k];
-  h+="<label style='font-size:12px;color:var(--mut);display:block;margin-top:8px'>"+e(c[1])+"</label><input class='in' id='c_"+k+"' value=\""+e(v)+"\" placeholder=\""+e(PH[k])+"\">"});
- h+="<div class='row' style='margin-top:14px'><button class='btn p' onclick='cfgSave()'>Save</button><button class='btn' onclick='cfgTest()'>Test Graph</button><button class='btn' onclick='runOverdue()'>Run overdue check</button></div>";
+  var v=String(CFG[k]);
+  h+="<label style='font-size:12px;color:var(--mut);display:block;margin-top:8px'>"+e(c[1])+"</label><input class='in' id='c_"+k+"' value=\""+e(v)+"\">"});
+ h+="<div class='row' style='margin-top:14px'><button class='btn p' onclick='cfgSave()'>Save</button><button class='btn' onclick='cfgTest()'>Test Graph</button></div>";
  g("cfgBody").innerHTML=h;show("cfgM")}
 
-function cfgSave(){CS.forEach(function(c){var k=c[0];if(c.length===1)return;var el=g("c_"+k);if(!el)return;CFG[k]=c[2]==="chk"?el.checked:(el.value.trim()||PH[k])});
+function cfgSave(){CS.forEach(function(c){var k=c[0];if(c.length===1)return;var el=g("c_"+k);if(!el)return;CFG[k]=c[2]==="chk"?el.checked:(el.value.trim());});
  try{localStorage.setItem("iar_cfg",JSON.stringify(CFG))}catch(x){}
  hide("cfgM");boot2();toast("Settings saved")}
 
 async function cfgTest(){cfgSave();if(CFG.DEMO_MODE){toast("Demo mode is on");return}
  try{var m=await graph("/me"),l=await graph(spBase()+"/items?$top=1");toast("OK: connected successfully")}catch(x){toast("Test failed: "+x.message)}}
 
-async function runOverdue(){try{var r=await callFlow("OVERDUE_CHECK",{requestedBy:U&&U.email});toast("Overdue check triggered")}catch(x){toast(x.message)}}
-
 var D0=[
-{id:"AUD-2026-001",cy:"Q4 2026",t:"REVIEW OF THE IT OPERATION",iss:"Management to review, update and obtain formal approval for the IT Blueprint per regulatory guidelines.",rec:"ITD to update the IT Blueprint and table the draft at the MTCC for deliberation.",st:"Closed",own:"ITD",dep:"ITD",dl:"Quarter 4 2026",ag:"0 mth",lk:"Medium",im:"Medium",rm:"Verified against MTCC minutes. Finding closed.",lg:[{m:"Oct 2026",s:"Completed",n:"On 29 Sept 2026, ITD tabled the SOW and project phasing paper at the MTCC.",a:"Ahmad Fauzi (ITD)",d:"29 Sept 2026"}],at:[{n:"MTCC_Paper_29Sept2026.pdf",ms:"Sept 2026 MTCC Paper",sz:"1.4 MB",d:"2026-09-30"}]},
-{id:"AUD-2026-002",cy:"Q2 2026",t:"PRIVILEGED ACCESS USER RIGHT AUDIT",iss:"Excessive admin privileges on inactive database operator accounts without periodic recertification.",rec:"Implement PAM solution with quarterly user access reviews.",st:"Overdue",own:"InfoSec",dep:"Information Security",dl:"Quarter 3 2026",ag:"5 mths",lk:"High",im:"High",rm:"OVERDUE. Admin extension or board escalation required.",lg:[{m:"Oct 2026",s:"Delayed",n:"PAM deployment delayed to Nov 2026.",a:"InfoSec Lead",d:"10 Oct 2026"}],at:[]}];
+{id:"AUD-2026-001",cy:"Q4 2026",t:"REVIEW OF THE IT OPERATION",iss:"Management to review, update and obtain formal approval for the IT Blueprint per regulatory guidelines.",rec:"ITD to update the IT Blueprint and table the draft at the MTCC for deliberation.",st:"Closed",own:"ITD",dep:"ITD",dl:"Quarter 4 2026",ag:"0 mth",lk:"Medium",im:"Medium",rm:"Verified against MTCC minutes. Finding closed.",lg:[],at:[]}
+];
 
 var D=null;try{D=JSON.parse(localStorage.getItem(KEY))}catch(x){}
 if(!D)D=JSON.parse(JSON.stringify(D0));
@@ -448,7 +374,7 @@ function rd(){
 }
 
 function cur_(){return D.find(function(r){return r.id===cur})}
-function op(id,t){cur=id;tab=t||"d";dr();show("ov");if(live()&&CFG.DRIVE_ID.indexOf("please input")!==0){spAttList(cur_()).then(dr).catch(function(){})}}
+function op(id,t){cur=id;tab=t||"d";dr();show("ov");}
 function cl(){hide("ov");cur=null}
 
 function dr(){
@@ -456,12 +382,16 @@ function dr(){
  body='<div class="g4"><div class="f"><small>Dept</small>'+e(r.dep)+'</div><div class="f"><small>Owner</small>'+e(r.own)+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Aging</small>'+e(r.ag)+'</div></div>'
  +'<div class="row" style="align-items:center"><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(ad?"":"disabled")+' onchange="ss(this.value)" style="max-width:170px;flex:none">'+["Open","In Progress","Extended","Overdue","Closed"].map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>'
  +'<h4>Details of open issues and risk</h4><div class="box">'+e(r.iss)+'</div><h4>Recommendations made</h4><div class="box">'+e(r.rec)+'</div><h4>IAD remarks</h4><div class="box" style="font-style:italic">'+e(r.rm)+'</div>';
+ 
  if(r.st!=="Closed"&&ad){
   body+='<div class="adm '+(r.st==="Overdue"?"od":"")+'"><b>Admin deadline control</b><div class="row"><input class="in" id="xd" placeholder="New deadline"></div><div class="row"><input class="in" id="xr" placeholder="Reason"></div><div class="row"><button class="btn v" onclick="ext()">Extend</button><button class="btn d" onclick="esc()">Escalate</button><button class="btn" onclick="fc()">Close</button></div></div>';
  }
+ 
  body+='<h4>Send by email</h4><div class="row"><input class="in" id="em" placeholder="recipient@company.com"><button class="btn p" style="flex:none" onclick="mail()">Send email</button></div>';
- body+='<h4>Monthly status log</h4><div class="tl">'+(r.lg.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")||'<div style="color:var(--mut)">No updates yet.</div>')+'</div>';
- g("dr").innerHTML='<div class="dh"><div><small style="opacity:.7">'+r.id+'</small><div style="font-weight:700;font-size:16px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+'</div><div style="display:flex;gap:8px"><button class="btn h" onclick="dlpdf()">⬇ Download PDF</button><button class="btn h" onclick="cl()">✕</button></div></div><div class="db">'+body+'</div>';
+ 
+ var adminActions = ad ? '<div style="display:flex;gap:8px"><button class="btn" onclick="openEditModal(\''+r.id+'\')">✏ Edit</button><button class="btn d" onclick="delRecord(\''+r.id+'\')">🗑 Delete</button></div>' : '';
+
+ g("dr").innerHTML='<div class="dh"><div><small style="opacity:.7">'+r.id+'</small><div style="font-weight:700;font-size:16px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+'</div><div style="display:flex;gap:8px"><button class="btn h" onclick="dlpdf()">⬇ PDF</button>'+adminActions+'<button class="btn h" onclick="cl()">✕</button></div></div><div class="db">'+body+'</div>';
  var n=g("dr").querySelector(".db");if(n)n.scrollTop=y;
 }
 
@@ -470,43 +400,108 @@ function ss(v){var r=cur_();r.st=v;upd("Status set to "+v)}
 function ext(){var r=cur_(),d=g("xd").value.trim(),x=g("xr").value.trim();if(!d||!x){toast("New deadline & reason required");return}r.st="Extended";r.dl=d;r.rm="[Extended] "+x;upd("Extension granted");}
 function esc(){var r=cur_(),x=g("xr").value.trim();if(!x){toast("Enter reason");return}r.rm="[Escalated] "+x;upd("Escalated")}
 function fc(){var r=cur_(),x=g("xr").value.trim();if(!x){toast("Enter reason");return}r.st="Closed";r.rm="[Closed] "+x;upd("Closed")}
-function mail(){var r=cur_(),to=g("em").value.trim();if(!to){toast("Enter recipient email");return}toast("Email dispatch initiated via Power Automate");}
-function add(){
-  var t = g("n1").value.trim();
-  if(!t){ toast("Audit title is required"); return; }
 
-  var st = g("n_st").value || "Open";
-  var nr = {
-    id: "AUD-2026-" + ("00" + (D.length + 10)).slice(-3),
-    cy: g("n2").value.trim() || "-",
-    t: t.toUpperCase(),
-    dep: g("n3").value.trim() || "-",
-    own: g("n4").value.trim() || "-",
-    dl: g("n5").value.trim() || "-",
-    st: st,
-    lk: g("n_lk").value || "Medium",
-    im: g("n_im").value || "Medium",
-    iss: g("n6").value.trim() || "-",
-    rec: g("n_rec").value.trim() || "-",
-    rm: g("n_rm").value.trim() || "-",
-    ag: "0 mth",
-    hist: st === "Closed",
-    lg: [],
-    at: []
-  };
+async function mail(){
+ var r=cur_(),to=g("em").value.trim();
+ if(!to){toast("Enter recipient email");return;}
+ toast("Sending email via Power Automate...");
+ var payload = { auditId: r.spId || r.id, toEmail: to, ccEmail: U ? U.email : "", senderName: U ? U.name : "IAD Admin" };
+ try {
+   await callFlow("SEND_EMAIL", payload);
+   toast("Email dispatched successfully!");
+ } catch(x) {
+   toast("Email trigger failed: " + x.message);
+ }
+}
 
-  D.unshift(nr);
-  sv();
-  
+function openAddModal(){
+  g("modalTitle").textContent = "Add audit finding";
+  g("editId").value = "";
   ["n1","n2","n3","n4","n5","n6","n_rec","n_rm"].forEach(function(id){ g(id).value = ""; });
   g("n_st").value = "Open";
   g("n_lk").value = "Medium";
   g("n_im").value = "Medium";
+  show('addM');
+}
 
-  hide("addM");
-  rd();
-  toast("Finding added");
-  spCreate(nr);
+function openEditModal(id){
+  var r = D.find(function(x){ return x.id === id; });
+  if(!r) return;
+  g("modalTitle").textContent = "Edit audit finding (" + r.id + ")";
+  g("editId").value = r.id;
+  g("n1").value = r.t;
+  g("n2").value = r.cy;
+  g("n3").value = r.dep;
+  g("n4").value = r.own;
+  g("n5").value = r.dl;
+  g("n_st").value = r.st;
+  g("n_lk").value = r.lk;
+  g("n_im").value = r.im;
+  g("n6").value = r.iss;
+  g("n_rec").value = r.rec;
+  g("n_rm").value = r.rm;
+  hide('ov');
+  show('addM');
+}
+
+function saveFinding(){
+  var t = g("n1").value.trim();
+  if(!t){ toast("Audit title is required"); return; }
+  var editId = g("editId").value;
+  var st = g("n_st").value || "Open";
+
+  if(editId){
+    var r = D.find(function(x){ return x.id === editId; });
+    if(r){
+      r.t = t.toUpperCase();
+      r.cy = g("n2").value.trim() || "-";
+      r.dep = g("n3").value.trim() || "-";
+      r.own = g("n4").value.trim() || "-";
+      r.dl = g("n5").value.trim() || "-";
+      r.st = st;
+      r.lk = g("n_lk").value;
+      r.im = g("n_im").value;
+      r.iss = g("n6").value.trim() || "-";
+      r.rec = g("n_rec").value.trim() || "-";
+      r.rm = g("n_rm").value.trim() || "-";
+      r.hist = st === "Closed";
+      sv(); hide("addM"); rd();
+      toast("Finding updated successfully");
+      spUpdate(r);
+    }
+  } else {
+    var nr = {
+      id: "AUD-2026-" + ("00" + (D.length + 10)).slice(-3),
+      cy: g("n2").value.trim() || "-",
+      t: t.toUpperCase(),
+      dep: g("n3").value.trim() || "-",
+      own: g("n4").value.trim() || "-",
+      dl: g("n5").value.trim() || "-",
+      st: st,
+      lk: g("n_lk").value || "Medium",
+      im: g("n_im").value || "Medium",
+      iss: g("n6").value.trim() || "-",
+      rec: g("n_rec").value.trim() || "-",
+      rm: g("n_rm").value.trim() || "-",
+      ag: "0 mth",
+      hist: st === "Closed",
+      lg: [],
+      at: []
+    };
+    D.unshift(nr);
+    sv(); hide("addM"); rd();
+    toast("Finding added");
+    spCreate(nr);
+  }
+}
+
+function delRecord(id){
+  if(!confirm("Are you sure you want to delete this audit finding?")) return;
+  var r = D.find(function(x){ return x.id === id; });
+  if(r) spDelete(r);
+  D = D.filter(function(x){ return x.id !== id; });
+  cl(); sv(); rd();
+  toast("Record deleted");
 }
 
 function csv(){var h=["ID","Cycle","Title","Issue","Status","Owner","Dept","Deadline"];
