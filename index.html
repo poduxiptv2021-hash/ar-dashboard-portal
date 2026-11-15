@@ -372,7 +372,7 @@ function fillDeps(){
         "Risk, Compliance & Integrity Management Department (RCI)",
         "Investment Department (ID)",
         "Property Development Department (PDD)",
-        "Internal Audit Department (IAD)"
+        "Internal Audit Department (IAD)",
         "PHB Asset Management (PAM)",
         "PHB Property Management (PPM)",
         "PHB Property Development (PPD)"
@@ -400,19 +400,6 @@ function fillDeps(){
     }
 }
 
-            <option>Corporate Administration Unit (CAU)</option>
-            <option>Finance Department (FD)</option>
-            <option>Support Services Department (SSD)</option>
-            <option>Corporate Communications Unit (CCU)</option>
-            <option>Information Technology Unit (ITU)</option>
-            <option>People Development & Capabilities Unit (PDC)</option>
-            <option>Human Resources Unit (HRU)</option>
-            <option>Contract & Procurement Management Department (CPM)</option>
-            <option>Risk, Compliance & Integrity Management Department (RCI)</option>
-            <option>Investment Department (ID)</option>
-            <option>Property Development Department (PDD)</option>
-            <option>Internal Audit Department (IAD)</option>
-    ];
 
     g("dpl").innerHTML =
         l.map(function(d){
@@ -434,7 +421,7 @@ function fillDeps(){
 
             }).join("");
     }
-}
+
 
 function boot(){fillDeps();var m=missing();
  g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", ")+" in the CONFIG block at the top of the script (currently &quot;please input the api&quot;).":"Sign in with your Microsoft 365 account.";
