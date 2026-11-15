@@ -305,9 +305,33 @@ async function graph(path,o){o=o||{};var t=await getToken();
  if(!r.ok)throw new Error("Graph "+r.status);
  if(o.raw)return r.blob();return r.status===204?{}:r.json()}
 
-var SITE=null;
-async function spBase(){if(!SITE){var v=String(CFG.SP_SITE_ID);if(v.indexOf("http")===0){var u=new URL(v);SITE=(await graph("/sites/"+u.hostname+":"+u.pathname.replace(/\/$/,""))).id}else SITE=v}return"/sites/"+SITE+"/lists/"+encodeURIComponent(CFG.LIST_AUDIT_ID)}
-function toSP(r){var f={};for(var k in FM){if(k==="lg")f[FM.lg]=JSON.stringify(r.lg||[]);else if(k==="at")f[FM.at]=JSON.stringify(r.at||[]);else if(k==="ex")f[FM.ex]=r.ex||0;else if(k==="hist")f[FM.hist]=!!r.hist;else if(k==="due")f[FM.due]=r.due||null;else f[FM[k]]=r[k]}return f}
+var SITE = null;
+
+async function spBase(){
+    if(!SITE){
+        var v = String(CFG.SP_SITE_ID);
+
+        if(v.indexOf("http") === 0){
+            var u = new URL(v);
+
+            SITE = (
+                await graph(
+                    "/sites/" +
+                    u.hostname +
+                    ":" +
+                    u.pathname.replace(/\/$/, "")
+                )
+            ).id;
+        }else{
+            SITE = v;
+        }
+    }
+
+    return "/sites/" +
+        SITE +
+        "/lists/" +
+        encodeURIComponent(CFG.LIST_AUDIT_ID);
+}
 
 async function spLoad(){
     try {
@@ -433,7 +457,7 @@ function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v
  g("addT").textContent=id?"Edit audit finding":"Add audit finding";
  s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
 
-async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
+
 async function add(){
     var t=g("n1").value.trim();
     if(!t){toast("Title is required");return}
