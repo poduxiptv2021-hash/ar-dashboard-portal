@@ -73,20 +73,9 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 .msb i{display:grid;grid-template-columns:repeat(2,9px);gap:2px}.msb i b{width:9px;height:9px;display:block}
 .chip{background:rgba(255,255,255,.14);border-radius:10px;padding:6px 12px;font-size:12px;line-height:1.35}
 #cfgM{z-index:70}
+body.auth #lgn{display:none!important}
 </style></head><body>
 <div id="lgn"><div class="lc">
-<div style="text-align:center;margin-bottom:20px"><div class="mark" style="margin:0 auto 12px;background:#4f46e5;color:#fff">🛡</div><h2 style="margin:0;font-size:20px">Internal Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company email</p></div>
-
-<!-- ADD THIS EMAIL INPUT BOX -->
-<div id="lemw" style="margin-bottom:8px;">
-  <input class="in" id="lem" placeholder="Work email (e.g. nurhaliza@phb.com.my)" autocomplete="email">
-</div>
-<input class="in" id="ldp" list="dpl" placeholder="Department (IAD admins can leave blank)" style="margin-top:8px"><datalist id="dpl"></datalist>
-<button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in to Portal</button>
-<div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
-<div style="font-size:12px;color:var(--mut);margin-top:6px">IAD access is granted only to <b>Admin</b> users listed in <b>AuditUserDirectory</b>. All other staff sign in under their own department.</div>
-<div id="lNote" style="font-size:11px;color:var(--mut);margin-top:8px"></div>
-</div></div>
 <div style="text-align:center;margin-bottom:20px"><div class="mark" style="margin:0 auto 12px;background:#4f46e5;color:#fff">🛡</div><h2 style="margin:0;font-size:20px">Internal Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p></div>
 <input class="in" id="ldp" list="dpl" placeholder="Department (IAD admins can leave blank)" style="margin-top:8px"><datalist id="dpl"></datalist>
 <button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in with Microsoft</button>
@@ -214,14 +203,15 @@ var CFG={
  IA_PIC_EMAIL:"please input the api",     // Internal Audit PIC / checker email (receives closure + new-finding reviews)
  IA_BOSS_EMAIL:"please input the api",    // Boss email (final approval)
  F_NOTIFY:"please input the api",         // HTTP URL of the generic email flow (IAD - Notify)
- F_UPLOAD_EVIDENCE:"please input the api" // optional HTTP URL of flow that saves uploaded evidence (use if DRIVE_ID is not set)
+ F_UPLOAD_EVIDENCE:"please input the api",// optional HTTP URL of flow that saves uploaded evidence (use if DRIVE_ID is not set)
+ DEPARTMENTS:"please input the api"       // comma-separated department names, e.g. Finance,HR,ITD (shown as suggestions in login and Add finding)
 };
 /* SharePoint internal column names in AuditRegisterList (edit if yours differ). Use text columns, not Person, for ResponsibleParty. DueDate = Date column. */
 var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
 var REQ=["TENANT_ID","CLIENT_ID","SP_SITE_ID","LIST_AUDIT_ID","F_GET_USER_ROLE"],U=null,MS=null;
 function isSet(v){return!!v&&String(v).indexOf("please input the api")<0&&String(v).charAt(0)!=="<"}
 function missing(){return REQ.filter(function(k){return!isSet(CFG[k])})}
-function live(){return false}
+function live(){return true}
 function normStatus(v){var t=String(v||"").toLowerCase();if(/clos|complet|resolv|done|settled/.test(t))return"Closed";if(/overdue|late/.test(t))return"Overdue";if(/extend/.test(t))return"Extended";if(/progress|ongoing|partial/.test(t))return"In Progress";return"Open"}
 async function notify(to,subject,html){return callFlow("NOTIFY",{toEmail:to,subject:subject,body:html,sentBy:U&&U.email})}
 /* ---- approval workflows: closure (Dept > IA PIC > Boss) and new finding (Maker > Checker > Boss) ---- */
@@ -243,7 +233,8 @@ async function wf(a){var r=cur_(),who=U.name,T={
  r.lg.unshift({m:"Workflow",s:"Workflow",n:T[3],a:who,d:new Date().toDateString()});
  await spUpdate(r);rd();dr();var to=T[2];
  if(isSet(to)&&String(to).indexOf("@")>0)notify(to,"[Audit "+r.id+"] "+T[3],"<p>"+e(T[3])+"</p><p><b>"+e(r.t)+"</b><br>Dept: "+e(r.dep)+"<br>Due: "+e(r.due||r.dl)+"</p>").then(function(){toast("Saved. Email sent to "+to)}).catch(function(x){toast("Saved. Email failed: "+x.message)});
- else toast("Saved. Email address not set in CONFIG")}
+ else toast("Saved. Email address not set in CONFIG");
+ if(a==="rvb_ok"&&isSet(r.oe)&&String(r.oe).indexOf("@")>0)notify(r.oe,"[Audit "+r.id+"] New finding assigned to "+r.dep,"<p>A new audit finding has been finalised and assigned to <b>"+e(r.dep)+"</b>: <b>"+e(r.t)+"</b>.</p><p>Due: "+e(r.due||r.dl)+". Please log in to the AR Dashboard to provide your status update with supporting evidence.</p>").catch(function(){})}
 /* ---- evidence upload (SharePoint library via Graph, or via flow) ---- */
 async function attach(r,f,ms){var rec={n:f.name,ms:ms,sz:Math.round(f.size/1024)+" KB",d:new Date().toISOString().slice(0,10)};
  if(isSet(CFG.DRIVE_ID)){var it=await spUpload(r,f);rec.did=it.id;rec.url=it.webUrl}
@@ -319,7 +310,7 @@ async function reload(){try{await spLoad();rd();toast("Data refreshed from Share
 function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v){g(k).value=v==null?"":v};
  g("addT").textContent=id?"Edit audit finding":"Add audit finding";
  s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
-async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}
+async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
  var id=g("n0").value,r=id?D.find(function(x){return x.id===id}):null,isNew=!r;
  if(isNew)r={id:nextId(),lg:[],at:[]};
  r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.ag=r.ag||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
@@ -333,55 +324,28 @@ async function mail(){var r=cur_(),to=g("em").value.trim();if(!to||to.indexOf("@
 async function getRole(email){
  var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;
  return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
-async function login() {
- var er = g("lErr");
- er.textContent = "";
- var email = g("lem").value.trim().toLowerCase();
- var dep = g("ldp").value.trim();
-
- if (email.indexOf("@") < 1) {
-  er.textContent = "Please enter your PHB work email.";
-  return;
- }
-
- try {
-  var ro = await getRole(email);
-  var isA = ro.found && String(ro.role).toLowerCase() === "admin";
-
-  if (isA && !ro.active) {
-   er.textContent = "Your IAD admin account is inactive. Please contact Internal Audit.";
-   return;
-  }
-
-  dep = ro.dep || dep;
-  if (!isA && !dep) {
-   er.textContent = "Please select your department from the dropdown.";
-   return;
-  }
-
-  U = {
-   email: email,
-   name: ro.name || email.split("@")[0],
-   dep: isA ? "" : dep,
-   admin: isA
-  };
-
-  try { sessionStorage.setItem("iar_user", JSON.stringify(U)); } catch (x) {}
-  await enter();
- } catch (x) {
-  er.textContent = x.message || String(x);
- }
-}
-async function enter(){g("lgn").style.display="none";
+async function login(){var er=g("lErr");er.textContent="";
+ var m=missing();if(m.length){er.textContent="Please input the api for: "+m.join(", ");return}
+ try{await getToken();var a=MS.getAllAccounts()[0],email=(a.username||"").toLowerCase(),name=a.name||email,dep=g("ldp").value.trim();
+  try{var me=await graph("/me?$select=displayName,department,mail");name=me.displayName||name;dep=dep||me.department||""}catch(x){}
+  var ro=await getRole(email),alt=(typeof me!=="undefined"&&me&&me.mail)?String(me.mail).toLowerCase():"";if(!(ro.found&&String(ro.role).toLowerCase()==="admin")&&alt&&alt!==email){var r2=await getRole(alt);if(r2.found)ro=r2}var isA=ro.found&&String(ro.role).toLowerCase()==="admin";
+  if(isA&&!ro.active){er.textContent="Your IAD admin account is inactive. Please contact Internal Audit.";return}
+  dep=ro.dep||dep;
+  if(!isA&&!dep){er.textContent="Please enter your department to continue.";return}
+  U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};
+  try{sessionStorage.setItem("iar_user",JSON.stringify(U))}catch(x){}
+  await enter()}catch(x){er.textContent=x.message||String(x)}}
+async function enter(){document.body.classList.add("auth");g("lgn").style.display="none";
  g("uchip").innerHTML="<b>"+e(U.name)+"</b><br><span style='opacity:.75'>"+(U.admin?"IAD Admin":"Department · "+e(U.dep))+"</span><br><span style='opacity:.6;font-size:11px'>"+e(U.email)+"</span>";
  setP(U.admin?"ADMIN":"PIC");
  try{await spLoad()}catch(x){toast("SharePoint load failed: "+x.message)}
- var dl=[];D.forEach(function(r){if(r.dep&&dl.indexOf(r.dep)<0)dl.push(r.dep)});g("dpl").innerHTML=dl.map(function(d){return"<option value='"+e(d)+"'>"}).join("");
+ fillDeps();
  rd();toast("Signed in as "+(U.admin?"IAD Admin":U.dep))}
 function logout(){try{sessionStorage.removeItem("iar_user")}catch(x){}
  var a=MS&&MS.getAllAccounts()[0];try{if(a)MS.logoutPopup({account:a})}catch(x){}
- U=null;D=[];cur=null;hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
-function boot(){var m=missing();
+ U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
+function fillDeps(){var l=[];if(isSet(CFG.DEPARTMENTS))String(CFG.DEPARTMENTS).split(",").forEach(function(d){d=d.trim();if(d&&l.indexOf(d)<0)l.push(d)});D.forEach(function(r){if(r.dep&&r.dep!=="-"&&l.indexOf(r.dep)<0)l.push(r.dep)});g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join("")}
+function boot(){fillDeps();var m=missing();
  g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", ")+" in the CONFIG block at the top of the script (currently &quot;please input the api&quot;).":"Sign in with your Microsoft 365 account.";
  try{var s=JSON.parse(sessionStorage.getItem("iar_user"));if(s&&s.email&&!m.length){U=s;enter()}}catch(x){}}
 async function runOverdue(){try{await callFlow("OVERDUE_CHECK",{requestedBy:U&&U.email});toast("Overdue check started")}catch(x){toast(x.message)}}
