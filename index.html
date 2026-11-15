@@ -199,8 +199,8 @@ var CFG={
  CLIENT_ID:"33869e2e-8bac-4522-bf68-947e2055eb29",         // App registration: Application (client) ID
  REDIRECT_URI:"https://poduxiptv2021-hash.github.io/ar-dashboard-portal/",      // URL where this page is hosted (leave as is to use the current page URL)
  SP_SITE_ID:"https://phbcommy.sharepoint.com/sites/SSDProject-SharePoint",        // SharePoint site ID  (hostname,siteId,webId)
- LIST_AUDIT_ID:"AuditRegisterList",     // AuditRegisterList ID (GUID)
- LIST_USERS_ID:"AuditUserDirectory",     // AuditUserDirectory list ID (GUID) - reference only, roles are read by the flow below
+ LIST_AUDIT_ID:"8448019c-4c4f-413e-8dad-6a214f36dd8b",     // AuditRegisterList ID (GUID)
+ LIST_USERS_ID:"cfe4c25a-2467-4e05-a2e6-6bed605eaec3",     // AuditUserDirectory list ID (GUID) - reference only, roles are read by the flow below
  DRIVE_ID:"please input the api",          // Document library drive ID for evidence attachments
  F_GET_USER_ROLE:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/24/workflows/b4f52ac7928e47599611f09cb1abe4b6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=asExxSEkAmnhCdivHC0GNhqrnSjpu_E4gwCZj0DeBO4",   // HTTP URL of flow: Audit-GetUserRole
  F_SEND_EMAIL:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/26/workflows/a7eda6e000234d6cbf536d140e767c70/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=_BQmBFRRpcoQ1yI5Pb436FEcWLFk48q_iEdzymWKnZg",      // HTTP URL of flow: IAD - Send Audit Report Email
@@ -358,16 +358,60 @@ function logout(){try{sessionStorage.removeItem("iar_user")}catch(x){}
 function fillDeps(){
 
     var l = [
-        "Finance",
-        "ITD",
-        "Human Resource",
-        "Corporate Communication",
-        "Legal",
-        "Investment",
-        "Property",
-        "Internal Audit",
-        "Risk Management",
-        "Company Secretary"
+       "Legal & Company Secretarial Department (LCS)",
+        "Corporate Strategy Department (CSD)",
+        "Corporate Security Management Unit (CSM)",
+        "Corporate Administration Unit (CAU)",
+        " Finance Department (FD)",
+        "Support Services Department (SSD)",
+        "Corporate Communications Unit (CCU)",
+        "Information Technology Unit (ITU)",
+        "People Development & Capabilities Unit (PDC)",
+        "Human Resources Unit (HRU)",
+        "Contract & Procurement Management Department (CPM)",
+        "Risk, Compliance & Integrity Management Department (RCI)",
+        "Investment Department (ID)",
+        "Property Development Department (PDD)",
+        "Internal Audit Department (IAD)"
+        "PHB Asset Management (PAM)",
+        "PHB Property Management (PPM)",
+        "PHB Property Development (PPD)"
+    ];
+
+    g("dpl").innerHTML =
+        l.map(function(d){
+            return "<option value='"+d+"'>";
+        }).join("");
+
+    if(g("n3")){
+
+        g("n3").innerHTML =
+            '<option value="">Select Department</option>' +
+
+            l.map(function(d){
+
+                return '<option value="' +
+                       d +
+                       '">' +
+                       d +
+                       '</option>';
+
+            }).join("");
+    }
+}
+
+            <option>Corporate Administration Unit (CAU)</option>
+            <option>Finance Department (FD)</option>
+            <option>Support Services Department (SSD)</option>
+            <option>Corporate Communications Unit (CCU)</option>
+            <option>Information Technology Unit (ITU)</option>
+            <option>People Development & Capabilities Unit (PDC)</option>
+            <option>Human Resources Unit (HRU)</option>
+            <option>Contract & Procurement Management Department (CPM)</option>
+            <option>Risk, Compliance & Integrity Management Department (RCI)</option>
+            <option>Investment Department (ID)</option>
+            <option>Property Development Department (PDD)</option>
+            <option>Internal Audit Department (IAD)</option>
     ];
 
     g("dpl").innerHTML =
