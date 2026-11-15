@@ -210,7 +210,7 @@ var CFG={
  IA_PIC_EMAIL:"please input the api",     // Internal Audit PIC / checker email (receives closure + new-finding reviews)
  IA_BOSS_EMAIL:"please input the api",    // Boss email (final approval)
  F_NOTIFY:"please input the api",         // HTTP URL of the generic email flow (IAD - Notify)
- F_UPLOAD_EVIDENCE:"please input the api",// optional HTTP URL of flow that saves uploaded evidence (use if DRIVE_ID is not set)
+ F_UPLOAD_EVIDENCE:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/01/workflows/b1f92876fa874fa09f2b7c2ee265a804/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=h3bVow3X8zu6B4kBPQ35ZFKm2k8Tj88mAj_AE7N-Pfc",// optional HTTP URL of flow that saves uploaded evidence (use if DRIVE_ID is not set)
  DEPARTMENTS:"please input the api",       // comma-separated department names, e.g. Finance,HR,ITD (shown as suggestions in login and Add finding)
  F_CREATE_AUDIT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/7a3ac887fec64e5a8d91b2be22b1a32f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=L7O2irMPKHRsEownjU0aZCI1MMLuV4gQYm1JFJ_tNrI",
 F_LOAD_AUDITS:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/13/workflows/9f307d1051824ed995418800e63e1b6d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ecF8GXONXCPn1bMlhJqisMsALTP6Y8KSjBHy2JBXxns"
@@ -248,7 +248,13 @@ async function wf(a){var r=cur_(),who=U.name,T={
 async function attach(r,f,ms){var rec={n:f.name,ms:ms,sz:Math.round(f.size/1024)+" KB",d:new Date().toISOString().slice(0,10)};
  if(isSet(CFG.DRIVE_ID)){var it=await spUpload(r,f);rec.did=it.id;rec.url=it.webUrl}
  else if(isSet(CFG.F_UPLOAD_EVIDENCE)){var b64=await new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result).split(",")[1])};fr.onerror=rej;fr.readAsDataURL(f)});
-  var o=await callFlow("UPLOAD_EVIDENCE",{auditId:r.spId||r.id,auditRef:r.id,fileName:f.name,contentBase64:b64,uploadedBy:U.email});rec.url=o.url||o.webUrl||""}
+  var o = await callFlow("UPLOAD_EVIDENCE", {
+    auditId: r.spId || r.id,
+    auditRef: r.id,
+    fileName: f.name,
+    contentBase64: b64,
+    uploadedBy: U.email
+});rec.url=o.url||o.webUrl||""}
  else throw new Error("DRIVE_ID or F_UPLOAD_EVIDENCE: please input the api");
  rec.k=r.id+"_"+r.at.length;F[rec.k]=f;r.at.push(rec)}
 async function up(){var r=cur_(),f=g("uf").files[0];if(!f){toast("Choose a file first");return}try{await attach(r,f,g("um").value);tab="a";upd("File attached")}catch(x){toast(x.message)}}
@@ -272,7 +278,27 @@ function rptPdf(){var d=new jspdf.jsPDF({unit:"mm",format:"a4"}),L=V(),y=20,X=[1
  saveFile("audit_report_"+new Date().toISOString().slice(0,10)+".pdf",d.output("blob"))}
 
 function isH(r){return!!r.hist||r.st==="Closed"}
-function vis(r){return!!U&&(U.admin||(String(r.dep||"").toLowerCase()===String(U.dep||"").toLowerCase()&&(!r.rv||r.rv==="Approved")))}
+function vis(r){
+    if(!U){
+        return false;
+    }
+
+    // IAD Admin sees all findings
+    if(U.admin){
+        return true;
+    }
+
+    var recordDepartment = String(r.dep || "")
+        .trim()
+        .toLowerCase();
+
+    var userDepartment = String(U.dep || "")
+        .trim()
+        .toLowerCase();
+
+    // Department user sees findings assigned to the same department
+    return recordDepartment === userDepartment;
+}
 function V(){return D.filter(vis)}
 function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x=String(r.id).match(/^AUD-(\d{4})-(\d+)$/);if(x&&+x[1]===y&&+x[2]>m)m=+x[2]});return"AUD-"+y+"-"+("000"+(m+1)).slice(-3)}
 /* ---- file save: preview uses the downloads capability, a self-hosted copy uses a normal download ---- */
@@ -317,22 +343,20 @@ async function spLoad(){
         isAdmin: !!(U && U.admin)
     });
 
+    // Accept direct array or wrapped Power Automate response
     if(!Array.isArray(result)){
-
-    if(result && Array.isArray(result.value)){
-        result = result.value;
-
-    }else if(result && Array.isArray(result.body)){
-        result = result.body;
-
-    }else{
-        console.error("Invalid LOAD_AUDITS response:", result);
-
-        throw new Error(
-            "Load flow returned invalid JSON. Fix the Response body to body('Select')."
-        );
+        if(result && Array.isArray(result.value)){
+            result = result.value;
+        }else if(result && Array.isArray(result.body)){
+            result = result.body;
+        }else{
+            console.error("LOAD_AUDITS response:", result);
+            throw new Error(
+                "Load flow did not return an array"
+            );
+        }
     }
-}
+
     D = result.map(function(r){
         var item = {
             spId: String(r.spId || ""),
@@ -343,7 +367,9 @@ async function spLoad(){
             own: r.own || "-",
             oe: r.oe || "",
             dl: r.dl || "-",
-            due: r.due ? String(r.due).slice(0,10) : "",
+            due: r.due
+                ? String(r.due).slice(0,10)
+                : "",
             st: r.st || "Open",
             lk: r.lk || "Medium",
             im: r.im || "Medium",
@@ -380,42 +406,8 @@ async function spLoad(){
 
         return item;
     });
-}
-async function spCreate(r){
-    try{
-        var result = await callFlow("CREATE_AUDIT", {
-            record: r,
-            user: U ? U.email : ""
-        });
 
-        if(!result || result.success !== true){
-            throw new Error(
-                result && result.message
-                    ? result.message
-                    : "Create flow did not confirm success"
-            );
-        }
-
-        r.spId = String(result.spId || "");
-
-        if(!r.spId){
-            throw new Error(
-                "SharePoint item was created but no item ID was returned"
-            );
-        }
-
-        return true;
-
-    }catch(x){
-        console.error("Create finding failed:", x);
-
-        toast(
-            "Save finding failed: " +
-            (x.message || String(x))
-        );
-
-        return false;
-    }
+    console.log("Loaded findings:", D);
 }
 async function spUpdate(r){if(!r||!r.spId)return;try{await graph((await spBase())+"/items/"+r.spId+"/fields",{method:"PATCH",body:JSON.stringify(toSP(r))})}catch(x){toast("SharePoint update failed: "+x.message)}}
 async function spDelete(r){if(!r||!r.spId)return;try{await graph((await spBase())+"/items/"+r.spId,{method:"DELETE"})}catch(x){toast("SharePoint delete failed: "+x.message)}}
@@ -451,12 +443,46 @@ async function login(){var er=g("lErr");er.textContent="";
   U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};
   try{sessionStorage.setItem("iar_user",JSON.stringify(U))}catch(x){}
   await enter()}catch(x){er.textContent=x.message||String(x)}}
-async function enter(){document.body.classList.add("auth");g("lgn").style.display="none";
- g("uchip").innerHTML="<b>"+e(U.name)+"</b><br><span style='opacity:.75'>"+(U.admin?"IAD Admin":"Department · "+e(U.dep))+"</span><br><span style='opacity:.6;font-size:11px'>"+e(U.email)+"</span>";
- setP(U.admin?"ADMIN":"PIC");
- try{await spLoad()}catch(x){toast("SharePoint load failed: "+x.message)}
- fillDeps();
- rd();toast("Signed in as "+(U.admin?"IAD Admin":U.dep))}
+async function enter(){
+    document.body.classList.add("auth");
+    g("lgn").style.display="none";
+
+    g("uchip").innerHTML =
+        "<b>"+e(U.name)+"</b><br>" +
+        "<span style='opacity:.75'>" +
+        (U.admin
+            ? "IAD Admin"
+            : "Department · "+e(U.dep)
+        ) +
+        "</span><br>" +
+        "<span style='opacity:.6;font-size:11px'>" +
+        e(U.email) +
+        "</span>";
+
+    setP(U.admin ? "ADMIN" : "PIC");
+
+    try{
+        await spLoad();
+        fillDeps();
+        rd();
+
+        toast(
+            D.length +
+            " finding(s) loaded from SharePoint"
+        );
+
+    }catch(x){
+        console.error("LOAD ERROR:", x);
+        D = [];
+        fillDeps();
+        rd();
+
+        toast(
+            "SharePoint load failed: " +
+            (x.message || String(x))
+        );
+    }
+}
 function logout(){try{sessionStorage.removeItem("iar_user")}catch(x){}
  var a=MS&&MS.getAllAccounts()[0];try{if(a)MS.logoutPopup({account:a})}catch(x){}
  U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
