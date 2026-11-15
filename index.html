@@ -221,7 +221,7 @@ var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"Responsible
 var REQ=["TENANT_ID","CLIENT_ID","SP_SITE_ID","LIST_AUDIT_ID","F_GET_USER_ROLE"],U=null,MS=null;
 function isSet(v){return!!v&&String(v).indexOf("please input the api")<0&&String(v).charAt(0)!=="<"}
 function missing(){return REQ.filter(function(k){return!isSet(CFG[k])})}
-function live(){return true}
+function live(){return false}
 function normStatus(v){var t=String(v||"").toLowerCase();if(/clos|complet|resolv|done|settled/.test(t))return"Closed";if(/overdue|late/.test(t))return"Overdue";if(/extend/.test(t))return"Extended";if(/progress|ongoing|partial/.test(t))return"In Progress";return"Open"}
 async function notify(to,subject,html){return callFlow("NOTIFY",{toEmail:to,subject:subject,body:html,sentBy:U&&U.email})}
 /* ---- approval workflows: closure (Dept > IA PIC > Boss) and new finding (Maker > Checker > Boss) ---- */
