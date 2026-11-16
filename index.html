@@ -104,8 +104,14 @@ body.auth #lgn{display:none!important}
   <input class="in" id="n4" placeholder="Responsible party"><input class="in" id="n5" placeholder="Deadline text (e.g. Quarter 4 2026)"></div>
 <input class="in" id="n13" type="email" placeholder="Responsible person email (for reminders / approvals)" style="margin-top:8px"><div class="row"><div><label style="font-size:11px;color:var(--mut)">Due date (used by the overdue check)</label><input class="in" type="date" id="n7"></div><div><label style="font-size:11px;color:var(--mut)">Status</label><select class="in" id="n8"><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select></div></div>
 <div class="row"><div><label style="font-size:11px;color:var(--mut)">Likelihood</label><select class="in" id="n9"><option>Low</option><option>Medium</option><option>High</option></select></div><div><label style="font-size:11px;color:var(--mut)">Impact</label><select class="in" id="n10"><option>Low</option><option>Medium</option><option>High</option></select></div></div>
-<textarea class="in" id="n6" rows="3" placeholder="Aging" style="margin-top:8px"></textarea>
-<textarea class="in" id="n6" rows="3" placeholder="Details of open issues and risk" style="margin-top:8px"></textarea>
+<textarea class="in" id="n14" rows="2"
+placeholder="Aging"
+style="margin-top:8px"></textarea>
+
+<textarea class="in" id="n6" rows="3"
+placeholder="Details of open issues and risk"
+style="margin-top:8px"></textarea>
+
 <textarea class="in" id="n11" rows="3" placeholder="Recommendations made" style="margin-top:8px"></textarea>
 <textarea class="in" id="n12" rows="2" placeholder="IAD remarks" style="margin-top:8px"></textarea>
 <div class="row"><button class="btn" onclick="hide('addM')">Cancel</button><button class="btn p" onclick="add()">Save finding</button></div></div></div>
@@ -217,7 +223,7 @@ var CFG={
  F_ISSUE_DEPARTMENT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/09/workflows/628bf8070e9a41d8a83a5ca1e12af280/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3b6DPv8WfN9LFY9DQqv6rTtX5uLPcqovRV_1AdS9ihE"
 };
 /* SharePoint internal column names in AuditRegisterList (edit if yours differ). Use text columns, not Person, for ResponsibleParty. DueDate = Date column. */
-var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
+var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department", ag:"Aging",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
 var REQ=["TENANT_ID","CLIENT_ID","SP_SITE_ID","LIST_AUDIT_ID","F_GET_USER_ROLE"],U=null,MS=null;
 function isSet(v){return!!v&&String(v).indexOf("please input the api")<0&&String(v).charAt(0)!=="<"}
 function missing(){return REQ.filter(function(k){return!isSet(CFG[k])})}
@@ -420,7 +426,7 @@ function toItem(r){
  return o}
 function payload(r,action){
  var o={action:action,spId:r.spId||"",auditId:r.id,id:r.id,t:r.t,cy:r.cy,dep:r.dep,own:r.own,oe:r.oe||"",dl:r.dl,due:r.due||"",st:r.st,lk:r.lk,im:r.im,iss:r.iss,rec:r.rec,rm:r.rm,hist:!!r.hist,ap:r.ap||"",rv:r.rv||"",mk:r.mk||"",ex:r.ex||0,lg:JSON.stringify(r.lg||[]),at:JSON.stringify(r.at||[]),by:U&&U.email},f={};
- var L={title:r.t,cycle:r.cy,department:r.dep,owner:r.own,deadline:r.dl,dueDate:r.due||"",status:r.st,likelihood:r.lk,impact:r.im,openIssues:r.iss,recommendations:r.rec,iadRemarks:r.rm,ownerEmail:r.oe||"",makerEmail:r.mk||"",approvalStage:r.ap||"",reviewStage:r.rv||"",extensionCount:r.ex||0,isHistorical:!!r.hist,monthlyLog:o.lg,evidenceLinks:o.at};
+ var L={title:r.t,cycle:r.cy,department:r.dep,aging:r.ag,owner:r.own,deadline:r.dl,dueDate:r.due||"",status:r.st,likelihood:r.lk,impact:r.im,openIssues:r.iss,recommendations:r.rec,iadRemarks:r.rm,ownerEmail:r.oe||"",makerEmail:r.mk||"",approvalStage:r.ap||"",reviewStage:r.rv||"",extensionCount:r.ex||0,isHistorical:!!r.hist,monthlyLog:o.lg,evidenceLinks:o.at};
  for(var q in L)o[q]=L[q];
  for(var k in FM)f[FM[k]]=o[k];o.fields=f;return o}
 async function spLoad(){
@@ -468,11 +474,12 @@ async function reload(){try{await spLoad();rd();toast("Data refreshed from Share
 /* ---- add / edit finding ---- */
 function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v){g(k).value=v==null?"":v};
  g("addT").textContent=id?"Edit audit finding":"Add audit finding";
- s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
+ s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n14",r.ag);
+s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
 async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
  var id=g("n0").value,r=id?D.find(function(x){return x.id===id}):null,isNew=!r;
  if(isNew)r={id:nextId(),lg:[],at:[]};
- r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.ag=r.ag||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
+ r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.ag=g("n14").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.ag=r.ag||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
  if(isNew){
    r.rv="Draft";
    r.mk=U.email;r.ex=0;if(!(await spCreate(r)))return;D.unshift(r);if(isSet(CFG.IA_PIC_EMAIL))notify(CFG.IA_PIC_EMAIL,"[Audit "+r.id+"] New finding awaiting your review","<p>A new finding was created by "+e(U.name)+": <b>"+e(r.t)+"</b> ("+e(r.dep)+"). Please review it in the AR Dashboard.</p>").catch(function(){})}else await spUpdate(r);
@@ -561,9 +568,15 @@ function op(id,t){cur=id;tab=t||"d";dr();show("ov");}
 function cl(){hide("ov");cur=null}
 function tb(t){tab=t;dr()}
 function dr(){
- var r=cur_();if(!r)return;var ad=P==="ADMIN",body="",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
+  var r=cur_();
+ if(!r) return;
+
+ var ad=P==="ADMIN",
+ body="",
+ o=g("dr").querySelector(".db"),
+ y=o?o.scrollTop:0;
  async (params) => {
-  {
+  
    body='<div class="g4"><div class="f"><small>Dept</small>'+e(r.dep)+'</div><div class="f"><small>Owner</small>'+e(r.own)+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Aging</small>'+e(r.ag)+'</div></div>'
    +'<div class="row" style="align-items:center"><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(ad||r.st!=="Closed"?"":"disabled")+' onchange="ss(this.value)" style="max-width:170px;flex:none">'+(ad?["Open","In Progress","Extended","Overdue","Closed"]:(["Open","In Progress"].indexOf(r.st)<0?[r.st,"Open","In Progress"]:["Open","In Progress"])).map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>'
    +wfPanel(r)+'<h4>Details of open issues and risk</h4><div class="box">'+e(r.iss)+'</div><h4>Recommendations made</h4><div class="box">'+e(r.rec)+'</div><h4>IAD remarks</h4><div class="box" style="font-style:italic">'+e(r.rm)+'</div>';
