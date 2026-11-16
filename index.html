@@ -215,7 +215,7 @@ var CFG={
  DEPARTMENTS:"please input the api"
 };
 /* SharePoint internal column names in AuditRegisterList (edit if yours differ). Use text columns, not Person, for ResponsibleParty. DueDate = Date column. */
-var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
+var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",ag:"Aging",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
 var REQ=["TENANT_ID","CLIENT_ID","SP_SITE_ID","LIST_AUDIT_ID","F_GET_USER_ROLE"],U=null,MS=null;
 function isSet(v){return!!v&&String(v).indexOf("please input the api")<0&&String(v).charAt(0)!=="<"}
 function missing(){return REQ.filter(function(k){return!isSet(CFG[k])})}
@@ -318,13 +318,13 @@ function toItem(r){
  var p=function(k){var v=r[k];if(v==null)v=r[FM[k]];if(v==null&&r.fields)v=r.fields[FM[k]];if(v&&typeof v==="object"&&!Array.isArray(v)&&v.Value!==undefined)v=v.Value;return v};
  var rid=r.spId!=null?r.spId:(r.ID!=null?r.ID:(r.Id!=null?r.Id:(r.id!=null&&/^\d+$/.test(String(r.id))?r.id:"")));
  var aid=r[FM.id]||(r.fields&&r.fields[FM.id])||(r.id!=null&&!/^\d+$/.test(String(r.id))?r.id:"")||r.auditId||"";
- var st=String(p("st")||"Open"),o={spId:String(rid),id:String(aid)||("SP-"+rid),t:p("t")||"",cy:p("cy")||"-",dep:p("dep")||"",own:p("own")||"-",oe:p("oe")||"",dl:p("dl")||"-",due:p("due")?String(p("due")).slice(0,10):"",st:st,lk:p("lk")||"Medium",im:p("im")||"Medium",iss:p("iss")||"-",rec:p("rec")||"-",rm:p("rm")||"-",ap:p("ap")||"",rv:p("rv")||"",mk:p("mk")||"",ex:Number(p("ex"))||0,ag:"-",lg:[],at:[]};
+ var st=String(p("st")||"Open"),o={spId:String(rid),id:String(aid)||("SP-"+rid),t:p("t")||"",cy:p("cy")||"-",dep:p("dep")||"",ag:p("ag")||"-",own:p("own")||"-",oe:p("oe")||"",dl:p("dl")||"-",due:p("due")?String(p("due")).slice(0,10):"",st:st,lk:p("lk")||"Medium",im:p("im")||"Medium",iss:p("iss")||"-",rec:p("rec")||"-",rm:p("rm")||"-",ap:p("ap")||"",rv:p("rv")||"",mk:p("mk")||"",ex:Number(p("ex"))||0,ag:"-",lg:[],at:[]};
  var h=p("hist");o.hist=h===true||h==="true"||h==="Yes"||st==="Closed";
  ["lg","at"].forEach(function(k){var v=p(k);if(Array.isArray(v))o[k]=v;else{try{var j=JSON.parse(v||"[]");o[k]=Array.isArray(j)?j:[]}catch(x){o[k]=[]}}});
  return o}
 function payload(r,action){
  var o={action:action,spId:r.spId||"",auditId:r.id,id:r.id,t:r.t,cy:r.cy,dep:r.dep,own:r.own,oe:r.oe||"",dl:r.dl,due:r.due||"",st:r.st,lk:r.lk,im:r.im,iss:r.iss,rec:r.rec,rm:r.rm,hist:!!r.hist,ap:r.ap||"",rv:r.rv||"",mk:r.mk||"",ex:r.ex||0,lg:JSON.stringify(r.lg||[]),at:JSON.stringify(r.at||[]),by:U&&U.email},f={};
- var L={title:r.t,cycle:r.cy,department:r.dep,owner:r.own,deadline:r.dl,dueDate:r.due||"",status:r.st,likelihood:r.lk,impact:r.im,openIssues:r.iss,recommendations:r.rec,iadRemarks:r.rm,ownerEmail:r.oe||"",makerEmail:r.mk||"",approvalStage:r.ap||"",reviewStage:r.rv||"",extensionCount:r.ex||0,isHistorical:!!r.hist,monthlyLog:o.lg,evidenceLinks:o.at};
+ var L={title:r.t,cycle:r.cy,department:r.dep,aging:r.ag,owner:r.own,deadline:r.dl,dueDate:r.due||"",status:r.st,likelihood:r.lk,impact:r.im,openIssues:r.iss,recommendations:r.rec,iadRemarks:r.rm,ownerEmail:r.oe||"",makerEmail:r.mk||"",approvalStage:r.ap||"",reviewStage:r.rv||"",extensionCount:r.ex||0,isHistorical:!!r.hist,monthlyLog:o.lg,evidenceLinks:o.at};
  for(var q in L)o[q]=L[q];
  for(var k in FM)f[FM[k]]=o[k];o.fields=f;return o}
 async function spLoad(){
@@ -347,7 +347,12 @@ async function spUpdate(r){
  try{await callFlow("UPDATE_AUDIT",payload(r,"update"));return true}catch(x){toast("Save to SharePoint failed: "+(x.message||x));return false}}
 async function spDelete(r){
  if(!r)return false;if(!r.spId)return true;
- try{await callFlow("DELETE_AUDIT",payload(r,"delete"));return true}catch(x){toast("Delete in SharePoint failed: "+(x.message||x));return false}}
+ try{await callFlow(
+   "DELETE_AUDIT",
+   {
+      spId:r.spId
+   }
+);return true}catch(x){toast("Delete in SharePoint failed: "+(x.message||x));return false}}
 function nz(s){return String(s||"").toLowerCase().replace(/\s+/g," ").trim()}
 function ab(s){var m=nz(s).match(/\(([^)]+)\)\s*$/);return m?m[1]:""}
 function depMatch(a,b){a=nz(a);b=nz(b);if(!a||!b)return false;if(a===b)return true;var x=ab(a),y=ab(b);
@@ -372,11 +377,11 @@ async function reload(){try{await spLoad();rd();toast("Data refreshed from Share
 /* ---- add / edit finding ---- */
 function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v){g(k).value=v==null?"":v};
  g("addT").textContent=id?"Edit audit finding":"Add audit finding";
- s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
+ s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n14",r.ag);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
 async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
  var id=g("n0").value,r=id?D.find(function(x){return x.id===id}):null,isNew=!r;
  if(isNew)r={id:nextId(),lg:[],at:[]};
- r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.ag=r.ag||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
+ r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.ag=g("n14").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.ag=r.ag||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
  if(isNew){r.rv="Checker Review";r.mk=U.email;r.ex=0;if(!(await spCreate(r)))return;D.unshift(r);if(isSet(CFG.IA_PIC_EMAIL))notify(CFG.IA_PIC_EMAIL,"[Audit "+r.id+"] New finding awaiting your review","<p>A new finding was created by "+e(U.name)+": <b>"+e(r.t)+"</b> ("+e(r.dep)+"). Please review it in the AR Dashboard.</p>").catch(function(){})}else await spUpdate(r);
  hide("addM");rd();toast(isNew?"Finding added":"Finding updated")}
 /* ---- send audit by email (Power Automate) ---- */
