@@ -20,9 +20,6 @@ button,input,select,textarea{font:inherit;color:var(--tx)}
 .logo{display:flex;gap:12px;align-items:center}
 .mark{width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);display:grid;place-items:center;font-size:21px}
 .logo h1{margin:0;font-size:19px;font-weight:700;letter-spacing:-.2px}.logo p{margin:2px 0 0;font-size:12px;opacity:.7}
-.seg{display:flex;background:rgba(255,255,255,.12);padding:3px;border-radius:10px}
-.seg button{border:0;background:none;color:#cfd8ff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600}
-.seg button.on{background:#fff;color:#1e1b4b}
 .btn{border:1px solid var(--bd);background:var(--card);border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:13px}
 .btn.p{background:var(--pri);border-color:var(--pri);color:#fff}.btn.h{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff}
 .btn.d{background:#dc2626;border-color:#dc2626;color:#fff}.btn.v{background:#7c3aed;border-color:#7c3aed;color:#fff}
@@ -85,7 +82,7 @@ body.auth #lgn{display:none!important}
 <div class="hero"><div class="wrap hrow">
 <div class="logo"><div class="mark">🛡</div><div><h1>Internal Audit Register Portal</h1><p>Internal Audit Department · Risk, Tracking &amp; Governance · Microsoft 365 access</p></div></div>
 <div class="hrow" style="gap:10px"><div class="chip" id="uchip"></div>
-<button class="btn h" id="addB" onclick="fm()">+ Add finding</button><button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button><button class="btn h" onclick="csv()">Export CSV</button><button class="btn h" onclick="reload()">⟳ Refresh</button><button class="btn h" onclick="rptPdf()">Report PDF</button><button class="btn h" onclick="xl()">Export Excel</button><button class="btn h" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn h" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button><button class="btn h" id="diagBtn" onclick="diag()">🔧 Test SharePoint</button><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
+<button class="btn h" id="addB" onclick="fm()">+ Add finding</button><button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button><button class="btn h" onclick="reload()">⟳ Refresh</button><button class="btn h" onclick="rptPdf()">Report PDF</button><button class="btn h" onclick="xl()">Export Excel</button><button class="btn h" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn h" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
 <div class="main">
 <div class="alert" id="al"><div><b id="alT"></b><div style="font-size:13px;opacity:.85">Deadlines have passed. Admin can extend or manage overdue findings.</div></div><button class="btn d" onclick="g('fs').value='Overdue';rd()">View overdue</button></div>
 <div class="kpis" id="kp"></div>
@@ -94,12 +91,12 @@ body.auth #lgn{display:none!important}
 </div>
 <div class="ov" id="ov"><div style="position:absolute;inset:0" onclick="cl()"></div><div class="dr" id="dr"></div></div>
 
-<!-- Add Finding Modal with Refined Spacing -->
+<!-- Add Finding Modal -->
 <div class="md" id="addM"><div>
 <h3 style="margin-top:0;margin-bottom:16px;font-size:18px;font-weight:700" id="addT">Add audit finding</h3>
 <input type="hidden" id="n0">
 <div style="display:flex;flex-direction:column;gap:12px">
-  <input class="in" id="n1" placeholder="Audit Tittlr">
+  <input class="in" id="n1" placeholder="Audit Title">
   <div class="row" style="margin-top:0"><input class="in" id="n2" placeholder="Audit cycle (e.g., Q4 2026)"><select class="in" id="n3"><option value="">Select Department</option></select></div>
   <div class="row" style="margin-top:0"><input class="in" id="n4" placeholder="Owner name"><input class="in" id="n5" placeholder="Deadline (e.g., Quarter 4 2026)"></div>
   <input class="in" id="n13" type="email" placeholder="Responsible owner email (e.g., owner@phb.com.my)">
@@ -108,10 +105,9 @@ body.auth #lgn{display:none!important}
     <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Status</label><select class="in" id="n8"><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select></div>
   </div>
   <div class="row" style="margin-top:0">
-    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Likelihood </label><select class="in" id="n9"><option>Low</option><option>Medium</option><option>High</option></select></div>
-    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Impact </label><select class="in" id="n10"><option>Low</option><option>Medium</option><option>High</option></select></div>
+    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Likelihood</label><select class="in" id="n9"><option>Low</option><option>Medium</option><option>High</option></select></div>
+    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Impact</label><select class="in" id="n10"><option>Low</option><option>Medium</option><option>High</option></select></div>
   </div>
-  <textarea class="in" id="n14" rows="2" placeholder="Aging (0 Months)"></textarea>
   <textarea class="in" id="n6" rows="3" placeholder="Detailed description of open audit issues"></textarea>
   <textarea class="in" id="n11" rows="3" placeholder="Recommendation by IAD" style="margin-top:0"></textarea>
   <textarea class="in" id="n12" rows="2" placeholder="IAD remarks" style="margin-top:0"></textarea>
@@ -119,7 +115,7 @@ body.auth #lgn{display:none!important}
 <div class="row" style="margin-top:20px"><button class="btn" onclick="hide('addM')">Cancel</button><button class="btn p" onclick="add()">Save finding record</button></div>
 </div></div>
 
-<!-- Import Historical Data Modal with Refined Spacing -->
+<!-- Import Historical Data Modal -->
 <div class="md" id="impM"><div style="width:min(760px,100%);max-height:92vh;overflow:auto">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;position:sticky;top:0;background:var(--card);padding-bottom:10px;z-index:1">
   <h3 style="margin:0;display:flex;align-items:center;gap:8px">⬆ Import Historical Audit Data <span style="background:#fef3c7;color:#92400e;font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600">Admin only</span></h3>
@@ -138,8 +134,7 @@ body.auth #lgn{display:none!important}
     <b style="color:#1d4ed8">Import Guidelines:</b>
     <ul style="margin:6px 0 0;padding-left:18px;color:#1e3a8a;line-height:1.9">
       <li>Rows with <b>Status = Closed</b> are automatically filed under the historical archive.</li>
-      <li>Active statuses populate the live Findings register.</li>
-      <li>Monthly updates are parsed from <b>MonthlyUpdate1 / 2 / 3</b> columns.</li>
+      <li>Active statuses populate the live Findings register. Statuses are auto-detected.</li>
     </ul>
   </div>
 
@@ -170,8 +165,6 @@ body.auth #lgn{display:none!important}
       <table style="font-size:11px"><thead><tr id="xlHead"></tr></thead><tbody id="xlBody"></tbody></table>
     </div>
   </div>
-
-  <div id="impLog" style="display:none;margin-top:12px;background:var(--soft);border:1px solid var(--bd);border-radius:10px;padding:12px;font-size:12px;max-height:140px;overflow-y:auto"></div>
 </div>
 
 <!-- Tab 2: Manual single record -->
@@ -196,12 +189,9 @@ body.auth #lgn{display:none!important}
 </div>
 
 </div></div>
-
-<div class="md" id="diagM"><div style="width:min(760px,100%)"><div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0">🔧 SharePoint Connection Test</h3><button class="btn" onclick="hide('diagM')">✕</button></div><div id="diagB"></div></div></div>
 <div id="toast"></div>
 <script>
 var KEY="iar_v3",P="ADMIN",cur=null,tab="d",F={};
-/* ===== CONFIG: replace every "please input the api" with your real value ===== */
 var CFG={
  TENANT_ID:"cc9afa77-5900-4c38-8262-c226c4c2e27d",
  CLIENT_ID:"33869e2e-8bac-4522-bf68-947e2055eb29",
@@ -218,15 +208,13 @@ var CFG={
  F_LOAD_AUDITS:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/13/workflows/9f307d1051824ed995418800e63e1b6d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ecF8GXONXCPn1bMlhJqisMsALTP6Y8KSjBHy2JBXxns",
  F_UPLOAD_EVIDENCE:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/01/workflows/b1f92876fa874fa09f2b7c2ee265a804/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=h3bVow3X8zu6B4kBPQ35ZFKm2k8Tj88mAj_AE7N-Pfc",
  F_NOTIFY:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/23/workflows/ac4aa82fb5bc4833affc95635d7f3f50/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=E4pgI8G78TqLb-FQMNE3ULXJnW1yOtVN6ftmfGVbaEU",
- F_EXCEL_IMPORT:"please input the api",
  F_EXTENSION_ALERT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/extension_teams_flow_placeholder/triggers/manual/paths/invoke?api-version=1",
- F_OVERDUE_CHECK:"please input the api",
  IA_PIC_EMAIL:"nurhaliza@phb.com.my",
  IA_BOSS_EMAIL:"nurhaliza@phb.com.my",
  FLOW_AUTH:"url",
  F_ISSUE_DEPARTMENT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/09/workflows/628bf8070e9a41d8a83a5ca1e12af280/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3b6DPv8WfN9LFY9DQqv6rTtX5uLPcqovRV_1AdS9ihE"
 };
-var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",ag:"Aging",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
+var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
 var REQ=["TENANT_ID","CLIENT_ID","SP_SITE_ID","LIST_AUDIT_ID","F_GET_USER_ROLE"],U=null,MS=null;
 function isSet(v){return!!v&&String(v).indexOf("please input the api")<0&&String(v).charAt(0)!=="<"}
 function missing(){return REQ.filter(function(k){return!isSet(CFG[k])})}
@@ -239,12 +227,12 @@ function wfPanel(r){
   var boss=U&&U.email===String(CFG.IA_BOSS_EMAIL).toLowerCase(),h="",st=[];
   var b=function(a,l,c){return"<button class='btn "+(c||"")+"' onclick=\"wf('"+a+"')\">"+l+"</button>"};
   if(r.rv==="Draft")h+=b("submit_review","📤 Submit For Review","p");
-  if(r.rv=="Checker Review"&&U.admin)h+=b("rv_ok","✓ Checker Approves, Send To Head IAD","p")+b("rv_back","Return");
-  if(r.rv==="Pending Head IAD Approval"&&boss)h+=b("rvb_ok","✓ Approve and Finalise","p")+b("rv_back","Return");
+  if(r.rv=="Checker Review"&&U.admin)h+=b("rv_ok","✓ Checker Approves, Send To Head IAD","p");
+  if(r.rv==="Pending Head IAD Approval"&&boss)h+=b("rvb_ok","✓ Approve and Finalise","p");
   if(r.rv==="Finalised"&&U.admin)h+=b("issue_dept","📨 Issue To Department","p");
   if(!r.ap&&r.st!=="Closed"&&(!r.rv||r.rv==="Approved"))h+=b("cl_sub","Submit for closure approval","p");
-  if(r.ap==="IA Review"&&U.admin)h+=b("cl_ia","✓ IA approves, send to Boss","p")+b("cl_back","Return to department");
-  if(r.ap==="Boss Approval"&&boss)h+=b("cl_boss","✓ Approve and close","p")+b("cl_back","Reject");
+  if(r.ap==="IA Review"&&U.admin)h+=b("cl_ia","✓ IA recommends closure (send to boss)","p");
+  if(r.ap==="Boss Approval"&&boss)h+=b("cl_boss","✓ Approve closure & close","p");
   if(!h&&!st.length)return"";
   return"<div class='adm'><b>Workflow</b><div style='margin:4px 0;font-size:12px'>"+(st.join(" · ")||"No active workflow")+"</div><div class='row'>"+h+"</div></div>"
 }
@@ -252,44 +240,42 @@ function wfPanel(r){
 async function wf(a){var r=cur_(),who=U.name,T={
  submit_review:["rv","Checker Review",CFG.IA_PIC_EMAIL,"New finding submitted for review by "+who],
  rvb_ok:["rv","Finalised","","Finding approved by Head IAD"],
- issue_dept:["rv","Issued To Department","","Finding issued to department"],
+ issue_dept:["rv","Issued To Department",r.oe,"Finding issued to department"],
  cl_sub:["ap","IA Review",CFG.IA_PIC_EMAIL,"Closure approval requested by "+who+" ("+r.dep+")"],
- cl_ia:["ap","Boss Approval",CFG.IA_BOSS_EMAIL,"IA reviewed closure, awaiting your approval"],
- cl_boss:["ap","",r.oe,"Closure approved, finding closed"],
- cl_back:["ap","",r.oe,"Closure not approved, returned"]
+ cl_ia:["ap","Boss Approval",CFG.IA_BOSS_EMAIL,"IA recommends closure, awaiting your final approval"],
+ cl_boss:["ap","",r.oe,"Closure approved by Boss, finding closed"]
 }[a];
 if(a==="cl_sub"&&!(r.at||[]).length){toast("Upload supporting evidence before submitting for closure");return}
 r[T[0]]=T[1];if(a==="cl_boss"){r.st="Closed";r.hist=true}
 r.lg.unshift({m:"Workflow",s:"Workflow",n:T[3],a:who,d:new Date().toDateString()});
 await spUpdate(r);
-if(a==="issue_dept")await callFlow("ISSUE_DEPARTMENT",{auditId:r.spId,auditRef:r.id,email:r.oe,title:r.t});
+if(a==="issue_dept"||a==="rvb_ok")await callFlow("ISSUE_DEPARTMENT",{auditId:r.spId,auditRef:r.id,email:r.oe,title:r.t});
 rd();dr();var to=T[2];
 if(isSet(to)&&String(to).indexOf("@")>0)notify(to,"[Audit "+r.id+"] "+T[3],"<p>"+e(T[3])+"</p><p><b>"+e(r.t)+"</b><br>Dept: "+e(r.dep)+"<br>Due: "+e(r.due||r.dl)+"</p>").then(function(){toast("Saved & notified "+to)}).catch(function(){});
 }
 
-/* ---- OneDrive Unified Attachment Handling ---- */
-async function attach(r,f,ms){
- var rec={n:f.name,ms:ms,sz:Math.round(f.size/1024)+" KB",d:new Date().toISOString().slice(0,10)};
+async function attach(r,f){
+ var rec={n:f.name,ms:"OneDrive",sz:Math.round(f.size/1024)+" KB",d:new Date().toISOString().slice(0,10)};
  if(isSet(CFG.DRIVE_ID)){
   var it=await spUpload(r,f);rec.did=it.id;rec.url=it.webUrl;
  }else if(isSet(CFG.F_UPLOAD_EVIDENCE)){
   var b64=await new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result).split(",")[1])};fr.onerror=rej;fr.readAsDataURL(f)});
   var o=await callFlow("UPLOAD_EVIDENCE",{auditId:r.spId||r.id,auditRef:r.id,fileName:f.name,contentBase64:b64,uploadedBy:U.email});rec.url=o.url||o.webUrl||o.link||o.path||o.Path||"";
  }else{
-  throw new Error("OneDrive DRIVE_ID or F_UPLOAD_EVIDENCE is required in CONFIG.");
+  throw new Error("OneDrive configuration required.");
  }
  rec.k=r.id+"_"+r.at.length;F[rec.k]=f;r.at.push(rec);
 }
 
-async function up(){var r=cur_(),f=g("uf").files[0];if(!f){toast("Please choose a file to upload");return}try{await attach(r,f,g("um").value);upd("File uploaded successfully via OneDrive");if(!U.admin)notifyPic(r,"Evidence uploaded","File: "+e(f.name))}catch(x){toast(x.message)}}
+async function up(){var r=cur_(),f=g("uf").files[0];if(!f){toast("Please choose a file to upload");return}try{await attach(r,f);upd("File uploaded successfully via OneDrive");if(!U.admin)notifyPic(r,"Evidence uploaded","File: "+e(f.name))}catch(x){toast(x.message)}}
 
 async function lg(){
  var r=cur_(),n=g("ln").value.trim();if(!n){toast("Please enter a progress narrative");return}
  var f=g("lf").files[0];
- r.lg.unshift({m:g("lm").value,s:g("ls").value,n:n,a:U.name,d:new Date().toDateString()});
- if(f){try{await attach(r,f,"Monthly update "+g("lm").value)}catch(x){toast("Evidence upload failed: "+x.message);r.lg.shift();return}}
+ r.lg.unshift({m:"Monthly Update",s:g("ls").value,n:n,a:U.name,d:new Date().toDateString()});
+ if(f){try{await attach(r,f)}catch(x){toast("Evidence upload failed: "+x.message);r.lg.shift();return}}
  upd("Monthly update posted successfully");
- if(!U.admin)notifyPic(r,"Monthly update posted ("+r.lg[0].m+")","Progress: "+e(r.lg[0].s)+" - "+e(r.lg[0].n)+(f?"<br>Evidence attached: "+e(f.name):""));
+ if(!U.admin)notifyPic(r,"Monthly update posted","Progress: "+e(r.lg[0].s)+" - "+e(r.lg[0].n)+(f?"<br>Evidence attached":""));
 }
 
 function remTpl(r,k){var od=k==="overdue";return{s:(od?"[OVERDUE] ":"[Reminder] ")+r.t+" - "+r.id,h:"<p>Dear "+e(r.own)+",</p><p>Audit finding <b>"+e(r.t)+"</b> ("+e(r.id)+", "+e(r.dep)+") "+(od?"is <b style='color:#b91c1c'>OVERDUE</b> since "+e(r.due)+". Please submit your status update and supporting evidence immediately.":"is due on <b>"+e(r.due||r.dl)+"</b>. Please submit your status update in the AR Dashboard.")+"</p><p>Internal Audit Department</p>"}}
@@ -299,22 +285,36 @@ async function sendReminders(){var t=new Date().toISOString().slice(0,10),w=new 
   try{await notify(r.oe,x.s,x.h);n++}catch(z){}}
  toast(n+" reminder email(s) sent")}
 
-function rptPdf(){var d=new jspdf.jsPDF({unit:"mm",format:"a4"}),L=V(),y=20,X=[14,38,100,135,165],c=function(s){return L.filter(function(r){return r.st===s}).length};
- d.setFontSize(16);d.text("Audit Register Report",14,y);y+=7;d.setFontSize(9);d.text("Generated "+new Date().toLocaleString()+" by "+(U?U.name:""),14,y);y+=8;
- d.setFontSize(10);d.text("Total "+L.length+"  Open "+c("Open")+"  In Progress "+c("In Progress")+"  Extended "+c("Extended")+"  Overdue "+c("Overdue")+"  Closed "+c("Closed"),14,y);y+=8;
- d.setFontSize(8);d.setFont("helvetica","bold");["ID","Title","Dept","Status","Due"].forEach(function(h,i){d.text(h,X[i],y)});d.setFont("helvetica","normal");y+=5;
- L.forEach(function(r){if(y>280){d.addPage();y=20}[r.id,String(r.t).slice(0,38),String(r.dep).slice(0,20),r.st,r.due||r.dl].forEach(function(v,i){d.text(String(v),X[i],y)});y+=5});
- saveFile("audit_report_"+new Date().toISOString().slice(0,10)+".pdf",d.output("blob"))}
+async function runOverdue(){
+ var t=new Date().toISOString().slice(0,10),cnt=0;
+ for(var i=0;i<D.length;i++){
+  var r=D[i];
+  if(r.st!=="Closed"&&r.due&&r.due<t&&r.st!=="Overdue"){
+   r.st="Overdue";
+   await spUpdate(r);
+   cnt++;
+  }
+ }
+ rd();
+ toast(cnt>0?cnt+" finding(s) marked as Overdue":"Overdue check complete. No new overdue items.");
+}
+
+function rptPdf(){
+ var jsPDF=window.jspdf.jsPDF,doc=new jsPDF({unit:"mm",format:"a4"}),L=V(),y=20,X=[14,38,100,135,165];
+ doc.setFontSize(16);doc.text("Audit Register Report",14,y);y+=7;
+ doc.setFontSize(9);doc.text("Generated "+new Date().toLocaleString()+" by "+(U?U.name:""),14,y);y+=8;
+ doc.setFontSize(8);doc.setFont("helvetica","bold");["ID","Title","Dept","Status","Due"].forEach(function(h,i){doc.text(h,X[i],y)});doc.setFont("helvetica","normal");y+=5;
+ L.forEach(function(r){if(y>280){doc.addPage();y=20}[r.id,String(r.t).slice(0,38),String(r.dep).slice(0,20),r.st,r.due||r.dl].forEach(function(v,i){doc.text(String(v),X[i],y)});y+=5});
+ saveFile("audit_report_"+new Date().toISOString().slice(0,10)+".pdf",doc.output("blob"));
+}
 
 function isH(r){return!!r.hist||r.st==="Closed"}
-function vis(r){if(!U)return false;if(U.admin)return true;return r.oe&&r.oe.toLowerCase()===U.email.toLowerCase()&&(r.rv==="Issued To Department"||r.rv==="Closed")}
+function vis(r){if(!U)return false;if(U.admin)return true;return r.oe&&r.oe.toLowerCase()===U.email.toLowerCase()&&(r.rv==="Issued To Department"||r.rv==="Closed"||r.st==="Open"||r.st==="In Progress"||r.st==="Extended"||r.st==="Overdue")}
 function V(){return D.filter(vis)}
 function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x=String(r.id).match(/^AUD-(\d{4})-(\d+)$/);if(x&&+x[1]===y&&+x[2]>m)m=+x[2]});return"AUD-"+y+"-"+("000"+(m+1)).slice(-3)}
 
 async function saveFile(name,data){
- var d=null;try{d=window.claude&&claude.use?await claude.use("downloads"):null}catch(x){d=null}
- if(d){try{await d.save({filename:name,data:data});toast("Saved "+name)}catch(x){if(x&&x.code==="declined")return;}return}
- var b=data instanceof Blob?data:new Blob([data]),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Downloaded "+name)}
+ var b=data instanceof Blob?data:new Blob([data]),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Saved "+name)}
 
 function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,Deadline:r.dl,DueDate:r.due,Status:r.st,Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(function(r){return!isH(r)}).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Active");
@@ -326,8 +326,7 @@ async function callFlow(n,p){var u=CFG["F_"+n];if(!isSet(u))throw new Error("F_"
  if(CFG.FLOW_AUTH!=="url"){h.Authorization="Bearer "+await getToken(["https://service.flow.microsoft.com//.default"]);try{b.authToken=await getToken(["User.Read"])}catch(x){}}
  for(var i=0;i<3;i++){var ac=new AbortController(),tm=setTimeout(function(){ac.abort()},90000),r;
   try{r=await fetch(u,{method:"POST",headers:h,body:JSON.stringify(b),signal:ac.signal})}catch(x){clearTimeout(tm);if(x.name==="AbortError")throw new Error(n+" flow timed out.");throw x}
-  clearTimeout(tm);
-  if(r.status===429){await new Promise(function(z){setTimeout(z,1500*(i+1))});continue}
+  clearTimeout(tm);if(r.status===429){await new Promise(function(z){setTimeout(z,1500*(i+1))});continue}
   if(!r.ok){var tx="";try{tx=(await r.text()).slice(0,140)}catch(z){}throw new Error(n+" flow returned "+r.status+(tx?": "+tx:""))}
   var t=await r.text();try{return JSON.parse(t)}catch(x){return{raw:t}}}
  throw new Error(n+" flow is busy.")}
@@ -342,7 +341,7 @@ function toItem(r){
  var p=function(k){var v=r[k];if(v==null)v=r[FM[k]];if(v==null&&r.fields)v=r.fields[FM[k]];if(v&&typeof v==="object"&&!Array.isArray(v)&&v.Value!==undefined)v=v.Value;return v};
  var rid=r.spId!=null?r.spId:(r.ID!=null?r.ID:(r.Id!=null?r.Id:(r.id!=null&&/^\d+$/.test(String(r.id))?r.id:"")));
  var aid=r[FM.id]||(r.fields&&r.fields[FM.id])||(r.id!=null&&!/^\d+$/.test(String(r.id))?r.id:"")||r.auditId||"";
- var st=String(p("st")||"Open"),o={spId:String(rid),id:String(aid)||("SP-"+rid),t:p("t")||"",cy:p("cy")||"-",dep:p("dep")||"",own:p("own")||"-",oe:p("oe")||"",dl:p("dl")||"-",due:p("due")?String(p("due")).slice(0,10):"",st:st,lk:p("lk")||"Medium",im:p("im")||"Medium",iss:p("iss")||"-",rec:p("rec")||"-",rm:p("rm")||"-",ap:p("ap")||"",rv:p("rv")||"",mk:p("mk")||"",ex:Number(p("ex"))||0,ag:"-",lg:[],at:[]};
+ var st=String(p("st")||"Open"),o={spId:String(rid),id:String(aid)||("SP-"+rid),t:p("t")||"",cy:p("cy")||"-",dep:p("dep")||"",own:p("own")||"-",oe:p("oe")||"",dl:p("dl")||"-",due:p("due")?String(p("due")).slice(0,10):"",st:st,lk:p("lk")||"Medium",im:p("im")||"Medium",iss:p("iss")||"-",rec:p("rec")||"-",rm:p("rm")||"-",ap:p("ap")||"",rv:p("rv")||"",mk:p("mk")||"",ex:Number(p("ex"))||0,lg:[],at:[]};
  var h=p("hist");o.hist=h===true||h==="true"||h==="Yes"||st==="Closed";
  ["lg","at"].forEach(function(k){var v=p(k);if(Array.isArray(v))o[k]=v;else{try{var j=JSON.parse(v||"[]");o[k]=Array.isArray(j)?j:[]}catch(x){o[k]=[]}}});
  return o;
@@ -381,7 +380,7 @@ function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v
 async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
  var id=g("n0").value,r=id?D.find(function(x){return x.id===id}):null,isNew=!r;
  if(isNew)r={id:nextId(),lg:[],at:[]};
- r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.ag=r.ag||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
+ r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
  if(isNew){r.rv="Draft";r.mk=U.email;r.ex=0;if(!(await spCreate(r)))return;D.unshift(r);}else await spUpdate(r);
  hide("addM");rd();toast(isNew?"Finding added":"Finding updated")}
 
@@ -406,7 +405,7 @@ function fillDeps(){
 var l=["Risk, Compliance & Integrity Management Department (RCIMD)","Finance Department (FD)","Human Resource Department (HRD)","Internal Audit Department (IAD)","Investment Department (ID)","Learning & Development Department (LDD)","Corporate Administration Department (CAD)","Contract Management Department (CMD)","Procurement & Vendor Management Department (PVMD)","Information Technology Department (ITD)","Property Development Department (PDD)","PHB Asset Management (PAM)","PHB Facility Management (PFM)","PHB Property Ventures (PPV)","Portfolio Management Department (PMD)","Research Unit (RU)"];
 D.forEach(function(r){if(r.dep&&r.dep!=="-"&&l.indexOf(r.dep)<0)l.push(r.dep)});
 g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join("");
-g("n3").innerHTML="<option value=''>Select Responsible Department</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
+g("n3").innerHTML="<option value=''>Select Department</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
 }
 
 function boot(){fillDeps();var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"Sign in with your corporate Microsoft 365 account.";}
@@ -419,7 +418,7 @@ function rk(l,i){var h=l==="High"||i==="High",m=l==="Medium"||i==="Medium";retur
 function toast(m){var t=g("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},Math.max(2800,String(m).length*75))}
 function show(i){g(i).classList.add("show")}function hide(i){g(i).classList.remove("show")}
 
-function setP(p){P=p;var a=p==="ADMIN";["addB","impB","cfgB","remB","diagBtn"].forEach(function(i){if(g(i))g(i).style.display=a?"":"none"});if(cur)dr()}
+function setP(p){P=p;var a=p==="ADMIN";["addB","impB","cfgB","remB"].forEach(function(i){if(g(i))g(i).style.display=a?"":"none"});if(cur)dr()}
 
 function rd(){
  var q=g("q").value.toLowerCase(),fs=g("fs").value,fd=g("fd").value;
@@ -441,33 +440,32 @@ function cl(){hide("ov");cur=null}
 
 function dr(){
  var r=cur_();if(!r)return;var ad=P==="ADMIN",body="",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
+ var isFinalised=r.rv==="Finalised"||r.rv==="Issued To Department";
 
- body='<div class="g4"><div class="f"><small>Department</small>'+e(r.dep)+'</div><div class="f"><small>Owner</small>'+e(r.own)+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Aging</small>'+e(r.ag)+'</div></div>'
- +'<div class="row" style="align-items:center"><span>Risk Level: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(ad||r.st!=="Closed"?"":"disabled")+' onchange="ss(this.value)" style="max-width:170px;flex:none">'+(ad?["Open","In Progress","Extended","Overdue","Closed"]:(["Open","In Progress"].indexOf(r.st)<0?[r.st,"Open","In Progress"]:["Open","In Progress"])).map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>'
+ body='<div class="g4"><div class="f"><small>Department</small>'+e(r.dep)+'</div><div class="f"><small>Owner</small>'+e(r.own)+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Due Date</small>'+e(r.due||'-')+'</div></div>'
+ +'<div class="row" style="align-items:center"><span>Risk Level: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(ad&&!isFinalised&&r.st!=="Closed"?"":"disabled")+' onchange="ss(this.value)" style="max-width:170px;flex:none">'+(ad?["Open","In Progress","Extended","Overdue","Closed"]:(["Open","In Progress"].indexOf(r.st)<0?[r.st,"Open","In Progress"]:["Open","In Progress"])).map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>'
  +wfPanel(r)+'<h4>Details of open issues and risk</h4><div class="box">'+e(r.iss)+'</div><h4>Recommendations made</h4><div class="box">'+e(r.rec)+'</div><h4>IAD remarks</h4><div class="box" style="font-style:italic">'+e(r.rm)+'</div>';
 
  if(r.st!=="Closed"){
-  if(ad)body+='<div class="adm '+(r.st==="Overdue"?"od":"")+'"><b>'+(r.st==="Overdue"?"⚠ Overdue – Submit Extension Request to Teams":"Admin Deadline Control (Extensions used "+(r.ex||0)+"/3)")+'</b><div class="row"><input class="in" id="xd" type="date" placeholder="Select new target date"></div><div class="row"><input class="in" id="xr" placeholder="Provide reason or justification for deadline extension..."></div><div class="row"><button class="btn v" onclick="ext()">Submit Extension Request to Teams</button></div></div>';
-  else if(r.st==="Overdue")body+='<div class="adm od">This finding is currently overdue. Please contact IAD Admin for assistance.</div>';
+  if(ad)body+='<div class="adm '+(r.st==="Overdue"?"od":"")+'"><b>'+(r.st==="Overdue"?"⚠ Overdue – Adjust Deadline & Notify Owner":"Admin Deadline Extension Control")+'</b><div class="row"><input class="in" id="xd" type="date" value="'+e(r.due||"")+'"></div><div class="row"><input class="in" id="xr" placeholder="Provide reason or justification for deadline adjustment..."></div><div class="row"><button class="btn v" onclick="ext()">Update Deadline & Email Owner</button></div></div>';
+  else if(r.st==="Overdue"&&!ad)body+='<div class="adm od">This finding is currently overdue. Please submit your update and notify IAD Admin.</div>';
  }
 
- /* Monthly Log: Visible to Admin only */
- if(ad){
-  body+='<h4>Monthly Status Log (Submitted by User)</h4><div class="tl">'+(r.lg.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")||'<div style="color:var(--mut)">No monthly updates submitted yet.</div>')+'</div>';
- }
+ /* Monthly Status Log: User progress tracking */
+ body+='<h4>Monthly Status Log (User Progress)</h4><div class="tl">'+(r.lg.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")||'<div style="color:var(--mut)">No monthly updates submitted yet.</div>')+'</div>';
 
- /* Monthly Update Form: Available for User only (Non-Admin) */
+ /* Monthly Update Form: Available for User / Department */
  if(!ad){
-  body+='<h4>Submit Monthly Progress Update</h4><div class="row"><select class="in" id="lm"><option>Nov 2026</option><option>Dec 2026</option><option>Jan 2027</option><option>Feb 2027</option></select><select class="in" id="ls"><option>On Track</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div><div class="row"><input class="in" id="la" value="'+e(U?U.name:"")+'" placeholder="Your name..."></div><div class="row"><textarea class="in" id="ln" rows="3" placeholder="Enter progress narrative and milestones achieved..."></textarea></div><div class="row"><input type="file" id="lf" class="in"></div><div class="row"><button class="btn p" onclick="lg()">Post Update + Evidence</button></div>';
+  body+='<h4>Submit Monthly Progress Update</h4><div class="row"><select class="in" id="ls"><option>On Track</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div><div class="row"><textarea class="in" id="ln" rows="3" placeholder="Enter progress narrative and milestones achieved..."></textarea></div><div class="row"><input type="file" id="lf" class="in"></div><div class="row"><button class="btn p" onclick="lg()">Post Update + Evidence</button></div>';
  }
 
- /* Unified OneDrive Attachment Section */
- body+='<h4>Supporting Evidence &amp; Documents (OneDrive)</h4><div class="drop"><b>Upload document or evidence file</b><div class="row"><select class="in" id="um"><option>General Evidence</option><option>Historical Record</option><option>Extension Approval</option><option>Committee Paper</option></select><input type="file" id="uf" class="in"></div><div class="row"><button class="btn p" onclick="up()">Attach to OneDrive Record</button></div></div><h4>Attached Files</h4>'
+ /* OneDrive Attachment Section */
+ body+='<h4>Supporting Evidence &amp; Documents (OneDrive)</h4><div class="drop"><b>Upload document or evidence file</b><div class="row"><input type="file" id="uf" class="in"></div><div class="row"><button class="btn p" onclick="up()">Attach to OneDrive Record</button></div></div><h4>Attached Files</h4>'
  +(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+i+')">Download</button>'+(ad?'<button class="btn" onclick="da('+i+')">✕</button>':"")+'</div></div>'}).join("")||'<div style="color:var(--mut)">No files attached yet.</div>');
 
  g("dr").innerHTML='<div class="dh"><div><small style="opacity:.7">'+e(r.id)+' · '+e(r.cy)+'</small><div style="font-weight:700;font-size:16px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+'</div><div style="display:flex;gap:8px;align-self:flex-start"><button class="btn h" onclick="dlpdf()" title="Download PDF">⬇ Download PDF</button><button class="btn h" onclick="cl()">✕</button></div></div>'
  +'<div class="db">'+body+'</div>'
- +(ad?'<div style="padding:12px 22px;border-top:1px solid var(--bd);display:flex;justify-content:space-between"><button class="btn" onclick="del()" style="color:#dc2626">Delete Record</button><button class="btn p" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit Finding</button></div>':"");
+ +(ad&&!isFinalised?'<div style="padding:12px 22px;border-top:1px solid var(--bd);display:flex;justify-content:space-between"><button class="btn" onclick="del()" style="color:#dc2626">Delete Record</button><button class="btn p" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit Finding</button></div>':"");
  var n=g("dr").querySelector(".db");if(n)n.scrollTop=y;
 }
 
@@ -476,18 +474,13 @@ function ss(v){var r=cur_();if(!r)return;if(!U.admin&&["Open","In Progress"].ind
 
 async function ext(){
  var r=cur_(),d=g("xd").value.trim(),x=g("xr").value.trim();
- if(!d||!x){toast("New deadline date and reason are required");return}
- if((r.ex||0)>=3){toast("Maximum of 3 extensions already reached");return}
- r.ex=(r.ex||0)+1;r.st="Extended";r.dl=d;r.due=/^\d{4}-\d\d-\d\d$/.test(d)?d:r.due;
- r.rm="[Extension "+r.ex+"/3 submitted to Teams] "+x;
- r.lg.unshift({m:"Extension Request",s:"Extended",n:"Deadline extension submitted to Teams for "+d+". Reason: "+x,a:"IAD Admin",d:new Date().toDateString()});
- upd("Extension submitted to Teams successfully");
- try{
-  await callFlow("EXTENSION_ALERT",{auditId:r.spId||r.id,title:r.t,action:"Extended",newDeadline:d,reason:x,by:U&&U.email});
- }catch(err){
-  r.st="Overdue";
-  toast("Teams submission failed. Issue reverted to Overdue status.");
-  upd("Reverted to Overdue due to Teams notification failure");
+ if(!d||!x){toast("New due date and reason are required");return}
+ r.due=d;r.dl=d;r.st="Extended";
+ r.rm="[Deadline Extended] "+x;
+ r.lg.unshift({m:"Deadline Extension",s:"Extended",n:"New due date set to "+d+". Reason: "+x,a:"IAD Admin",d:new Date().toDateString()});
+ upd("Deadline extended successfully");
+ if(r.oe){
+  try{await notify(r.oe,"[Audit Deadline Updated] "+r.t,"<p>Your audit finding deadline has been updated by IAD Admin to <b>"+d+"</b>.</p><p>Reason: "+e(x)+"</p>");}catch(e){}
  }
 }
 
@@ -498,14 +491,24 @@ async function del(){var r=cur_();if(!r||!confirm("Are you sure you want to dele
 function dlpdf(){
  var r=cur_();if(!r)return;toast("Generating PDF…");
  var jsPDF=window.jspdf.jsPDF,doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
- doc.text(r.id+" - "+r.t,14,20);saveFile(r.id+"_AuditReport.pdf",doc.output("blob"));
+ doc.setFontSize(16);doc.text("Audit Finding Report: "+r.id,14,20);
+ doc.setFontSize(11);
+ doc.text("Title: "+r.t,14,30);
+ doc.text("Department: "+r.dep,14,38);
+ doc.text("Owner: "+r.own+" ("+r.oe+")",14,46);
+ doc.text("Status: "+r.st+" | Cycle: "+r.cy,14,54);
+ doc.text("Deadline: "+r.dl+" (Due: "+(r.due||"-")+")",14,62);
+ doc.text("Open Issues & Risk:",14,74);
+ doc.setFontSize(10);
+ doc.text(doc.splitTextToSize(r.iss,180),14,82);
+ doc.save(r.id+"_AuditFindingReport.pdf");
 }
 
 var xlRows=[];
 function itab(n){[1,2].forEach(function(i){g("ip"+i).style.display=i===n?"":"none";var b=g("itab"+i);b.style.background=i===n?"var(--pri)":"none";b.style.color=i===n?"#fff":"var(--mut)"});}
 function newId(){var i=100;while(D.some(function(x){return x.id==="AUD-HIST-"+String(i).padStart(3,"0")}))i++;return"AUD-HIST-"+String(i).padStart(3,"0")}
 
-function mkRec(o,hist){
+function mkRec(o){
  var status=normStatus(o.st||o.Status||o.status||o["Issue Status"]);
  return{
   id:String(o.id||o.AuditID||"").trim()||newId(),
@@ -517,18 +520,17 @@ function mkRec(o,hist){
   own:String(o.own||o.Owner||o.owner||o.ResponsibleParty||"-").trim(),
   dep:String(o.dep||o.Dept||o.Department||o.dept||"-").trim(),
   dl:String(o.dl||o.Deadline||o.deadline||"-").trim(),
-  ag:String(o.ag||o.Aging||"-").trim(),
   lk:String(o.lk||o.Likelihood||o.likelihood||"Medium").trim(),
   im:String(o.im||o.Impact||o.impact||"Medium").trim(),
   rm:String(o.rm||o.IADRemarks||o.iadRemarks||"-").trim(),
-  lg:[],at:[],hist:(status==="Closed"),rv:"Approved",ex:0,oe:String(o.OwnerEmail||o.oe||o["Owner Email"]||"").trim(),due:String(o.DueDate||o.due||"").slice(0,10)};
+  lg:[],at:[],hist:(status==="Closed"),rv:"Issued To Department",ex:0,oe:String(o.OwnerEmail||o.oe||o["Owner Email"]||"").trim(),due:String(o.DueDate||o.due||"").slice(0,10)};
 }
 
 function dlXLTemplate(){
  toast("Preparing template download…");
  var XLSX2=window.XLSX,wb=XLSX2.utils.book_new();
- var hdrs=["AuditID","Title","Cycle","Department","Owner","Deadline","Status","Likelihood","Impact","OpenIssues","Recommendations","IADRemarks"];
- var rows=[hdrs,["(auto)","REVIEW OF IT CONTROLS","Q4 2026","ITD","Ahmad","Quarter 4 2026","Open","High","High","Description of audit finding...","Remediation steps...","Remarks..."]];
+ var hdrs=["AuditID","Title","Cycle","Department","Owner","Deadline","DueDate","Status","Likelihood","Impact","OpenIssues","Recommendations","OwnerEmail","IADRemarks"];
+ var rows=[hdrs,["(auto)","REVIEW OF IT CONTROLS","Q4 2026","ITD","Ahmad","Quarter 4 2026","2026-12-31","Open","High","High","Description of audit finding...","Remediation steps...","ahmad@phb.com.my","Remarks..."]];
  XLSX2.utils.book_append_sheet(wb,XLSX2.utils.aoa_to_sheet(rows),"IMPORT_DATA");
  saveFile("AuditRegister_ImportTemplate.xlsx",XLSX2.write(wb,{type:"array",bookType:"xlsx"}))}
 
@@ -555,10 +557,6 @@ async function importManual(){var t=g("hf1").value.trim();if(!t){toast("Title is
  var rec=mkRec({t:t,cy:g("hf2").value,dep:g("hf3").value,own:g("hf4").value,dl:g("hf5").value,st:g("hf6").value,lk:g("hf7").value,im:g("hf8").value,iss:g("hf9").value,rec:g("hf10").value,rm:g("hf11").value});
  if(!(await spCreate(rec)))return;D.unshift(rec);rd();hide('impM');toast("Manual record saved successfully");
 }
-
-function csv(){var h=["ID","Cycle","Title","Issue","Status","Owner","Dept","Deadline"];
- var rows=V().map(function(r){return[r.id,r.cy,r.t,r.iss,r.st,r.own,r.dep,r.dl].map(function(c){return'"'+sx(c).replace(/"/g,'""')+'"'}).join(",")});
- saveFile("audit_register.csv",h.join(",")+"\n"+rows.join("\n"))}
 
 g("tb").addEventListener("click",function(ev){var t=ev.target.closest("tr[data-id]");if(t)op(t.getAttribute("data-id"))});
 rd();boot();
