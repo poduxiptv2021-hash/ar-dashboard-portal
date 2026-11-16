@@ -353,7 +353,8 @@ async function spLoad(){
                 id: r.id || r.AuditID || ("SP-" + String(r.spId || r.ID || Math.random())),
                 t: r.t || r.Title || r.title || "",
                 cy: r.cy || r.AuditCycle || r.cycle || "-",
-                dep: r.dep || r.Department || r.dept || "",
+                // Ensure all possible variations of department keys are caught here:
+                dep: r.dep || r.Department || r.dept || r.DepartmentValue || "-",
                 own: r.own || r.ResponsibleParty || r.Owner || r.owner || "-",
                 oe: r.oe || r.OwnerEmail || r.ownerEmail || "",
                 dl: r.dl || r.Deadline || r.deadline || "-",
