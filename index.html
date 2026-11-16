@@ -433,8 +433,33 @@ async function spUpdate(r){
         return;
     }
     try {
-        await callFlow("UPDATE_AUDIT", r);
-        console.log("F_UPDATE_AUDIT success");
+        var payload = {
+            spId: r.spId || "",
+            auditId: r.id,
+            title: r.t,
+            cycle: r.cy,
+            department: r.dep,
+            owner: r.own,
+            deadline: r.dl,
+            dueDate: r.due || "",
+            status: r.st,
+            likelihood: r.lk,
+            impact: r.im,
+            openIssues: r.iss,
+            recommendations: r.rec,
+            iadRemarks: r.rm,
+            ownerEmail: r.oe || "",
+            makerEmail: r.mk || "",
+            approvalStage: r.ap || "",
+            reviewStage: r.rv || "",
+            extensionCount: r.ex || 0,
+            isHistorical: !!r.hist,
+            monthlyLog: JSON.stringify(r.lg || []),
+            evidenceLinks: JSON.stringify(r.at || [])
+        };
+        console.log("Sending to F_UPDATE_AUDIT:", payload);
+        var res = await callFlow("UPDATE_AUDIT", payload);
+        console.log("F_UPDATE_AUDIT success:", res);
     } catch(x) {
         console.error("spUpdate error:", x);
         toast("Sync warning: " + x.message);
@@ -445,12 +470,18 @@ async function spDelete(r){
     sv();
     if(!r || !isSet(CFG.F_DELETE_AUDIT)) return;
     try {
-        await callFlow("DELETE_AUDIT", { spId: r.spId, auditId: r.id });
+        var payload = {
+            spId: r.spId || "",
+            auditId: r.id
+        };
+        console.log("Sending to F_DELETE_AUDIT:", payload);
+        var res = await callFlow("DELETE_AUDIT", payload);
+        console.log("F_DELETE_AUDIT success:", res);
     } catch(x) {
         console.error("spDelete error:", x);
+        toast("Delete sync warning: " + x.message);
     }
 }
-
 async function reload(){try{await spLoad();rd();toast("Data refreshed")}catch(x){toast("Refresh failed: "+x.message)}}
 
 function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v){g(k).value=v==null?"":v};
