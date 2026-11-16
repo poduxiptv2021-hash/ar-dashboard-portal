@@ -508,7 +508,11 @@ async function add(){
         r.rv="Checker Review"; r.mk=U.email; r.ex=0;
         var ok = await spCreate(r);
         if(!ok) return;
+        
+        // Remove any temporary un-synced items before pushing to the top
+        D = D.filter(function(x){ return x.id !== r.id; });
         D.unshift(r);
+
         if(isSet(CFG.IA_PIC_EMAIL)){
             notify(CFG.IA_PIC_EMAIL,"[Audit "+r.id+"] New finding awaiting your review","<p>A new finding was created by "+e(U.name)+": <b>"+e(r.t)+"</b> ("+e(r.dep)+").</p>").catch(function(){});
         }
