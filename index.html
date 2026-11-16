@@ -141,7 +141,7 @@ body.auth #lgn{display:none!important}
   <div class="drop" id="xlDrop" ondragover="event.preventDefault()" ondrop="xlDropEvt(event)" style="margin-bottom:12px">
     <div style="font-size:32px;margin-bottom:6px">📂</div>
     <b>Drag &amp; drop your Excel (.xlsx) or CSV file here</b>
-    <div style="color:var(--mut);font-size:12px;margin:4px 0 10px">Automatically detects the <b>IMPORT_DATA</b> sheet or any sheet with valid headers. Required columns: Title, Cycle, Department, Owner, Deadline, Status, Likelihood, Impact, OpenIssues, Recommendations</div>
+    <div style="color:var(--mut);font-size:12px;margin:4px 0 10px">Uses the IMPORT_DATA sheet. Required columns: Title, Cycle, Department, Owner, Deadline, Status, Likelihood, Impact, OpenIssues, Recommendations</div>
     <input type="file" id="xlFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="readXL(this)">
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
       <button class="btn p" onclick="g('xlFile').click()">Browse file</button>
@@ -212,8 +212,8 @@ var CFG={
  DEPARTMENTS:"please input the api",
  F_CREATE_AUDIT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/7a3ac887fec64e5a8d91b2be22b1a32f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=L7O2irMPKHRsEownjU0aZCI1MMLuV4gQYm1JFJ_tNrI",
  F_LOAD_AUDITS:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/13/workflows/9f307d1051824ed995418800e63e1b6d/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ecF8GXONXCPn1bMlhJqisMsALTP6Y8KSjBHy2JBXxns",
- F_UPDATE_AUDIT:"",
- F_DELETE_AUDIT:""
+ F_UPDATE_AUDIT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/00/workflows/c9b80fe0cc4345cd81518bb6cc0625a0/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=lRBT0vMgMOlF3eR7TGQcDR_eY7cNp2E9HgMAWcQebtM",
+ F_DELETE_AUDIT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/24/workflows/aab0f27fe3b34e0ea453d84e73d183f6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=Gyca5_PdVuvvNxK8zD6-my9NeppS8ng1NSmv9I4zucE"
 };
 var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"ResponsibleParty",dl:"Deadline",due:"DueDate",st:"Status",lk:"Likelihood",im:"Impact",iss:"OpenIssues",rec:"Recommendations",rm:"IADRemarks",hist:"IsHistorical",lg:"MonthlyLog",oe:"OwnerEmail",ap:"ApprovalStage",rv:"ReviewStage",mk:"MakerEmail",ex:"ExtensionCount",at:"EvidenceLinks"};
 var REQ=["TENANT_ID","CLIENT_ID","SP_SITE_ID","LIST_AUDIT_ID","F_GET_USER_ROLE"],U=null,MS=null,D=[];
@@ -420,6 +420,7 @@ async function spCreate(r){
         return true;
     } catch(x) {
         console.error("spCreate error:", x);
+        toast("SharePoint save failed: " + x.message);
         return false;
     }
 }
@@ -473,27 +474,17 @@ async function add(){
 
     if(isNew){
         r.rv="Checker Review"; r.mk=U.email; r.ex=0;
-        // FIX: Save locally FIRST so items never disappear on refresh regardless of SharePoint flow status
+        var ok = await spCreate(r);
+        if(!ok) return;
         D.unshift(r);
-        sv();
-        hide("addM");
-        rd();
-        toast("Finding saved locally");
-
-        // Attempt SharePoint background sync
-        spCreate(r).then(function(ok){
-            if(ok) toast("Finding synced with SharePoint");
-        }).catch(function(){});
-
         if(isSet(CFG.IA_PIC_EMAIL)){
             notify(CFG.IA_PIC_EMAIL,"[Audit "+r.id+"] New finding awaiting your review","<p>A new finding was created by "+e(U.name)+": <b>"+e(r.t)+"</b> ("+e(r.dep)+").</p>").catch(function(){});
         }
     } else {
         await spUpdate(r);
-        hide("addM");
-        rd();
-        toast("Finding updated");
     }
+    hide("addM"); sv(); rd();
+    toast(isNew ? "Finding saved to SharePoint" : "Finding updated");
 }
 
 async function mail(){var r=cur_(),to=g("em").value.trim();if(!to||to.indexOf("@")<1){toast("Enter a valid recipient email");return}
@@ -523,15 +514,8 @@ async function enter(){
     g("lgn").style.display="none";
     g("uchip").innerHTML="<b>"+e(U.name)+"</b><br><span style='opacity:.75'>"+(U.admin?"IAD Admin":"Department · "+e(U.dep))+"</span><br><span style='opacity:.6;font-size:11px'>"+e(U.email)+"</span>";
     setP(U.admin?"ADMIN":"PIC");
-    
-    // Load local storage first for instant display
-    try {
-        var localData = localStorage.getItem(KEY);
-        if (localData) { D = JSON.parse(localData); rd(); }
-    } catch(e) {}
-
-    try{await spLoad(); rd();}catch(x){console.warn("SharePoint load warning:", x);}
-    fillDeps();
+    try{await spLoad();}catch(x){console.warn("SharePoint load warning:", x);}
+    fillDeps();rd();
     toast(D.length+" finding(s) loaded");
 }
 
@@ -593,7 +577,7 @@ function dr(){
   +'<h4>Add monthly update</h4><div class="row"><select class="in" id="lm">'+["Nov 2026","Dec 2026","Jan 2027","Feb 2027"].map(function(m){return'<option>'+m+'</option>'}).join("")+'</select><select class="in" id="ls">'+["On Track","In Progress","Delayed","Completed"].map(function(m){return'<option>'+m+'</option>'}).join("")+'</select></div><div class="row"><input class="in" id="la" value="'+e(U?U.name:"")+'"></div><div class="row"><textarea class="in" id="ln" rows="3" placeholder="Progress narrative..."></textarea></div><div class="row"><input type="file" id="lf" class="in"></div><div class="row"><button class="btn p" onclick="lg()">Post update + evidence</button></div>';
  }{
   body+='<h4>Attachments</h4><div class="drop"><b>Upload evidence / historical file</b><div class="row"><select class="in" id="um"><option>General Evidence</option><option>Historical Record</option><option>Extension Approval</option><option>Committee Paper</option></select><input type="file" id="uf"></div><div class="row"><button class="btn p" onclick="up()">Attach to record</button></div></div><h4>Attached files</h4>'
-  +(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+iتاز+')">Download</button>'+(ad?'<button class="btn" onclick="da('+i+')">✕</button>':"")+'</div></div>'}).join("")||'<div style="color:var(--mut)">No attachments yet.</div>');
+  +(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+i+')">Download</button>'+(ad?'<button class="btn" onclick="da('+i+')">✕</button>':"")+'</div></div>'}).join("")||'<div style="color:var(--mut)">No attachments yet.</div>');
  }
  g("dr").innerHTML='<div class="dh"><div><small style="opacity:.7">'+r.id+' · '+e(r.cy)+'</small><div style="font-weight:700;font-size:16px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+'</div><div style="display:flex;gap:8px;align-self:flex-start"><button class="btn h" onclick="dlpdf()" title="Download PDF">⬇ Download</button><button class="btn h" onclick="cl()">✕</button></div></div>'
  +'<div class="db">'+body+'</div>'
@@ -656,64 +640,10 @@ function dlXLTemplate(){
  XLSX2.utils.book_append_sheet(wb,wsD,"IMPORT_DATA");
  saveFile("AuditRegister_ImportTemplate.xlsx",XLSX2.write(wb,{type:"array",bookType:"xlsx"}))}
 
-// Smart Sheet Detection & Robust Reading Function
-function readXL(inp){
- var f=inp.files[0];if(!f)return;
+function readXL(inp){var f=inp.files[0];if(!f)return;
  var r=new FileReader();
- r.onload=function(ev){
-  try{
-   var XLSX2=window.XLSX, wb=XLSX2.read(new Uint8Array(ev.target.result),{type:"array"});
-   
-   // 1. Detect sheet: check for 'IMPORT_DATA' case-insensitively, or scan for headers
-   var targetSheetName = null;
-   for(var i=0; i<wb.SheetNames.length; i++){
-    if(wb.SheetNames[i].toLowerCase() === "import_data"){ targetSheetName = wb.SheetNames[i]; break; }
-   }
-   if(!targetSheetName){
-    for(var i=0; i<wb.SheetNames.length; i++){
-     var sName = wb.SheetNames[i];
-     var testJson = XLSX2.utils.sheet_to_json(wb.Sheets[sName], {header:1, defval:""});
-     for(var rIdx=0; rIdx<Math.min(testJson.length, 5); rIdx++){
-      var rowStr = JSON.stringify(testJson[rIdx]).toLowerCase();
-      if(rowStr.indexOf("title")>=0 && (rowStr.indexOf("department")>=0 || rowStr.indexOf("status")>=0)){
-       targetSheetName = sName; break;
-      }
-     }
-     if(targetSheetName) break;
-    }
-   }
-   if(!targetSheetName) targetSheetName = wb.SheetNames[0];
-
-   var ws = wb.Sheets[targetSheetName];
-   var json = XLSX2.utils.sheet_to_json(ws, {defval:""});
-
-   // If header row is not at index 0, locate the correct header row dynamically
-   if(json.length === 0 || (!json[0].Title && !json[0].title && !json[0].t)){
-    var rawRows = XLSX2.utils.sheet_to_json(ws, {header:1, defval:""});
-    var headerRowIdx = -1;
-    for(var rIdx=0; rIdx<rawRows.length; rIdx++){
-     if(JSON.stringify(rawRows[rIdx]).toLowerCase().indexOf("title")>=0){ headerRowIdx = rIdx; break; }
-    }
-    if(headerRowIdx >= 0){
-     json = XLSX2.utils.sheet_to_json(ws, {range: headerRowIdx, defval:""});
-    }
-   }
-
-   xlRows = json.filter(function(row){
-    var t = String(row.Title || row.t || row.title || "").trim();
-    return t && t.toUpperCase() !== "TITLE" && t !== "(auto)";
-   });
-
-   if(!xlRows.length){
-    toast("No valid audit rows found in sheet: "+targetSheetName);
-    return;
-   }
-
-   showXLPreview(xlRows);
-   toast("Detected sheet: "+targetSheetName+" ("+xlRows.length+" rows)");
-  }catch(err){toast("Could not read file: "+err.message);}};
- r.readAsArrayBuffer(f);
-}
+ r.onload=function(ev){try{var XLSX2=window.XLSX,wb=XLSX2.read(new Uint8Array(ev.target.result),{type:"array"});var sn=wb.SheetNames.indexOf("IMPORT_DATA")>=0?"IMPORT_DATA":wb.SheetNames[0];var json=XLSX2.utils.sheet_to_json(wb.Sheets[sn],{defval:""});xlRows=json.filter(function(r){var t=String(r.Title||r.t||"").trim();return t&&t.toUpperCase()!=="TITLE"&&t!=="(auto)"});showXLPreview(xlRows);}catch(err){toast("Could not read file: "+err.message);}};
+ r.readAsArrayBuffer(f);}
 
 function xlDropEvt(ev){ev.preventDefault();var f=ev.dataTransfer.files[0];if(!f)return;var inp=g("xlFile"),dt=new DataTransfer();dt.items.add(f);inp.files=dt.files;readXL(inp);}
 
