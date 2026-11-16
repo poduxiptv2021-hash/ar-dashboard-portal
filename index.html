@@ -333,60 +333,25 @@ async function spBase(){
         encodeURIComponent(CFG.LIST_AUDIT_ID);
 }
 
-async function spLoad(){
+async function spLoad() {
     try {
-        var result = await callFlow("LOAD_AUDITS", {requestedBy: U ? U.email : "", department: U ? U.dep : "", isAdmin: !!(U && U.admin)});
-        if (typeof result === "string") { try { result = JSON.parse(result); } catch(e) {} }
-        if (!Array.isArray(result)) {
-            if (result && Array.isArray(result.value)) result = result.value;
-            else if (result && Array.isArray(result.body)) result = result.body;
-            else if (result && Array.isArray(result.data)) result = result.data;
-            else if (result && typeof result === "object") {
-                var foundKey = Object.keys(result).find(function(k){ return Array.isArray(result[k]); });
-                result = foundKey ? result[foundKey] : [];
-            } else { result = []; }
-        }
-
-        D = result.map(function(r){
-            var item = {
-                spId: String(r.spId || r.ID || r.Id || ""),
-                id: r.id || r.AuditID || ("SP-" + String(r.spId || r.ID || Math.random())),
-                t: r.t || r.Title || r.title || "",
-                cy: r.cy || r.AuditCycle || r.cycle || "-",
-                // Ensure all possible variations of department keys are caught here:
-                dep: r.dep || r.Department || r.dept || r.DepartmentValue || "-",
-                own: r.own || r.ResponsibleParty || r.Owner || r.owner || "-",
-                oe: r.oe || r.OwnerEmail || r.ownerEmail || "",
-                dl: r.dl || r.Deadline || r.deadline || "-",
-                due: (r.due || r.DueDate || r.dueDate) ? String(r.due || r.DueDate || r.dueDate).slice(0,10) : "",
-                st: r.st || r.Status || r.status || "Open",
-                lk: r.lk || r.Likelihood || r.likelihood || "Medium",
-                im: r.im || r.Impact || r.impact || "Medium",
-                iss: r.iss || r.OpenIssues || r.issues || "-",
-                rec: r.rec || r.Recommendations || r.recommendations || "-",
-                rm: r.rm || r.IADRemarks || r.remarks || "-",
-                hist: r.hist === true || r.hist === "true" || r.IsHistorical === true || r.st === "Closed",
-                ap: r.ap || r.ApprovalStage || "",
-                rv: r.rv || r.ReviewStage || "",
-                mk: r.mk || r.MakerEmail || "",
-                ex: Number(r.ex || r.ExtensionCount) || 0,
-                lg: [], at: []
-            };
-            try{ item.lg = Array.isArray(r.lg || r.MonthlyLog) ? (r.lg || r.MonthlyLog) : JSON.parse(r.lg || r.MonthlyLog || "[]"); }catch(x){ item.lg = []; }
-            try{ item.at = Array.isArray(r.at || r.EvidenceLinks) ? (r.at || r.EvidenceLinks) : JSON.parse(r.at || r.EvidenceLinks || "[]"); }catch(x){ item.at = []; }
-            return item;
+        var res = await fetch(CFG.LOAD_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                requestedBy: U.email || "haliza@phb.com.my",
+                department: U.department || "All",
+                isAdmin: U.isAdmin !== undefined ? U.isAdmin : true
+            })
         });
-        sv();
-    } catch(err) {
-        console.warn("SharePoint load error, falling back to local storage:", err);
-        try {
-            var localData = localStorage.getItem(KEY);
-            if (localData) { D = JSON.parse(localData); toast("Loaded from local cache (SharePoint offline)"); return; }
-        } catch(e) {}
-        throw err;
+        var data = await res.json();
+        console.log("Raw F_LOAD_AUDITS response:", data);
+        return Array.isArray(data) ? data : [];
+    } catch (err) {
+        console.error("Failed to load audit findings:", err);
+        return [];
     }
 }
-
 async function spCreate(r){
     try {
         var payload = {
