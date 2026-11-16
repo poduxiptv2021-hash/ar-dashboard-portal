@@ -566,6 +566,6 @@ async function importManual(){var t=g("hf1").value.trim();if(!t){toast("Title is
  if(!(await spCreate(rec)))return;D.unshift(rec);rd();hide('impM');toast("Manual record saved successfully");
 }
 
-g("tb").addEventListener("click",function(ev){var t=ev.target.closest("tr[data-id]);t}op(t.getAttribute("data-id"))});
+g("tb").addEventListener("click",function(ev){var t=ev.target.closest("tr[data-id]");if(t)op(t.getAttribute("data-id"))});
 rd();boot();
 </script></body></html>
