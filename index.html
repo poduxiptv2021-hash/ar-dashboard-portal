@@ -309,7 +309,15 @@ function rptPdf(){
 }
 
 function isH(r){return!!r.hist||r.st==="Closed"}
-function vis(r){if(!U)return false;if(U.admin)return true;return r.oe&&r.oe.toLowerCase()===U.email.toLowerCase()&&(r.rv==="Issued To Department"||r.rv==="Closed"||r.st==="Open"||r.st==="In Progress"||r.st==="Extended"||r.st==="Overdue")}
+
+/* --- FIXED VISIBILITY CHECK FOR USERS --- */
+function vis(r){
+  if(!U)return false;
+  if(U.admin)return true;
+  // Matches if the finding's Owner Email matches Haliza's logged-in email
+  return r.oe && r.oe.toLowerCase() === U.email.toLowerCase();
+}
+
 function V(){return D.filter(vis)}
 function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x=String(r.id).match(/^AUD-(\d{4})-(\d+)$/);if(x&&+x[1]===y&&+x[2]>m)m=+x[2]});return"AUD-"+y+"-"+("000"+(m+1)).slice(-3)}
 
@@ -457,7 +465,7 @@ function dr(){
  /* Monthly Update Form: Available for User / Department */
  if(!ad){
   body+='<h4>Submit Monthly Progress Update</h4><div class="row"><select class="in" id="ls"><option>On Track</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div><div class="row"><textarea class="in" id="ln" rows="3" placeholder="Enter progress narrative and milestones achieved..."></textarea></div><div class="row"><input type="file" id="lf" class="in"></div><div class="row"><button class="btn p" onclick="lg()">Post Update + Evidence</button></div>';
- }
+}
 
  /* OneDrive Attachment Section */
  body+='<h4>Supporting Evidence &amp; Documents (OneDrive)</h4><div class="drop"><b>Upload document or evidence file</b><div class="row"><input type="file" id="uf" class="in"></div><div class="row"><button class="btn p" onclick="up()">Attach to OneDrive Record</button></div></div><h4>Attached Files</h4>'
@@ -558,6 +566,6 @@ async function importManual(){var t=g("hf1").value.trim();if(!t){toast("Title is
  if(!(await spCreate(rec)))return;D.unshift(rec);rd();hide('impM');toast("Manual record saved successfully");
 }
 
-g("tb").addEventListener("click",function(ev){var t=ev.target.closest("tr[data-id]");if(t)op(t.getAttribute("data-id"))});
+g("tb").addEventListener("click",function(ev){var t=ev.target.closest("tr[data-id]);t}op(t.getAttribute("data-id"))});
 rd();boot();
 </script></body></html>
