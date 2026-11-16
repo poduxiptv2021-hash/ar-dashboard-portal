@@ -99,22 +99,22 @@ body.auth #lgn{display:none!important}
 <h3 style="margin-top:0;margin-bottom:16px;font-size:18px;font-weight:700" id="addT">Add audit finding</h3>
 <input type="hidden" id="n0">
 <div style="display:flex;flex-direction:column;gap:12px">
-  <input class="in" id="n1" placeholder="Enter full audit finding title (e.g., Review of IT Operational Controls)">
-  <div class="row" style="margin-top:0"><input class="in" id="n2" placeholder="Audit cycle (e.g., Q4 2026)"><select class="in" id="n3"><option value="">Select Responsible Department</option></select></div>
-  <div class="row" style="margin-top:0"><input class="in" id="n4" placeholder="Responsible owner name"><input class="in" id="n5" placeholder="Deadline description (e.g., Quarter 4 2026)"></div>
-  <input class="in" id="n13" type="email" placeholder="Responsible person email (e.g., owner@phb.com.my for automated notifications)">
+  <input class="in" id="n1" placeholder="Audit Tittlr">
+  <div class="row" style="margin-top:0"><input class="in" id="n2" placeholder="Audit cycle (e.g., Q4 2026)"><select class="in" id="n3"><option value="">Select Department</option></select></div>
+  <div class="row" style="margin-top:0"><input class="in" id="n4" placeholder="Owner name"><input class="in" id="n5" placeholder="Deadline (e.g., Quarter 4 2026)"></div>
+  <input class="in" id="n13" type="email" placeholder="Responsible owner email (e.g., owner@phb.com.my)">
   <div class="row" style="margin-top:0">
     <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Target Due Date (for automated overdue triggers)</label><input class="in" type="date" id="n7"></div>
-    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Initial Status</label><select class="in" id="n8"><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select></div>
+    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Status</label><select class="in" id="n8"><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select></div>
   </div>
   <div class="row" style="margin-top:0">
-    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Likelihood Level</label><select class="in" id="n9"><option>Low</option><option>Medium</option><option>High</option></select></div>
-    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Impact Level</label><select class="in" id="n10"><option>Low</option><option>Medium</option><option>High</option></select></div>
+    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Likelihood </label><select class="in" id="n9"><option>Low</option><option>Medium</option><option>High</option></select></div>
+    <div><label style="font-size:11px;color:var(--mut);display:block;margin-bottom:4px">Impact </label><select class="in" id="n10"><option>Low</option><option>Medium</option><option>High</option></select></div>
   </div>
-  <textarea class="in" id="n14" rows="2" placeholder="Aging details or notes..."></textarea>
-  <textarea class="in" id="n6" rows="3" placeholder="Detailed description of open audit issues and associated risks..."></textarea>
-  <textarea class="in" id="n11" rows="3" placeholder="Actionable recommendations made by internal audit..." style="margin-top:0"></textarea>
-  <textarea class="in" id="n12" rows="2" placeholder="Internal Audit Department remarks or management responses..." style="margin-top:0"></textarea>
+  <textarea class="in" id="n14" rows="2" placeholder="Aging (0 Months)"></textarea>
+  <textarea class="in" id="n6" rows="3" placeholder="Detailed description of open audit issues"></textarea>
+  <textarea class="in" id="n11" rows="3" placeholder="Recommendation by IAD" style="margin-top:0"></textarea>
+  <textarea class="in" id="n12" rows="2" placeholder="IAD remarks" style="margin-top:0"></textarea>
 </div>
 <div class="row" style="margin-top:20px"><button class="btn" onclick="hide('addM')">Cancel</button><button class="btn p" onclick="add()">Save finding record</button></div>
 </div></div>
