@@ -408,7 +408,26 @@ function logout(){try{sessionStorage.removeItem("iar_user")}catch(x){}
  var a=MS&&MS.getAllAccounts()[0];try{if(a)MS.logoutPopup({account:a})}catch(x){}
  U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
 function fillDeps(){
- var l=["Legal & Company Secretarial Department (LCS)","Corporate Strategy Department (CSD)","Corporate Security Management Unit (CSM)","Corporate Administration Unit (CAU)","Finance Department (FD)","Support Services Department (SSD)","Corporate Communications Unit (CCU)","Information Technology Unit (ITU)","People Development & Capabilities Unit (PDC)","Human Resources Unit (HRU)","Contract & Procurement Management Department (CPM)","Risk, Compliance & Integrity Management Department (RCI)","Investment Department (ID)","Property Development Department (PDD)","Internal Audit Department (IAD)","PHB Asset Management (PAM)","PHB Property Management (PPM)","PHB Property Development (PPD)"];
+
+var l = [
+"Risk, Compliance & Integrity Management Department (RCIMD)",
+"Finance Department (FD)",
+"Human Resource Department (HRD)",
+"Internal Audit Department (IAD)",
+"Investment Department (ID)",
+"Learning & Development Department (LDD)",
+"Corporate Administration Department (CAD)",
+"Contract Management Department (CMD)",
+"Procurement & Vendor Management Department (PVMD)",
+"Information Technology Department (ITD)",
+"Property Development Department (PDD)",
+"PHB Asset Management (PAM)",
+"PHB Facility Management (PFM)",
+"PHB Property Ventures (PPV)",
+"Portfolio Management Department (PMD)",
+"Research Unit (RU)"
+];
+
  if(isSet(CFG.DEPARTMENTS))l=String(CFG.DEPARTMENTS).split(",").map(function(x){return x.trim()}).filter(Boolean);
  D.forEach(function(r){if(r.dep&&r.dep!=="-"&&l.indexOf(r.dep)<0)l.push(r.dep)});
  g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join("");
