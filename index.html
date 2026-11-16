@@ -104,8 +104,9 @@ body.auth #lgn{display:none!important}
   <input class="in" id="n4" placeholder="Responsible party"><input class="in" id="n5" placeholder="Deadline text (e.g. Quarter 4 2026)"></div>
 <input class="in" id="n13" type="email" placeholder="Responsible person email (for reminders / approvals)" style="margin-top:8px"><div class="row"><div><label style="font-size:11px;color:var(--mut)">Due date (used by the overdue check)</label><input class="in" type="date" id="n7"></div><div><label style="font-size:11px;color:var(--mut)">Status</label><select class="in" id="n8"><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select></div></div>
 <div class="row"><div><label style="font-size:11px;color:var(--mut)">Likelihood</label><select class="in" id="n9"><option>Low</option><option>Medium</option><option>High</option></select></div><div><label style="font-size:11px;color:var(--mut)">Impact</label><select class="in" id="n10"><option>Low</option><option>Medium</option><option>High</option></select></div></div>
-<textarea class="in" id="n6" rows="3" placeholder="Aging" style="margin-top:8px"></textarea>
-<textarea class="in" id="n6" rows="3" placeholder="Details of open issues and risk" style="margin-top:8px"></textarea>
+<textarea class="in" id="n14" rows="3" placeholder="Aging"></textarea>
+
+<textarea class="in" id="n6" rows="3" placeholder="Details of open issues and risk"></textarea>
 <textarea class="in" id="n11" rows="3" placeholder="Recommendations made" style="margin-top:8px"></textarea>
 <textarea class="in" id="n12" rows="2" placeholder="IAD remarks" style="margin-top:8px"></textarea>
 <div class="row"><button class="btn" onclick="hide('addM')">Cancel</button><button class="btn p" onclick="add()">Save finding</button></div></div></div>
@@ -272,7 +273,7 @@ if(r.rv==="Finalised" && U.admin){
  if(r.ap==="Boss Approval"&&boss)h+=b("cl_boss","✓ Approve and close","p")+b("cl_back","Reject");
  if(!h&&!st.length)return"";
  return"<div class='adm'><b>Workflow</b><div style='margin:4px 0;font-size:12px'>"+(st.join(" · ")||"No active workflow")+"</div><div class='row'>"+h+"</div></div>"}
-async function wf(a){var r=cur(),who=U.name,T={
+async function wf(a){var r=cur_(),who=U.name,T={
 
 submit_review:[
    "rv",
@@ -561,9 +562,17 @@ function op(id,t){cur=id;tab=t||"d";dr();show("ov");}
 function cl(){hide("ov");cur=null}
 function tb(t){tab=t;dr()}
 function dr(){
- var r=cur_();if(!r)return;var ad=P==="ADMIN",body="",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
- async (params) => {
-  {
+function dr(){
+
+ var r=cur_();
+ if(!r)return;
+
+ var ad=P==="ADMIN",
+ body="",
+ o=g("dr").querySelector(".db"),
+ y=o?o.scrollTop:0;
+
+
    body='<div class="g4"><div class="f"><small>Dept</small>'+e(r.dep)+'</div><div class="f"><small>Owner</small>'+e(r.own)+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Aging</small>'+e(r.ag)+'</div></div>'
    +'<div class="row" style="align-items:center"><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(ad||r.st!=="Closed"?"":"disabled")+' onchange="ss(this.value)" style="max-width:170px;flex:none">'+(ad?["Open","In Progress","Extended","Overdue","Closed"]:(["Open","In Progress"].indexOf(r.st)<0?[r.st,"Open","In Progress"]:["Open","In Progress"])).map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>'
    +wfPanel(r)+'<h4>Details of open issues and risk</h4><div class="box">'+e(r.iss)+'</div><h4>Recommendations made</h4><div class="box">'+e(r.rec)+'</div><h4>IAD remarks</h4><div class="box" style="font-style:italic">'+e(r.rm)+'</div>';
@@ -585,7 +594,7 @@ function dr(){
   +(ad?'<div style="padding:12px 22px;border-top:1px solid var(--bd);display:flex;justify-content:space-between"><button class="btn" onclick="del()" style="color:#dc2626">Delete record</button><button class="btn p" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit finding</button></div>':"");
   var n=g("dr").querySelector(".db");if(n)n.scrollTop=y;
  }
- }
+ 
 function upd(m){sv();rd();dr();toast(m);spUpdate(cur_())}
 function ss(v){var r=cur_();if(!r)return;if(!U.admin&&["Open","In Progress"].indexOf(v)<0){toast("Only IAD can set this status. Use Submit for closure approval to close.");dr();return}
  r.st=v;upd("Status set to "+v);if(!U.admin)notifyPic(r,"Status changed to "+v)}
