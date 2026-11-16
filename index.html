@@ -582,7 +582,7 @@ function dr(){
    }
    if(ad)body+='<h4>Email respective person</h4><div class="row"><input class="in" id="em" value="'+e(r.oe||"")+'" placeholder="recipient@company.com"><button class="btn p" style="flex:none" onclick="mail()">Send email</button></div>';
    else body+='<h4>Email IA PIC</h4><div class="row"><button class="btn p" onclick="mailPic()">Send latest update to IA PIC</button></div>';
-  }{
+
    body+='<h4>Monthly status log</h4><div class="tl">'+(r.lg.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")||'<div style="color:var(--mut)">No updates yet.</div>')+'</div>'
    +'<h4>Add monthly update</h4><div class="row"><select class="in" id="lm">'+["Nov 2026","Dec 2026","Jan 2027","Feb 2027"].map(function(m){return'<option>'+m+'</option>'}).join("")+'</select><select class="in" id="ls">'+["On Track","In Progress","Delayed","Completed"].map(function(m){return'<option>'+m+'</option>'}).join("")+'</select></div><div class="row"><input class="in" id="la" value="'+e(U?U.name:"")+'"></div><div class="row"><textarea class="in" id="ln" rows="3" placeholder="Progress narrative..."></textarea></div><div class="row"><input type="file" id="lf" class="in"></div><div class="row"><button class="btn p" onclick="lg()">Post update + evidence</button></div>';
   }{
