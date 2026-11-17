@@ -229,7 +229,7 @@ function wfPanel(r){
   if(r.rv==="Draft")h+=b("submit_review","📤 Submit For Review","p");
   if(r.rv=="Checker Review"&&U.admin)h+=b("rv_ok","✓ Checker Approves, Send To Head IAD","p");
   if(r.rv==="Pending Head IAD Approval"&&boss)h+=b("rvb_ok","✓ Approve and Finalise","p");
-  
+  if(r.rv==="Finalised"&&U.admin)h+=b("issue_dept","📨 Issue To Department","p");
   if(!r.ap&&r.st!=="Closed"&&(!r.rv||r.rv==="Approved"))h+=b("cl_sub","Submit for closure approval","p");
   if(r.ap==="IA Review"&&U.admin)h+=b("cl_ia","✓ IA recommends closure (send to boss)","p");
   if(r.ap==="Boss Approval"&&boss)h+=b("cl_boss","✓ Approve closure & close","p");
@@ -239,42 +239,30 @@ function wfPanel(r){
 
 async function wf(a){var r=cur_(),who=U.name,T={
  submit_review:["rv","Checker Review",CFG.IA_PIC_EMAIL,"New finding submitted for review by "+who],
-rvb_ok:[
- "rv",
- "Issued To Department",
- r.oe,
- "Finding approved and issued to department"
-]
-
+ rvb_ok:["rv","Finalised","","Finding approved by Head IAD"],
+ issue_dept:["rv","Issued To Department",r.oe,"Finding issued to department"],
  cl_sub:["ap","IA Review",CFG.IA_PIC_EMAIL,"Closure approval requested by "+who+" ("+r.dep+")"],
  cl_ia:["ap","Boss Approval",CFG.IA_BOSS_EMAIL,"IA recommends closure, awaiting your final approval"],
  cl_boss:["ap","",r.oe,"Closure approved by Boss, finding closed"]
 }[a];
 if(a==="cl_sub"&&!(r.at||[]).length){toast("Upload supporting evidence before submitting for closure");return}
 r[T[0]]=T[1];if(a==="cl_boss"){r.st="Closed";r.hist=true}
-r.wf.unshift({
-   stage:r.rv,
-   action:T[3],
-   by:who,
-   date:new Date().toDateString()
-});
+r.lg.unshift({m:"Workflow",s:"Workflow",n:T[3],a:who,d:new Date().toDateString()});
 await spUpdate(r);
-if(a==="rvb_ok"){
-
+if(a==="issue_dept")
+{
    await callFlow(
       "ISSUE_DEPARTMENT",
       {
          auditId:r.spId,
          auditRef:r.id,
          email:r.oe,
-         owner:r.own,
          title:r.t,
+         owner:r.own,
          department:r.dep
       }
    );
-
 }
-
 rd();dr();var to=T[2];
 if(isSet(to)&&String(to).indexOf("@")>0)notify(to,"[Audit "+r.id+"] "+T[3],"<p>"+e(T[3])+"</p><p><b>"+e(r.t)+"</b><br>Dept: "+e(r.dep)+"<br>Due: "+e(r.due||r.dl)+"</p>").then(function(){toast("Saved & notified "+to)}).catch(function(){});
 }
