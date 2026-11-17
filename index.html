@@ -210,7 +210,7 @@ var CFG={
  F_NOTIFY:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/23/workflows/ac4aa82fb5bc4833affc95635d7f3f50/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=E4pgI8G78TqLb-FQMNE3ULXJnW1yOtVN6ftmfGVbaEU",
  F_EXTENSION_ALERT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/extension_teams_flow_placeholder/triggers/manual/paths/invoke?api-version=1",
  IA_PIC_EMAIL:"nurhaliza@phb.com.my",
- IA_BOSS_EMAIL:"nurathiraashikin@phb.com.my",
+ IA_BOSS_EMAIL:"nurhaliza@phb.com.my",
  FLOW_AUTH:"url",
  F_ISSUE_DEPARTMENT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/09/workflows/628bf8070e9a41d8a83a5ca1e12af280/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3b6DPv8WfN9LFY9DQqv6rTtX5uLPcqovRV_1AdS9ihE"
 };
@@ -231,7 +231,10 @@ function wfPanel(r){
  // --- New finding workflow (IAD only) ---
  if(r.rv==="Draft"&&U.admin)h+=b("submit_review","📤 Submit for review","p");
  if(r.rv==="Checker Review"&&U.admin)h+=b("rv_ok","✓ Checker approves, email Head IAD","p");
- if(r.rv==="Pending Head IAD Approval"&&boss)h+=b("rvb_ok","✓ Head IAD approves and issues to department","p");
+//  if(r.rv==="Pending Head IAD Approval"&&boss)
+//     h+=b("rvb_ok","✓ Head IAD approves and issues to department","p");
+ if(r.rv==="Pending Head IAD Approval"&&U.admin)
+    h+=b("rvb_ok","✓ Head IAD approves and issues to department","p");
  if((r.rv==="Issued To Department"||r.rv==="Approved")&&U.admin)h+=b("reissue","📨 Re-Issue To Department","p");
  // --- Closure workflow ---
  var canClosure=r.st!=="Closed"&&(r.rv==="Issued To Department"||r.rv==="Approved");
@@ -513,14 +516,26 @@ var locked =
   // Monthly log (admin read-only)
   body+='<h4>Monthly status log (submitted by department)</h4><div class="tl">'+(uLogs.length?uLogs.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div style="white-space:pre-wrap">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">No department updates yet.</div>')+'</div>';
   // Workflow history (admin)
-  if(adminLogs.length)body+='<details style="margin-top:14px"><summary style="cursor:pointer;color:var(--mut);font-weight:600">Workflow history</summary><div class="tl" style="margin-top:8px">'+adminLogs.map(function(l){return'<div><b>'+e(l.m)+'</b><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")+'</div></details>';
+  if(adminLogs.length)body+='<details style="margin-top:14px"><summary style="cursor:pointer;color:var(--mut);font-weight:600">Workflow history</summary><div class="tl" style="margin-top:8px">'+adminLogs
+.sort(function(a,b){
+   return new Date(a.d) - new Date(b.d);
+})
+.map(function(l){
+   return '<div><b>'+e(l.m)+'</b><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'
+}).join("")+'</div></details>';
   // Email
   body+='<h4>Email respective person</h4><div class="row"><input class="in" id="em" value="'+e(r.oe||"")+'" placeholder="recipient@company.com"><button class="btn p" style="flex:none" onclick="mail()">Send email</button></div>';
  }
  // ── User-only sections ──
  if(!ad){
   // Workflow history (read-only for user)
-  body+='<details style="margin-top:14px"><summary style="cursor:pointer;color:var(--mut);font-weight:600">Workflow history</summary><div class="tl" style="margin-top:8px">'+adminLogs.map(function(l){return'<div><b>'+e(l.m)+'</b><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")+'</div></details>';
+  body+='<details style="margin-top:14px"><summary style="cursor:pointer;color:var(--mut);font-weight:600">Workflow history</summary><div class="tl" style="margin-top:8px">'+adminLogs
+.sort(function(a,b){
+   return new Date(a.d) - new Date(b.d);
+})
+.map(function(l){
+   return '<div><b>'+e(l.m)+'</b><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'
+}).join("")+'</div></details>';
   // Monthly status log
   body+='<h4>Monthly status log</h4><div class="tl">'+(uLogs.length?uLogs.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div style="white-space:pre-wrap">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">No updates yet.</div>')+'</div>';
   // Add monthly update
