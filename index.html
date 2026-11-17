@@ -224,9 +224,9 @@ function live(){return true}
 function sx(v){v=String(v==null?"":v);return/^[=+\-@\t\r]/.test(v)?"'"+v:v}
 function normStatus(v){var t=String(v||"").toLowerCase();if(/clos|complet|resolv|done|settled/.test(t))return"Closed";if(/overdue|late/.test(t))return"Overdue";if(/extend/.test(t))return"Extended";if(/progress|ongoing|partial/.test(t))return"In Progress";return"Open"}
 async function notify(to,subject,html){var p={toEmail:to,subject:subject,body:html,sentBy:U&&U.email};if(isSet(CFG.F_NOTIFY))return callFlow("NOTIFY",p);if(isSet(CFG.F_SEND_EMAIL))return callFlow("SEND_EMAIL",p);throw new Error("F_NOTIFY: please input the api")}
-function stamp(){return new Date().toLocaleString("en-MY",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}) }
+function stamp(){return new Date().toLocaleString("en-MY",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
 
-/* ── WORKFLOW PANEL: ADMIN ONLY (HIDDEN FOR DEPARTMENT USERS) ── */
+/* ── WORKFLOW PANEL: ADMIN / IAD / BOSS CLOSURE REVIEW ── */
 function wfPanel(r){
  if(!U||!U.admin)return"";
  var boss=String(U.email||"").trim().toLowerCase()===String(CFG.IA_BOSS_EMAIL||"").trim().toLowerCase(),h="",st=[];
@@ -250,12 +250,13 @@ function wfPanel(r){
  if(r.rv==="Issued To Department"||r.rv==="Approved"){
   h+=b("reissue","📨 Re-Issue To Department","");
  }
+ // Closure Review Actions for IAD & Boss
  if(r.ap==="IA Review")h+=b("cl_ia","✓ IAD recommends closure, email Head IAD","p")+b("cl_back","Return to department");
  if(r.ap==="Boss Approval"&&(boss||U.admin))h+=b("cl_boss","✓ Approve and close","p")+b("cl_back","Reject");
 
  if(!h&&!st.length)return"";
  var stHtml=st.length?'<div style="color:var(--mut);font-size:12px;margin:4px 0 6px">'+e(st.join(" · "))+'</div>':"";
- return"<div class='adm'><b>Workflow status</b>"+stHtml+"<div style='display:flex;flex-wrap:wrap;gap:6px'>"+h+"</div></div>";
+ return"<div class='adm'><b>Workflow status &amp; Closure Review</b>"+stHtml+"<div style='display:flex;flex-wrap:wrap;gap:6px'>"+h+"</div></div>";
 }
 
 async function wf(a){
@@ -412,23 +413,33 @@ function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x
 async function saveFile(name,data){
  var b=data instanceof Blob?data:new Blob([data]),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Saved "+name)}
 
-function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,OwnerEmail:r.oe,Deadline:r.dl,DueDate:r.due,Status:r.st,WorkflowStage:r.rv||"In Progress",Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
+function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,OwnerEmail:r.oe,Deadline:r.dl,DueDate:r.due,Status:r.st,WorkflowStage:r.rv||"In Progress",ApprovalStage:r.ap||"-",Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(function(r){return!isH(r)}).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Active");
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(isH).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Historical");
  saveFile("audit_register_"+new Date().toISOString().slice(0,10)+".xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}))}
 
+/* ── EXPORT FULL DETAILS (FINDING + LOGS + HISTORY + EVIDENCE) TO EXCEL ── */
 function dlSingleXl(){
  var r=cur_();if(!r)return;
  var W=XLSX.utils.book_new();
  var mainRow=[{
   AuditID:sx(r.id),Title:sx(r.t),Cycle:sx(r.cy),Department:sx(r.dep),Owner:sx(r.own),OwnerEmail:sx(r.oe),
   Deadline:sx(r.dl),DueDate:sx(r.due),Status:sx(r.st),WorkflowStage:sx(r.rv||"In Progress"),
-  Likelihood:sx(r.lk),Impact:sx(r.im),OpenIssues:sx(r.iss),Recommendations:sx(r.rec),IADRemarks:sx(r.rm)
+  ApprovalStage:sx(r.ap||"-"),Likelihood:sx(r.lk),Impact:sx(r.im),
+  OpenIssues:sx(r.iss),Recommendations:sx(r.rec),IADRemarks:sx(r.rm)
  }];
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(mainRow),"Finding Details");
- var logs=(r.lg||[]).map(function(l){return{Type:sx(l.m),Status:sx(l.s),Narrative:sx(l.n),By:sx(l.a),Date:sx(l.d)}});
- if(logs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(logs),"Logs & History");
- saveFile(r.id+"_AuditFinding.xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}));
+ 
+ var uLogs=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})).map(function(l){return{Type:sx(l.m),Status:sx(l.s),Narrative:sx(l.n),SubmittedBy:sx(l.a),Date:sx(l.d)}});
+ if(uLogs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(uLogs),"Monthly Status Logs");
+
+ var adLogs=chronoLogs((r.lg||[]).filter(function(l){return/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})).map(function(l){return{Type:sx(l.m),Details:sx(l.n),ActionBy:sx(l.a),Date:sx(l.d)}});
+ if(adLogs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(adLogs),"Workflow History");
+
+ var atts=(r.at||[]).map(function(a){return{FileName:sx(a.n),Source:sx(a.ms),Size:sx(a.sz),URL:sx(a.url||"-"),Date:sx(a.d)}});
+ if(atts.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(atts),"Evidence & Links");
+
+ saveFile(r.id+"_CompleteAuditFindingDetails.xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}));
 }
 
 async function callFlow(n,p){var u=CFG["F_"+n];if(!isSet(u))throw new Error("F_"+n+": please input the api");
@@ -478,7 +489,6 @@ async function spCreate(r){
 
 async function spUpdate(r){if(!r||!r.spId)return false;try{await callFlow("UPDATE_AUDIT",payload(r,"update"));return true}catch(x){toast("Update failed: "+x.message);return false}}
 
-/* --- FIXED: spDelete sends full payload matching CREATE/UPDATE --- */
 async function spDelete(r){
  if(!r||!r.spId)return true;
  try{
@@ -658,8 +668,9 @@ async function dl(i){var a=cur_().at[i],f=a.k&&F[a.k];if(a.url&&!a.k){window.ope
 function da(i){cur_().at.splice(i,1);upd("Attachment removed")}
 async function del(){var r=cur_();if(!r||!confirm("Are you sure you want to delete this record?"))return;if(!(await spDelete(r)))return;D=D.filter(function(x){return x!==r});cl();rd();toast("Record deleted")}
 
+/* ── COMPREHENSIVE PDF REPORT CONTAINING ALL DETAILS ── */
 function dlpdf(){
- var r=cur_();if(!r)return;toast("Generating PDF…");
+ var r=cur_();if(!r)return;toast("Generating complete finding PDF report…");
  var jsPDF=window.jspdf.jsPDF,doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"}),y=20;
  doc.setFontSize(16);doc.setFont("helvetica","bold");doc.text("Audit Finding Report: "+r.id,14,y);y+=9;
  doc.setFontSize(10);doc.setFont("helvetica","normal");
@@ -667,7 +678,7 @@ function dlpdf(){
   "Title: "+r.t,
   "Cycle: "+r.cy+"   |   Department: "+r.dep,
   "Owner: "+r.own+" ("+(r.oe||"-")+")",
-  "Status: "+r.st+"   |   Workflow Stage: "+(r.rv||"In Progress"),
+  "Status: "+r.st+"   |   Workflow Stage: "+(r.rv||"In Progress")+(r.ap?" | Closure Approval: "+r.ap:""),
   "Risk: "+r.lk+" Likelihood / "+r.im+" Impact",
   "Deadline: "+r.dl+"   |   Target Due Date: "+(r.due||"-")
  ];
@@ -684,10 +695,19 @@ function dlpdf(){
  sec("Details of Open Issues & Risk:",r.iss);
  sec("Recommendations Made:",r.rec);
  sec("IAD Remarks:",r.rm);
- if(r.lg&&r.lg.length){
-  sec("Workflow & Monthly Status Log:",chronoLogs(r.lg).map(function(l){return"["+l.d+"] "+l.m+" ("+l.s+") - "+l.a+": "+l.n}).join("\n"));
+
+ var uLogs=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))}));
+ if(uLogs.length){
+  sec("Monthly Status Logs:",uLogs.map(function(l){return"["+l.d+"] "+l.m+" ("+l.s+") - "+l.a+": "+l.n}).join("\n"));
  }
- doc.save(r.id+"_AuditFindingReport.pdf");
+ var adLogs=chronoLogs((r.lg||[]).filter(function(l){return/^(Workflow|Extension|IAD)/i.test(String(l.m||""))}));
+ if(adLogs.length){
+  sec("Workflow History:",adLogs.map(function(l){return"["+l.d+"] "+l.m+" - "+l.a+": "+l.n}).join("\n"));
+ }
+ if(r.at&&r.at.length){
+  sec("Attached Evidence & Links:",r.at.map(function(a){return"• "+a.n+" ("+a.ms+": "+(a.url||a.sz)+")"}).join("\n"));
+ }
+ doc.save(r.id+"_CompleteAuditFindingReport.pdf");
 }
 
 var xlRows=[];
