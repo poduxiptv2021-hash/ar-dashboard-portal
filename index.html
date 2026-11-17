@@ -224,7 +224,7 @@ function normStatus(v){var t=String(v||"").toLowerCase();if(/clos|complet|resolv
 async function notify(to,subject,html){var p={toEmail:to,subject:subject,body:html,sentBy:U&&U.email};if(isSet(CFG.F_NOTIFY))return callFlow("NOTIFY",p);if(isSet(CFG.F_SEND_EMAIL))return callFlow("SEND_EMAIL",p);throw new Error("F_NOTIFY: please input the api")}
 
 function wfPanel(r){
- var boss=!!U&&(U.email===String(CFG.IA_BOSS_EMAIL).toLowerCase()),h="",st=[];
+ var boss=!!U&&(String(U.email||"").trim().toLowerCase()===String(CFG.IA_BOSS_EMAIL||"").trim().toLowerCase()),h="",st=[];
  if(r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")st.push("Finding: "+r.rv);
  if(r.ap)st.push("Closure: "+r.ap);
  var b=function(a,l,c){return"<button class='btn "+(c||"")+"' style='margin:3px' onclick=\"wf('"+a+"')\">"+l+"</button>"};
@@ -232,6 +232,7 @@ function wfPanel(r){
  if(r.rv==="Draft"&&U.admin)h+=b("submit_review","📤 Submit for review","p");
  if(r.rv==="Checker Review"&&U.admin)h+=b("rv_ok","✓ Checker approves, email Head IAD","p");
  if(r.rv==="Pending Head IAD Approval"&&boss)h+=b("rvb_ok","✓ Head IAD approves and issues to department","p");
+ if((r.rv==="Issued To Department"||r.rv==="Approved")&&U.admin)h+=b("reissue","📨 Re-Issue To Department","p");
  // --- Closure workflow ---
  var canClosure=r.st!=="Closed"&&(r.rv==="Issued To Department"||r.rv==="Approved");
  if(!r.ap&&canClosure&&!U.admin)h+=b("cl_sub","Submit for closure","p");
@@ -348,11 +349,6 @@ async function mail(){if(!U.admin){toast("Only IAD can email other recipients");
 function vis(r){
  if(!U)return false;
  if(U.admin)return true;
- h += b(
- "reissue",
- "📨 Re-Issue To Department",
- "p"
-);
  var issued=r.rv==="Issued To Department"||r.rv==="Approved";
  if(!issued)return false;
  var depOk=String(r.dep||"").trim().toLowerCase()===String(U.dep||"").trim().toLowerCase();
