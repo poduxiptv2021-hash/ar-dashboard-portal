@@ -249,7 +249,20 @@ if(a==="cl_sub"&&!(r.at||[]).length){toast("Upload supporting evidence before su
 r[T[0]]=T[1];if(a==="cl_boss"){r.st="Closed";r.hist=true}
 r.lg.unshift({m:"Workflow",s:"Workflow",n:T[3],a:who,d:new Date().toDateString()});
 await spUpdate(r);
-if(a==="issue_dept"||a==="rvb_ok")await callFlow("ISSUE_DEPARTMENT",{auditId:r.spId,auditRef:r.id,email:r.oe,title:r.t});
+if(a==="issue_dept")
+{
+   await callFlow(
+      "ISSUE_DEPARTMENT",
+      {
+         auditId:r.spId,
+         auditRef:r.id,
+         email:r.oe,
+         title:r.t,
+         owner:r.own,
+         department:r.dep
+      }
+   );
+}
 rd();dr();var to=T[2];
 if(isSet(to)&&String(to).indexOf("@")>0)notify(to,"[Audit "+r.id+"] "+T[3],"<p>"+e(T[3])+"</p><p><b>"+e(r.t)+"</b><br>Dept: "+e(r.dep)+"<br>Due: "+e(r.due||r.dl)+"</p>").then(function(){toast("Saved & notified "+to)}).catch(function(){});
 }
@@ -312,12 +325,19 @@ function isH(r){return!!r.hist||r.st==="Closed"}
 
 /* --- FIXED VISIBILITY CHECK FOR USERS --- */
 function vis(r){
-  if(!U)return false;
-  if(U.admin)return true;
-  // Matches if the finding's Owner Email matches Haliza's logged-in email
-  return r.oe && r.oe.toLowerCase() === U.email.toLowerCase();
-}
 
+   if(!U)
+      return false;
+
+   if(U.admin)
+      return true;
+
+   return (
+      r.rv === "Issued To Department"
+      &&
+      r.dep === U.dep
+   );
+}
 function V(){return D.filter(vis)}
 function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x=String(r.id).match(/^AUD-(\d{4})-(\d+)$/);if(x&&+x[1]===y&&+x[2]>m)m=+x[2]});return"AUD-"+y+"-"+("000"+(m+1)).slice(-3)}
 
