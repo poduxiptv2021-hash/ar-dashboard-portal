@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><title>Internal Audit Register Portal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.phb.com.my; connect-src 'self' https://graph.microsoft.com https://login.microsoftonline.com https://*.api.powerplatform.com; frame-src https://login.microsoftonline.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://graph.microsoft.com https://login.microsoftonline.com https://*.api.powerplatform.com; frame-src https://login.microsoftonline.com; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="same-origin">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -18,6 +18,7 @@ button,input,select,textarea{font:inherit;color:var(--tx)}
 .wrap{max-width:1240px;margin:0 auto}
 .hrow{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
 .logo{display:flex;gap:12px;align-items:center}
+.mark{width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);display:grid;place-items:center;font-size:21px}
 .logo h1{margin:0;font-size:19px;font-weight:700;letter-spacing:-.2px}.logo p{margin:2px 0 0;font-size:12px;opacity:.7}
 .btn{border:1px solid var(--bd);background:var(--card);border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:13px}
 .btn.p{background:var(--pri);border-color:var(--pri);color:#fff}.btn.h{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff}
@@ -71,15 +72,9 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 body.auth #lgn{display:none!important}
 .stage-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.18);margin-left:6px;font-weight:600}
 </style></head><body>
-
 <div id="lgn"><div class="lc">
-<div style="text-align:center;margin-bottom:20px">
-  <div style="margin:0 auto 12px;background:#ffffff;border:1px solid var(--bd);border-radius:14px;padding:10px 18px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
-    <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:38px;width:auto;object-fit:contain;display:block;">
-  </div>
-  <h2 style="margin:0;font-size:20px">Internal Audit Register</h2>
-  <p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p>
-</div>
+<div style="text-align:center;margin-bottom:20px"><div class="mark" style="margin:0 auto 12px;background:#4f46e5;color:#fff">🛡</div><h2 style="margin:0;font-size:20px">Internal Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p></div>
+<input class="in" id="ldp" list="dpl" placeholder="Enter department name (e.g., Finance, ITD, HRD)" style="margin-top:8px"><datalist id="dpl"></datalist>
 <button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in with Microsoft</button>
 <div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
 <div style="font-size:12px;color:var(--mut);margin-top:6px">IAD access is granted only to <b>Admin</b> users listed in <b>AuditUserDirectory</b>. All other staff sign in under their own department.</div>
@@ -87,12 +82,7 @@ body.auth #lgn{display:none!important}
 </div></div>
 
 <div class="hero"><div class="wrap hrow">
-<div class="logo">
-  <div style="background:#ffffff;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:6px 12px;display:grid;place-items:center;">
-    <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:28px;width:auto;object-fit:contain;display:block;">
-  </div>
-  <div><h1>Internal Audit Register Portal</h1><p>Internal Audit Department · Risk, Tracking &amp; Governance · Microsoft 365 access</p></div>
-</div>
+<div class="logo"><div class="mark">🛡</div><div><h1>Internal Audit Register Portal</h1><p>Internal Audit Department · Risk, Tracking &amp; Governance · Microsoft 365 access</p></div></div>
 <div class="hrow" style="gap:10px"><div class="chip" id="uchip"></div>
 <button class="btn h" id="addB" onclick="fm()">+ Add finding</button><button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button><button class="btn h" onclick="reload()">⟳ Refresh</button><button class="btn h" onclick="rptPdf()">Report PDF</button><button class="btn h" onclick="xl()">Export Excel</button><button class="btn h" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn h" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
 <div class="main">
@@ -212,7 +202,7 @@ var CFG={
  LIST_AUDIT_ID:"8448019c-4c4f-413e-8dad-6a214f36dd8b",
  LIST_USERS_ID:"cfe4c25a-2467-4e05-a2e6-6bed605eaec3",
  DRIVE_ID:"please input the api",
- F_GET_USER_ROLE:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/05/workflows/088bedabef5640dc9c151f0e500acf8c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=ayzMRiRCIcZWu5vHiq33U6g9vvWUT6Mu3i2K2hbTJOw",
+ F_GET_USER_ROLE:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/24/workflows/b4f52ac7928e47599611f09cb1abe4b6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=asExxSEkAmnhCdivHC0GNhqrnSjpu_E4gwCZj0DeBO4",
  F_SEND_EMAIL:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/26/workflows/a7eda6e000234d6cbf536d140e767c70/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=_BQmBFRRpcoQ1yI5Pb436FEcWLFk48q_iEdzymWKnZg",
  F_CREATE_AUDIT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/19/workflows/7a3ac887fec64e5a8d91b2be22b1a32f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=L7O2irMPKHRsEownjU0aZCI1MMLuV4gQYm1JFJ_tNrI",
  F_UPDATE_AUDIT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/00/workflows/c9b80fe0cc4345cd81518bb6cc0625a0/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=lRBT0vMgMOlF3eR7TGQcDR_eY7cNp2E9HgMAWcQebtM",
@@ -260,6 +250,7 @@ function wfPanel(r){
  if(r.rv==="Issued To Department"||r.rv==="Approved"){
   h+=b("reissue","📨 Re-Issue To Department","");
  }
+ // Closure Review Actions for IAD & Boss
  if(r.ap==="IA Review")h+=b("cl_ia","✓ IAD recommends closure, email Head IAD","p")+b("cl_back","Return to department");
  if(r.ap==="Boss Approval"&&(boss||U.admin))h+=b("cl_boss","✓ Approve and close","p")+b("cl_back","Reject");
 
@@ -533,86 +524,28 @@ async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required"
  }
  hide("addM");rd();toast(isNew?"Finding saved (In Progress). Submit for IAD Check when ready.":"Finding updated")}
 
-async function getRole(email){
-  var r = await callFlow("GET_USER_ROLE", {email: email});
-  
-  // Safely extract role whether it's a string or a SharePoint/OData object
-  var rawRole = r.role || r.Role || r.body?.role || "";
-  var role = "";
-  if (typeof rawRole === "object" && rawRole !== null) {
-    role = rawRole.Value || rawRole.value || rawRole.DisplayName || "";
-  } else {
-    role = String(rawRole);
-  }
-  
-  // Safely extract active status
-  var a = r.active !== undefined ? r.active : (r.Active !== undefined ? r.Active : true);
-  if (typeof a === "object" && a !== null) a = a.Value || a.value;
-  
-  // Safely extract department and name
-  var rawDep = r.department || r.Department || "";
-  var dep = typeof rawDep === "object" && rawDep !== null ? (rawDep.Value || rawDep.value || "") : String(rawDep);
+async function getRole(email){var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
 
-  var rawName = r.name || r.Title || "";
-  var name = typeof rawName === "object" && rawName !== null ? (rawName.Value || rawName.value || "") : String(rawName);
-
-  return {
-    found: !!role,
-    role: role,
-    active: a === undefined || a === true || a === "true" || a === "Yes" || a === 1,
-    name: name,
-    dep: dep
-  };
-}
-
-async function login(){
-  var er=g("lErr");er.textContent="";var m=missing();if(m.length){er.textContent="Please input configuration keys for: "+m.join(", ");return}
-  try{
-    await getToken();
-    var a=MS.getAllAccounts()[0],email=(a.username||"").toLowerCase(),name=a.name||email,dep="";
-    try{
-      var me=await graph("/me?$select=displayName,department,mail");
-      name=me.displayName||name;
-      dep=me.department||"";
-    }catch(x){}
-    
-    var ro=await getRole(email),isA=ro.found&&String(ro.role).toLowerCase()==="admin";
-    if(isA&&!ro.active){er.textContent="Your IAD admin account is inactive.";return}
-    
-    dep=ro.dep||dep;
-    if(!isA&&!dep){
-      dep="General Department";
-    }
-    
-    U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};
-    await enter();
-  }catch(x){
-    er.textContent=x.message||String(x);
-  }
-}
+async function login(){var er=g("lErr");er.textContent="";var m=missing();if(m.length){er.textContent="Please input configuration keys for: "+m.join(", ");return}
+ try{await getToken();var a=MS.getAllAccounts()[0],email=(a.username||"").toLowerCase(),name=a.name||email,dep=g("ldp").value.trim();
+  try{var me=await graph("/me?$select=displayName,department,mail");name=me.displayName||name;dep=dep||me.department||""}catch(x){}
+  var ro=await getRole(email),isA=ro.found&&String(ro.role).toLowerCase()==="admin";
+  if(isA&&!ro.active){er.textContent="Your IAD admin account is inactive.";return}
+  dep=ro.dep||dep;if(!isA&&!dep){er.textContent="Please enter your department to continue.";return}
+  U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};await enter()}catch(x){er.textContent=x.message||String(x)}}
 
 async function enter(){document.body.classList.add("auth");g("lgn").style.display="none";
  g("uchip").innerHTML="<b>"+e(U.name)+"</b><br><span style='opacity:.75'>"+(U.admin?"IAD Admin":"Department · "+e(U.dep))+"</span>";
  setP(U.admin?"ADMIN":"PIC");try{await spLoad()}catch(x){D=[];toast("SharePoint load warning: "+x.message)}
  fillDeps();rd();toast("Signed in successfully")}
 
-function logout(){
-  U=null;D=[];cur=null;
-  document.body.classList.remove("auth");
-  hide("ov");
-  g("lgn").style.display="grid";
-  var ldp=g("ldp");
-  if(ldp) ldp.value="";
-  rd();
-}
+function logout(){U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
 
 function fillDeps(){
-  var l=["Risk, Compliance & Integrity Management Department (RCIMD)","Finance Department (FD)","Human Resource Department (HRD)","Internal Audit Department (IAD)","Investment Department (ID)","Learning & Development Department (LDD)","Corporate Administration Department (CAD)","Contract Management Department (CMD)","Procurement & Vendor Management Department (PVMD)","Information Technology Department (ITD)","Property Development Department (PDD)","PHB Asset Management (PAM)","PHB Facility Management (PFM)","PHB Property Ventures (PPV)","Portfolio Management Department (PMD)","Research Unit (RU)"];
-  D.forEach(function(r){if(r.dep&&r.dep!=="-"&&l.indexOf(r.dep)<0)l.push(r.dep)});
-  var dpl=g("dpl");
-  if(dpl) dpl.innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join("");
-  var n3=g("n3");
-  if(n3) n3.innerHTML="<option value=''>Select Department</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
+var l=["Risk, Compliance & Integrity Management Department (RCIMD)","Finance Department (FD)","Human Resource Department (HRD)","Internal Audit Department (IAD)","Investment Department (ID)","Learning & Development Department (LDD)","Corporate Administration Department (CAD)","Contract Management Department (CMD)","Procurement & Vendor Management Department (PVMD)","Information Technology Department (ITD)","Property Development Department (PDD)","PHB Asset Management (PAM)","PHB Facility Management (PFM)","PHB Property Ventures (PPV)","Portfolio Management Department (PMD)","Research Unit (RU)"];
+D.forEach(function(r){if(r.dep&&r.dep!=="-"&&l.indexOf(r.dep)<0)l.push(r.dep)});
+g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join("");
+g("n3").innerHTML="<option value=''>Select Department</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
 }
 
 function boot(){fillDeps();var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"Sign in with your corporate Microsoft 365 account.";}
