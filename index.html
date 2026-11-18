@@ -533,7 +533,37 @@ async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required"
  }
  hide("addM");rd();toast(isNew?"Finding saved (In Progress). Submit for IAD Check when ready.":"Finding updated")}
 
-async function getRole(email){var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
+async function getRole(email){
+  var r = await callFlow("GET_USER_ROLE", {email: email});
+  
+  // Safely extract role whether it's a string or a SharePoint/OData object
+  var rawRole = r.role || r.Role || r.body?.role || "";
+  var role = "";
+  if (typeof rawRole === "object" && rawRole !== null) {
+    role = rawRole.Value || rawRole.value || rawRole.DisplayName || "";
+  } else {
+    role = String(rawRole);
+  }
+  
+  // Safely extract active status
+  var a = r.active !== undefined ? r.active : (r.Active !== undefined ? r.Active : true);
+  if (typeof a === "object" && a !== null) a = a.Value || a.value;
+  
+  // Safely extract department and name
+  var rawDep = r.department || r.Department || "";
+  var dep = typeof rawDep === "object" && rawDep !== null ? (rawDep.Value || rawDep.value || "") : String(rawDep);
+
+  var rawName = r.name || r.Title || "";
+  var name = typeof rawName === "object" && rawName !== null ? (rawName.Value || rawName.value || "") : String(rawName);
+
+  return {
+    found: !!role,
+    role: role,
+    active: a === undefined || a === true || a === "true" || a === "Yes" || a === 1,
+    name: name,
+    dep: dep
+  };
+}
 
 async function login(){
   var er=g("lErr");er.textContent="";var m=missing();if(m.length){er.textContent="Please input configuration keys for: "+m.join(", ");return}
