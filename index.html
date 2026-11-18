@@ -71,21 +71,18 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 .chip{background:rgba(255,255,255,.14);border-radius:10px;padding:6px 12px;font-size:12px;line-height:1.35}
 body.auth #lgn{display:none!important}
 .stage-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.18);margin-left:6px;font-weight:600}
-.mark{width:44px;height:44px;border-radius:13px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);display:grid;place-items:center;overflow:hidden}
-.mark img{width:100%;height:100%;object-fit:contain;padding:4px}
 </style></head><body>
-  
 <div id="lgn"><div class="lc">
 <div style="text-align:center;margin-bottom:20px"><div class="mark" style="margin:0 auto 12px;background:#4f46e5;color:#fff">🛡</div><h2 style="margin:0;font-size:20px">Internal Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p></div>
 <input class="in" id="ldp" list="dpl" placeholder="Enter department name (e.g., Finance, ITD, HRD)" style="margin-top:8px"><datalist id="dpl"></datalist>
 <button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in with Microsoft</button>
 <div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
-<div style="font-size:12px;color:var(--mut);margin-top:6px">IAD access is granted only to <b>Admin</b> users listed in</b>. All other staff sign in under their own department.</div>
+<div style="font-size:12px;color:var(--mut);margin-top:6px">IAD access is granted only to <b>Admin</b> users listed in <b>AuditUserDirectory</b>. All other staff sign in under their own department.</div>
 <div id="lNote" style="font-size:11px;color:var(--mut);margin-top:8px"></div>
 </div></div>
 
 <div class="hero"><div class="wrap hrow">
-<div class="logo"><div class="mark">🛡</div><div><h1>Internal Audit Register Portal</h1></div></div>
+<div class="logo"><div class="mark">🛡</div><div><h1>Internal Audit Register Portal</h1><p>Internal Audit Department · Risk, Tracking &amp; Governance · Microsoft 365 access</p></div></div>
 <div class="hrow" style="gap:10px"><div class="chip" id="uchip"></div>
 <button class="btn h" id="addB" onclick="fm()">+ Add finding</button><button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button><button class="btn h" onclick="reload()">⟳ Refresh</button><button class="btn h" onclick="rptPdf()">Report PDF</button><button class="btn h" onclick="xl()">Export Excel</button><button class="btn h" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn h" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
 <div class="main">
@@ -229,7 +226,7 @@ function normStatus(v){var t=String(v||"").toLowerCase();if(/clos|complet|resolv
 async function notify(to,subject,html){var p={toEmail:to,subject:subject,body:html,sentBy:U&&U.email};if(isSet(CFG.F_NOTIFY))return callFlow("NOTIFY",p);if(isSet(CFG.F_SEND_EMAIL))return callFlow("SEND_EMAIL",p);throw new Error("F_NOTIFY: please input the api")}
 function stamp(){return new Date().toLocaleString("en-MY",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
 
-/* ── WORKFLOW PANEL: ADMIN ONLY (HIDDEN FOR DEPARTMENT USERS) ── */
+/* ── WORKFLOW PANEL: ADMIN / IAD / BOSS CLOSURE REVIEW ── */
 function wfPanel(r){
  if(!U||!U.admin)return"";
  var boss=String(U.email||"").trim().toLowerCase()===String(CFG.IA_BOSS_EMAIL||"").trim().toLowerCase(),h="",st=[];
@@ -240,31 +237,26 @@ function wfPanel(r){
 
  var b=function(a,l,c){return"<button class='btn "+(c||"")+"' style='margin:3px' onclick=\"wf('"+a+"')\">"+l+"</button>"};
 
- // Step 1: Auditor saved finding (Draft / In Progress) -> Submit for IAD Check
  if(!r.rv||r.rv==="Draft"||r.rv==="In Progress"){
   h+=b("submit_review","📤 Submit for IAD Check","p");
  }
- // Step 2: IAD Check -> Approve & Issue to Department (or return to Auditor)
  if(r.rv==="IAD Check"||r.rv==="Checker Review"){
   h+=b("iad_approve_issue","✓ IAD Check Approved · Issue to Department","p");
   h+=b("iad_return","↩ Return to Auditor");
  }
- // Legacy Pending Head IAD Approval support
  if(r.rv==="Pending Head IAD Approval"){
   h+=b("iad_approve_issue","✓ Head IAD Approves & Issues to Department","p");
  }
- // Re-issue if already issued
  if(r.rv==="Issued To Department"||r.rv==="Approved"){
   h+=b("reissue","📨 Re-Issue To Department","");
  }
-
- // Step 3: Closure Approval (Admin / Head IAD)
+ // Closure Review Actions for IAD & Boss
  if(r.ap==="IA Review")h+=b("cl_ia","✓ IAD recommends closure, email Head IAD","p")+b("cl_back","Return to department");
  if(r.ap==="Boss Approval"&&(boss||U.admin))h+=b("cl_boss","✓ Approve and close","p")+b("cl_back","Reject");
 
  if(!h&&!st.length)return"";
  var stHtml=st.length?'<div style="color:var(--mut);font-size:12px;margin:4px 0 6px">'+e(st.join(" · "))+'</div>':"";
- return"<div class='adm'><b>Workflow status</b>"+stHtml+"<div style='display:flex;flex-wrap:wrap;gap:6px'>"+h+"</div></div>";
+ return"<div class='adm'><b>Workflow status &amp; Closure Review</b>"+stHtml+"<div style='display:flex;flex-wrap:wrap;gap:6px'>"+h+"</div></div>";
 }
 
 async function wf(a){
@@ -328,7 +320,6 @@ async function attach(r,f){
 
 async function up(){var r=cur_(),f=g("uf").files[0];if(!f){toast("Please choose a file to upload");return}try{await attach(r,f);upd("File uploaded successfully via OneDrive");if(!U.admin)notifyPic(r,"Evidence uploaded","File: "+e(f.name))}catch(x){toast(x.message)}}
 
-/* ── USER UPDATE PROGRESS (USES SINGLE ONEDRIVE SECTION IF FILE CHOSEN) ── */
 async function lg(){
  if(U&&U.admin){toast("Admin cannot submit department monthly updates.");return}
  var r=cur_(),n=g("ln").value.trim();if(!n){toast("Please enter a progress narrative");return}
@@ -339,7 +330,6 @@ async function lg(){
  if(!U.admin)notifyPic(r,"Monthly update posted","Progress: "+e(r.lg[r.lg.length-1].s)+" - "+e(r.lg[r.lg.length-1].n)+(f?"<br>Evidence attached":""));
 }
 
-/* ── SEND NOTIFICATION 3 DAYS BEFORE DUE (AND OVERDUE) ── */
 function remTpl(r,k,daysLeft){
  var od=k==="overdue";
  var soonMsg=daysLeft===0?"is due <b>TODAY ("+e(r.due)+")</b>":"is due in <b>"+daysLeft+" day"+(daysLeft===1?"":"s")+" ("+e(r.due)+")</b>";
@@ -408,7 +398,6 @@ async function notifyMany(to,subj,html){var l=String(to||"").split(/[;, ]+/).fil
 function notifyPic(r,what,extra){return notifyMany(CFG.IA_PIC_EMAIL,"[Audit "+r.id+"] "+what,"<p><b>"+e(U.name)+"</b> ("+e(U.dep||"IAD")+") updated this finding.</p><p><b>"+e(r.t)+"</b><br>Status: "+e(r.st)+(extra?"<br>"+extra:"")+"</p>").catch(function(){})}
 async function mail(){if(!U.admin){toast("Only IAD can email other recipients");return}var r=cur_(),to=g("em").value.trim();if(!to||to.indexOf("@")<1){toast("Enter a valid email");return}try{await notifyMany(to,"[Audit "+r.id+"] "+r.t,"<p><b>"+e(r.t)+"</b> ("+e(r.id)+")</p><p>Department: "+e(r.dep)+"<br>Status: "+e(r.st)+"<br>Due: "+e(r.due||r.dl)+"</p><p>"+e(r.iss)+"</p>");toast("Email sent to "+to)}catch(x){toast("Email failed: "+x.message)}}
 
-/* ── VISIBILITY: Users see findings once Issued To Department & keep seeing them across status/closure changes ── */
 function vis(r){
  if(!U)return false;
  if(U.admin)return true;
@@ -424,24 +413,33 @@ function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x
 async function saveFile(name,data){
  var b=data instanceof Blob?data:new Blob([data]),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Saved "+name)}
 
-function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,OwnerEmail:r.oe,Deadline:r.dl,DueDate:r.due,Status:r.st,WorkflowStage:r.rv||"In Progress",Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
+function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,OwnerEmail:r.oe,Deadline:r.dl,DueDate:r.due,Status:r.st,WorkflowStage:r.rv||"In Progress",ApprovalStage:r.ap||"-",Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(function(r){return!isH(r)}).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Active");
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(isH).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Historical");
  saveFile("audit_register_"+new Date().toISOString().slice(0,10)+".xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}))}
 
-/* ── DOWNLOAD SINGLE ISSUE AS EXCEL ── */
+/* ── EXPORT FULL DETAILS (FINDING + LOGS + HISTORY + EVIDENCE) TO EXCEL ── */
 function dlSingleXl(){
  var r=cur_();if(!r)return;
  var W=XLSX.utils.book_new();
  var mainRow=[{
   AuditID:sx(r.id),Title:sx(r.t),Cycle:sx(r.cy),Department:sx(r.dep),Owner:sx(r.own),OwnerEmail:sx(r.oe),
   Deadline:sx(r.dl),DueDate:sx(r.due),Status:sx(r.st),WorkflowStage:sx(r.rv||"In Progress"),
-  Likelihood:sx(r.lk),Impact:sx(r.im),OpenIssues:sx(r.iss),Recommendations:sx(r.rec),IADRemarks:sx(r.rm)
+  ApprovalStage:sx(r.ap||"-"),Likelihood:sx(r.lk),Impact:sx(r.im),
+  OpenIssues:sx(r.iss),Recommendations:sx(r.rec),IADRemarks:sx(r.rm)
  }];
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(mainRow),"Finding Details");
- var logs=(r.lg||[]).map(function(l){return{Type:sx(l.m),Status:sx(l.s),Narrative:sx(l.n),By:sx(l.a),Date:sx(l.d)}});
- if(logs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(logs),"Logs & History");
- saveFile(r.id+"_AuditFinding.xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}));
+ 
+ var uLogs=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})).map(function(l){return{Type:sx(l.m),Status:sx(l.s),Narrative:sx(l.n),SubmittedBy:sx(l.a),Date:sx(l.d)}});
+ if(uLogs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(uLogs),"Monthly Status Logs");
+
+ var adLogs=chronoLogs((r.lg||[]).filter(function(l){return/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})).map(function(l){return{Type:sx(l.m),Details:sx(l.n),ActionBy:sx(l.a),Date:sx(l.d)}});
+ if(adLogs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(adLogs),"Workflow History");
+
+ var atts=(r.at||[]).map(function(a){return{FileName:sx(a.n),Source:sx(a.ms),Size:sx(a.sz),URL:sx(a.url||"-"),Date:sx(a.d)}});
+ if(atts.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(atts),"Evidence & Links");
+
+ saveFile(r.id+"_CompleteAuditFindingDetails.xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}));
 }
 
 async function callFlow(n,p){var u=CFG["F_"+n];if(!isSet(u))throw new Error("F_"+n+": please input the api");
@@ -490,7 +488,17 @@ async function spCreate(r){
 }
 
 async function spUpdate(r){if(!r||!r.spId)return false;try{await callFlow("UPDATE_AUDIT",payload(r,"update"));return true}catch(x){toast("Update failed: "+x.message);return false}}
-async function spDelete(r){if(!r||!r.spId)return true;try{await callFlow("DELETE_AUDIT",{spId:r.spId,auditId:r.id,id:r.id,by:U&&U.email});return true}catch(x){toast("Delete in SharePoint failed: "+x.message);return false}}
+
+async function spDelete(r){
+ if(!r||!r.spId)return true;
+ try{
+  await callFlow("DELETE_AUDIT",payload(r,"delete"));
+  return true;
+ }catch(x){
+  toast("Delete in SharePoint failed: "+x.message);
+  return false;
+ }
+}
 
 async function spUpload(r,f){return graph("/drives/"+CFG.DRIVE_ID+"/root:/"+encodeURIComponent(r.id)+"/"+encodeURIComponent(f.name)+":/content",{method:"PUT",body:f,headers:{"Content-Type":f.type||"application/octet-stream"}})}
 
@@ -573,7 +581,6 @@ function cur_(){return D.find(function(r){return r.id===cur})}
 function op(id,t){cur=id;tab=t||"d";dr();show("ov");}
 function cl(){hide("ov");cur=null}
 
-/* ── CHRONOLOGICAL ORDER HELPER (OLDEST TOP -> NEWEST BOTTOM) ── */
 function chronoLogs(arr){
  return(arr||[]).slice().sort(function(a,b){
   var da=Date.parse(a.d),db=Date.parse(b.d);
@@ -588,22 +595,17 @@ function dr(){
  var uLogs=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))}));
  var adminLogs=chronoLogs((r.lg||[]).filter(function(l){return/^(Workflow|Extension|IAD)/i.test(String(l.m||""))}));
 
- // ── meta cards ──
  body='<div class="g4"><div class="f"><small>Department</small>'+e(r.dep)+'</div><div class="f"><small>Responsible party</small>'+e(r.own)+'</div><div class="f"><small>Owner email</small>'+e(r.oe||"-")+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Due date</small>'+e(r.due||"-")+'</div><div class="f"><small>Extensions</small>'+(r.ex||0)+'/3</div></div>';
- // ── status bar ──
  var canStat=ad?!locked&&r.st!=="Closed":["Open","In Progress"].indexOf(r.st)>=0;
  var opts=(ad?["Open","In Progress","Extended","Overdue","Closed"]:["Open","In Progress"]);
  body+='<div class="row" style="align-items:center;margin-bottom:4px"><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(canStat?"":"disabled")+' onchange="ss(this.value)" style="max-width:180px;flex:none">'+opts.map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>';
 
- // ── workflow panel (ADMIN ONLY - hidden for user) ──
  if(ad)body+=wfPanel(r);
 
- // ── finding details ──
  body+='<h4>Details of open issues and risk</h4><div class="box" style="white-space:pre-wrap">'+e(r.iss)+'</div>';
  body+='<h4>Recommendations made</h4><div class="box" style="white-space:pre-wrap">'+e(r.rec)+'</div>';
  body+='<h4>IAD remarks</h4><div class="box" style="white-space:pre-wrap;font-style:italic">'+e(r.rm)+'</div>';
 
- // ── Admin-only sections ──
  if(ad){
   if(r.st!=="Closed"){
    body+='<div class="adm '+(r.st==="Overdue"?"od":"")+'"><b>'+(r.st==="Overdue"?"⚠ Overdue – ":"")+'Deadline extension ('+(r.ex||0)+'/3)</b><div class="row"><input class="in" id="xd" type="date"></div><div class="row"><input class="in" id="xr" placeholder="Reason (required)"></div><div class="row"><button class="btn v" onclick="ext()">Extend deadline and notify</button></div></div>';
@@ -612,12 +614,10 @@ function dr(){
   body+='<h4>Monthly status log (submitted by department)</h4><div class="tl">'+(uLogs.length?uLogs.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div style="white-space:pre-wrap">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">No department updates yet.</div>')+'</div>';
   if(adminLogs.length)body+='<details open style="margin-top:14px"><summary style="cursor:pointer;color:var(--mut);font-weight:600">Workflow history</summary><div class="tl" style="margin-top:8px">'+adminLogs.map(function(l){return'<div><b>'+e(l.m)+'</b><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")+'</div></details>';
   body+='<h4>Email respective person</h4><div class="row"><input class="in" id="em" value="'+e(r.oe||"")+'" placeholder="recipient@company.com"><button class="btn p" style="flex:none" onclick="mail()">Send email</button></div>';
-  // Admin OneDrive evidence section
   body+='<h4>Supporting evidence and documents</h4><div class="drop"><div class="row"><input type="file" id="uf" class="in"></div><div class="row"><button class="btn p" onclick="up()">Upload to OneDrive</button></div><div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input class="in" id="lu" placeholder="Or paste a OneDrive/SharePoint https:// link" style="flex:1"><button class="btn" onclick="addLink()">Add link</button></div></div>'
   +'<h4>Attached files</h4>'+(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+i+')">'+(a.url&&!a.k?"Open":"Download")+'</button><button class="btn" onclick="da('+i+')">✕</button></div></div>'}).join("")||'<div style="color:var(--mut)">No files attached yet.</div>');
  }
 
- // ── User-only sections (Workflow status & Workflow history HIDDEN; single OneDrive section; Update & Submit for closure buttons at bottom) ──
  if(!ad){
   body+='<h4>Monthly status log</h4><div class="tl">'+(uLogs.length?uLogs.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div style="white-space:pre-wrap">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">No updates yet.</div>')+'</div>';
 
@@ -625,7 +625,6 @@ function dr(){
    body+='<h4>Update progress</h4><div class="row"><select class="in" id="lm">'+monthOpts()+'</select><select class="in" id="ls"><option>On Track</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div><div class="row"><textarea class="in" id="ln" rows="3" placeholder="Key in progress narrative and milestones…"></textarea></div>';
   }
 
-  // Single OneDrive upload & attached files section
   body+='<h4>Supporting evidence and documents (OneDrive)</h4><div class="drop"><div class="row"><input type="file" id="uf" class="in"></div><div class="row"><button class="btn p" onclick="up()">Upload to OneDrive</button></div><div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input class="in" id="lu" placeholder="Or paste a OneDrive/SharePoint https:// link" style="flex:1"><button class="btn" onclick="addLink()">Add link</button></div></div>'
   +'<h4>Attached files</h4>'+(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+i+')">'+(a.url&&!a.k?"Open":"Download")+'</button></div></div>'}).join("")||'<div style="color:var(--mut)">No files attached yet.</div>');
 
@@ -633,7 +632,6 @@ function dr(){
    body+='<div class="adm" style="margin-top:16px"><div style="font-size:13px;font-weight:600">✓ Submitted for closure — currently under IAD review.</div></div>';
   }
 
-  // Bottom 2 action buttons: "Update" and "Submit for closure"
   if(r.st!=="Closed"){
    var canSubClosure=!r.ap;
    body+='<div class="row" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--bd)">'
@@ -643,7 +641,6 @@ function dr(){
   }
  }
 
- // ── Header & Footer ──
  var stgBadge=(ad&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?'<span class="stage-badge">'+e(r.rv)+'</span>':(ad?'<span class="stage-badge">Issued To Department</span>':'');
  g("dr").innerHTML='<div class="dh"><div><small style="opacity:.7">'+e(r.id)+' · '+e(r.cy)+'</small><div style="font-weight:700;font-size:16px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+stgBadge+'</div><div style="display:flex;gap:8px;align-self:flex-start"><button class="btn h" onclick="dlpdf()" title="Download PDF">⬇ PDF</button><button class="btn h" onclick="dlSingleXl()" title="Download Excel">⬇ Excel</button><button class="btn h" onclick="cl()">✕</button></div></div>'
  +'<div class="db">'+body+'</div>'
@@ -671,8 +668,9 @@ async function dl(i){var a=cur_().at[i],f=a.k&&F[a.k];if(a.url&&!a.k){window.ope
 function da(i){cur_().at.splice(i,1);upd("Attachment removed")}
 async function del(){var r=cur_();if(!r||!confirm("Are you sure you want to delete this record?"))return;if(!(await spDelete(r)))return;D=D.filter(function(x){return x!==r});cl();rd();toast("Record deleted")}
 
+/* ── COMPREHENSIVE PDF REPORT CONTAINING ALL DETAILS ── */
 function dlpdf(){
- var r=cur_();if(!r)return;toast("Generating PDF…");
+ var r=cur_();if(!r)return;toast("Generating complete finding PDF report…");
  var jsPDF=window.jspdf.jsPDF,doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"}),y=20;
  doc.setFontSize(16);doc.setFont("helvetica","bold");doc.text("Audit Finding Report: "+r.id,14,y);y+=9;
  doc.setFontSize(10);doc.setFont("helvetica","normal");
@@ -680,7 +678,7 @@ function dlpdf(){
   "Title: "+r.t,
   "Cycle: "+r.cy+"   |   Department: "+r.dep,
   "Owner: "+r.own+" ("+(r.oe||"-")+")",
-  "Status: "+r.st+"   |   Workflow Stage: "+(r.rv||"In Progress"),
+  "Status: "+r.st+"   |   Workflow Stage: "+(r.rv||"In Progress")+(r.ap?" | Closure Approval: "+r.ap:""),
   "Risk: "+r.lk+" Likelihood / "+r.im+" Impact",
   "Deadline: "+r.dl+"   |   Target Due Date: "+(r.due||"-")
  ];
@@ -697,10 +695,19 @@ function dlpdf(){
  sec("Details of Open Issues & Risk:",r.iss);
  sec("Recommendations Made:",r.rec);
  sec("IAD Remarks:",r.rm);
- if(r.lg&&r.lg.length){
-  sec("Workflow & Monthly Status Log:",chronoLogs(r.lg).map(function(l){return"["+l.d+"] "+l.m+" ("+l.s+") - "+l.a+": "+l.n}).join("\n"));
+
+ var uLogs=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))}));
+ if(uLogs.length){
+  sec("Monthly Status Logs:",uLogs.map(function(l){return"["+l.d+"] "+l.m+" ("+l.s+") - "+l.a+": "+l.n}).join("\n"));
  }
- doc.save(r.id+"_AuditFindingReport.pdf");
+ var adLogs=chronoLogs((r.lg||[]).filter(function(l){return/^(Workflow|Extension|IAD)/i.test(String(l.m||""))}));
+ if(adLogs.length){
+  sec("Workflow History:",adLogs.map(function(l){return"["+l.d+"] "+l.m+" - "+l.a+": "+l.n}).join("\n"));
+ }
+ if(r.at&&r.at.length){
+  sec("Attached Evidence & Links:",r.at.map(function(a){return"• "+a.n+" ("+a.ms+": "+(a.url||a.sz)+")"}).join("\n"));
+ }
+ doc.save(r.id+"_CompleteAuditFindingReport.pdf");
 }
 
 var xlRows=[];
