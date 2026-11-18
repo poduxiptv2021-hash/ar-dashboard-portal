@@ -72,7 +72,7 @@ body.auth #lgn{display:none!important}
 .stage-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.18);margin-left:6px;font-weight:600}
 </style></head><body>
 
-  <div id="lgn"><div class="lc">
+<div id="lgn"><div class="lc">
 <div style="text-align:center;margin-bottom:20px">
   <div style="margin:0 auto 12px;background:#ffffff;border:1px solid var(--bd);border-radius:14px;padding:10px 18px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
     <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:38px;width:auto;object-fit:contain;display:block;">
@@ -551,7 +551,7 @@ async function login(){
     
     dep=ro.dep||dep;
     if(!isA&&!dep){
-      dep="General Department"; // Fallback if Graph and SharePoint department are both empty
+      dep="General Department";
     }
     
     U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};
@@ -566,13 +566,23 @@ async function enter(){document.body.classList.add("auth");g("lgn").style.displa
  setP(U.admin?"ADMIN":"PIC");try{await spLoad()}catch(x){D=[];toast("SharePoint load warning: "+x.message)}
  fillDeps();rd();toast("Signed in successfully")}
 
-function logout(){U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
+function logout(){
+  U=null;D=[];cur=null;
+  document.body.classList.remove("auth");
+  hide("ov");
+  g("lgn").style.display="grid";
+  var ldp=g("ldp");
+  if(ldp) ldp.value="";
+  rd();
+}
 
 function fillDeps(){
-var l=["Risk, Compliance & Integrity Management Department (RCIMD)","Finance Department (FD)","Human Resource Department (HRD)","Internal Audit Department (IAD)","Investment Department (ID)","Learning & Development Department (LDD)","Corporate Administration Department (CAD)","Contract Management Department (CMD)","Procurement & Vendor Management Department (PVMD)","Information Technology Department (ITD)","Property Development Department (PDD)","PHB Asset Management (PAM)","PHB Facility Management (PFM)","PHB Property Ventures (PPV)","Portfolio Management Department (PMD)","Research Unit (RU)"];
-D.forEach(function(r){if(r.dep&&r.dep!=="-"&&l.indexOf(r.dep)<0)l.push(r.dep)});
-g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join("");
-g("n3").innerHTML="<option value=''>Select Department</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
+  var l=["Risk, Compliance & Integrity Management Department (RCIMD)","Finance Department (FD)","Human Resource Department (HRD)","Internal Audit Department (IAD)","Investment Department (ID)","Learning & Development Department (LDD)","Corporate Administration Department (CAD)","Contract Management Department (CMD)","Procurement & Vendor Management Department (PVMD)","Information Technology Department (ITD)","Property Development Department (PDD)","PHB Asset Management (PAM)","PHB Facility Management (PFM)","PHB Property Ventures (PPV)","Portfolio Management Department (PMD)","Research Unit (RU)"];
+  D.forEach(function(r){if(r.dep&&r.dep!=="-"&&l.indexOf(r.dep)<0)l.push(r.dep)});
+  var dpl=g("dpl");
+  if(dpl) dpl.innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join("");
+  var n3=g("n3");
+  if(n3) n3.innerHTML="<option value=''>Select Department</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
 }
 
 function boot(){fillDeps();var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"Sign in with your corporate Microsoft 365 account.";}
