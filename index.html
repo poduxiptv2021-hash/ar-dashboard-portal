@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.phb.com.my; connect-src 'self' https://graph.microsoft.com https://login.microsoftonline.com https://*.api.powerplatform.com; frame-src https://login.microsoftonline.com https://*.sharepoint.com https://onedrive.live.com https://1drv.ms https://*.officeapps.live.com https://*.office.com; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="same-origin">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
@@ -131,6 +131,38 @@ td{padding:14px 16px}
 tr.r:hover{background:#f7fbf1}
 .phbf{padding:18px 12px 26px}
 @media(max-width:700px){.hero{padding:12px 14px}.hero .logo h1{font-size:16px}.chip{display:none}}
+
+/* ===== ORBIT-STYLE LAYOUT ===== */
+:root{--bg:#f9fafb;--gr:#0d7a55;--mono:"JetBrains Mono",ui-monospace,Consolas,monospace}
+html{scroll-behavior:smooth}section{scroll-margin-top:92px}
+.nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid #e8ece9}
+.nv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;padding:14px 28px;max-width:1360px}
+.brand{display:flex;align-items:center;gap:14px}.vr{width:1px;height:34px;background:#dfe5e1}
+.pn{font-size:28px;font-weight:700;color:var(--gr);letter-spacing:-.01em;line-height:1}
+.pp{background:#e7f6ee;border:1px solid #bfe6d2;color:var(--gr);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700}
+.nl{display:flex;justify-content:center;gap:48px}.nl a{color:#2b3530;font-weight:600;font-size:16px;text-decoration:none;padding:6px 2px;border-bottom:2px solid transparent}.nl a:hover{color:var(--gr);border-color:var(--gr)}
+.nr{display:flex;gap:10px;align-items:center}
+.nav .chip{background:var(--soft);border:1px solid var(--bd);color:var(--tx)}.nav .btn{border-radius:12px;padding:10px 18px}
+.main{max-width:1360px;margin:22px auto 40px;padding:0 28px}
+.banner{border-radius:28px;padding:34px 38px;color:#fff;background:linear-gradient(105deg,#00704f 0%,#005a46 45%,#0b2a4e 100%);box-shadow:0 18px 40px rgba(11,42,78,.22);margin-bottom:24px}
+.bt1{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.14)}
+.eb{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.2em;color:#5ee6a8;margin-bottom:6px}
+.banner h1{margin:0;font-size:clamp(30px,4.4vw,54px);font-weight:800;letter-spacing:-.025em;line-height:1.1}.banner h1 em{font-style:normal;color:#5ee6a8}
+.bch{display:flex;gap:10px}.chp{padding:12px 20px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:700;text-decoration:none}.chp.on{background:#3fe0a0;border-color:#3fe0a0;color:#06281d}
+.bq{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-top:20px}.ql{font-weight:800;letter-spacing:.08em;color:#5ee6a8;font-size:14px;margin-right:6px}
+.qc{font:inherit;font-weight:700;font-size:14px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:10px 18px;cursor:pointer}.qc:hover{background:rgba(255,255,255,.2)}.qc.rs{background:rgba(0,0,0,.28);color:#5ee6a8}
+.sh{border-left:4px solid var(--gr);padding:2px 0 2px 18px;margin:38px 0 20px}
+.eb2{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.22em;color:var(--gr)}
+.sh h2{margin:4px 0;font-size:clamp(28px,3.2vw,40px);font-weight:800;letter-spacing:-.02em}.sh p{margin:0;color:#3a4540;font-size:17px}
+.card,.k,.st{border-radius:22px;border:1px solid #e3e9e5;background:#fff}
+.k{display:flex;flex-direction:column;gap:2px;padding:20px 24px;border-top:1px solid #e3e9e5;position:relative}.k:before{content:"";position:absolute;left:24px;top:0;width:36px;height:4px;border-radius:0 0 4px 4px;background:var(--c)}
+.k small{font-size:15px;font-weight:700;color:#1d2823}.k b{font-size:34px;font-family:var(--mono);color:var(--c)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.st{padding:24px}.st h3{margin:14px 0 6px;font-size:20px}.st p{margin:0;color:#3a4540}
+.sn{display:inline-block;font-family:var(--mono);font-weight:700;font-size:14px;color:var(--gr);background:#e7f6ee;border:1px solid #bfe6d2;border-radius:999px;padding:3px 12px}
+.tools{margin-bottom:16px}
+#toast{display:none;align-items:center;gap:10px;background:#0b1f3a;border-radius:999px;padding:14px 22px;font-weight:700;border:1px solid #1a3558}#toast:before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#3fe0a0;margin-right:10px}
+@media(max-width:980px){.nl,.pp{display:none}.nv{grid-template-columns:1fr auto;padding:12px 16px}.main{padding:0 14px}.banner{padding:24px 20px;border-radius:22px}}
 </style></head><body>
 <div id="lgn"><div class="lc">
 <div style="text-align:center;margin-bottom:20px">
@@ -146,16 +178,20 @@ tr.r:hover{background:#f7fbf1}
 <div class="phbf"><b>WE ARE PHB</b><small>PROFESSIONAL | HARMONIOUS | BOLD</small></div>
 </div></div>
 
-<div class="hero"><div class="wrap hrow">
-<div class="logo"><div class="lp"><img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:30px;width:auto;display:block"></div><div><h1>Internal Audit Register Portal</h1><p>Internal Audit Department</p></div></div>
-<div class="hrow" style="gap:10px"><div class="chip" id="uchip"></div><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
+<header class="nav"><div class="wrap nv"><div class="brand"><img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:46px;width:auto;display:block"><i class="vr"></i><b class="pn">IAR</b><span class="pp">One Register for Internal Audit</span></div>
+<nav class="nl"><a href="#s1">1. Overview</a><a href="#s2">2. Findings (<span id="navN">0</span>)</a><a href="#s3">3. How it works</a></nav>
+<div class="nr"><div class="chip" id="uchip"></div><button class="btn" onclick="logout()">Sign out</button></div></div></header>
 <div class="main">
-<div class="tools"><button class="btn p" id="addB" onclick="fm()">+ Add finding</button><button class="btn" id="impB" onclick="show('impM')">⬆ Import data</button><button class="btn" onclick="reload()">⟳ Refresh</button><button class="btn" onclick="rptPdf()">Report PDF</button><button class="btn" onclick="xl()">Export Excel</button><button class="btn" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn" id="remC" onclick="remCfg()">⚙ Reminder settings</button><button class="btn" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button></div>
+<section class="banner"><div class="bt1"><div><div class="eb">&gt; PHB INTERNAL AUDIT REGISTER</div><h1>Track findings. Close them <em>on time.</em></h1></div><div class="bch"><a class="chp" href="#s1">1. Overview</a><a class="chp on" href="#s2">2. All Findings</a></div></div>
+<div class="bq"><span class="ql">QUICK FILTER:</span><button class="qc" onclick="qf('Overdue')">Overdue</button><button class="qc" onclick="qf('Open')">Open</button><button class="qc" onclick="qf('In Progress')">In Progress</button><button class="qc" onclick="qf('Extended')">Extended</button><button class="qc" onclick="qf('Closed')">Closed</button><button class="qc rs" onclick="qf('')">Reset Filter</button></div></section>
 <div class="alert" id="al"><div><b id="alT"></b><div style="font-size:13px;opacity:.85">Deadlines have passed. Admin can extend or manage overdue findings.</div></div><button class="btn d" onclick="g('fs').value='Overdue';rd()">View overdue</button></div>
-<div class="kpis" id="kp"></div>
-<div class="card" id="hm"></div>
+<section id="s1"><div class="sh"><span class="eb2">SECTION 01</span><h2>Overview</h2><p>Where findings stand right now, by status and by department.</p></div><div class="kpis" id="kp"></div><div class="card" id="hm"></div></section>
+<section id="s2"><div class="sh"><span class="eb2">SECTION 02</span><h2>Findings register</h2><p>Grouped by department. Select a finding to open its details.</p></div>
+<div class="tools"><button class="btn p" id="addB" onclick="fm()">+ Add finding</button><button class="btn" id="impB" onclick="show('impM')">⬆ Import data</button><button class="btn" onclick="reload()">⟳ Refresh</button><button class="btn" onclick="rptPdf()">Report PDF</button><button class="btn" onclick="xl()">Export Excel</button><button class="btn" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn" id="remC" onclick="remCfg()">⚙ Reminder settings</button><button class="btn" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button></div>
 <div class="card"><div class="bar"><input id="q" placeholder="Search by title, audit issue, department, or owner name..." oninput="rd()"><select id="fs" onchange="rd()"><option value="">All statuses</option><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select><select id="fd" onchange="rd()"></select></div>
 <div class="tw"><table><thead><tr><th>Audit</th><th>Audit cycle</th><th>Open issue</th><th>Dept</th><th>Owner</th><th>Status</th><th>Risk</th><th>Deadline</th><th>Files</th></tr></thead><tbody id="tb"></tbody></table></div></div>
+</section>
+<section id="s3"><div class="sh"><span class="eb2">SECTION 03</span><h2>How closure works</h2><p>Three approval layers keep every closure reviewed.</p></div><div class="steps"><div class="st"><span class="sn">01</span><h3>Department submits</h3><p>Update progress each month, attach evidence from OneDrive, then press Submit for closure.</p></div><div class="st"><span class="sn">02</span><h3>IAD Admin reviews</h3><p>Internal Audit checks the evidence and either forwards it for approval or returns it with a reason.</p></div><div class="st"><span class="sn">03</span><h3>HOD IAD approves</h3><p>The Head of Internal Audit gives final approval and the finding is closed.</p></div><div class="st"><span class="sn">04</span><h3>Deadlines and extensions</h3><p>Overdue findings can be extended up to 3 times by IAD Admin. Reminders go by Teams and email.</p></div></div></section>
 </div>
 <div id="hmw"></div><div class="phbf"><b>WE ARE PHB</b><small>PROFESSIONAL | HARMONIOUS | BOLD</small></div>
 <div class="ov" id="ov"><div style="position:absolute;inset:0" onclick="cl()"></div><div class="dr" id="dr"></div></div>
@@ -634,6 +670,7 @@ function show(i){g(i).classList.add("show")}function hide(i){g(i).classList.remo
 
 function setP(p){P=p;var a=p==="ADMIN";["addB","impB","cfgB","remB","remC"].forEach(function(i){if(g(i))g(i).style.display=a?"":"none"});if(cur)dr()}
 
+function qf(v){g("fs").value=v;rd();g("s2").scrollIntoView({behavior:"smooth"})}
 function rd(){
  var q=g("q").value.toLowerCase(),fs=g("fs").value,fd=g("fd").value;
  var deps=[];V().forEach(function(r){if(deps.indexOf(r.dep)<0)deps.push(r.dep)});
@@ -643,6 +680,7 @@ function rd(){
  var K=[["Total findings",V().length,"#172F4B"],["Open",c("Open"),"#969100"],["In progress",c("In Progress"),"#265856"],["Extended",c("Extended"),"#4D6B1A"],["Overdue",c("Overdue"),"#a4231b"],["Closed",c("Closed"),"#51920A"]];
  g("kp").innerHTML=K.map(function(k){return'<div class="k" style="--c:'+k[2]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join("");
  
+ if(g("navN"))g("navN").textContent=V().length;
  var sig=V().map(function(r){return r.id+r.st+r.dep}).join("|");
  if(window.__sig!==sig){var first=!window.__sig;window.__sig=sig;
   var dm={};V().forEach(function(r){if(r.st!=="Closed")dm[r.dep]=(dm[r.dep]||0)+1});var dk=Object.keys(dm).sort(function(a,b){return dm[b]-dm[a]}).slice(0,6),mx=Math.max(1,dk.length?dm[dk[0]]:1),nO=V().filter(function(r){return r.st!=="Closed"}).length,h=new Date().getHours();
