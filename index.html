@@ -107,6 +107,30 @@ h2,h3,.logo h1,.k b,.t{font-weight:800}
 .lc .phbf{padding:22px 0 0}
 @media(max-width:700px){.dv{grid-template-columns:1fr;grid-template-rows:auto 1fr}.vt{flex-direction:row;border-right:0;border-bottom:1px solid var(--bd)}.hb{grid-template-columns:100px 1fr 30px}}
 @media(prefers-reduced-motion:reduce){.hero:before{animation:none}.bt i{transition:none}}
+
+/* ===== CLEAN UI ===== */
+.hero{padding:12px 28px;box-shadow:0 2px 10px rgba(23,47,75,.18)}
+.hero:before{width:200px;opacity:.6}
+.hero .logo{gap:16px}.hero .lp{background:#fff;border-radius:12px;padding:6px 12px;display:grid;place-items:center}
+.hero .logo h1{font-size:20px;line-height:1.2}.hero .logo p{margin:2px 0 0;font-size:13px}
+.chip{font-size:13px;padding:7px 14px;display:flex;gap:8px;align-items:center}.chip br{display:none}.chip b{font-weight:700}.chip span{opacity:.9!important}
+.main{margin:22px auto 40px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tools .btn{background:#fff;border-color:var(--bd);color:var(--dn)}
+.tools .btn:hover{border-color:var(--g1);color:var(--g4)}
+.tools .btn.p{background:var(--g1);border-color:var(--g1);color:#fff}
+.kpis{gap:12px;margin-bottom:18px}
+.k{border-radius:14px;padding:14px 18px;box-shadow:none;border:1px solid var(--bd);border-top:3px solid var(--c)}
+.k small{display:block;color:var(--mut);font-size:13px;font-weight:600}.k b{font-size:28px;margin-top:4px}
+.card{border-radius:14px;box-shadow:none}
+#hm{padding:16px 20px;margin-bottom:18px}#hm h3{font-size:18px}#hm p{margin:0 0 6px}
+#hm:has(.hb) p{margin-bottom:12px}
+.bar{padding:12px 14px;gap:10px}
+th{padding:12px 16px;font-weight:700;color:var(--dn);background:var(--soft)}
+td{padding:14px 16px}
+tr.r:hover{background:#f7fbf1}
+.phbf{padding:18px 12px 26px}
+@media(max-width:700px){.hero{padding:12px 14px}.hero .logo h1{font-size:16px}.chip{display:none}}
 </style></head><body>
 <div id="lgn"><div class="lc">
 <div style="text-align:center;margin-bottom:20px">
@@ -123,14 +147,10 @@ h2,h3,.logo h1,.k b,.t{font-weight:800}
 </div></div>
 
 <div class="hero"><div class="wrap hrow">
-<div class="logo">
-  <div style="background:#ffffff;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:6px 12px;display:grid;place-items:center;">
-    <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:28px;width:auto;object-fit:contain;display:block;">
-  </div>
-  <h1>Internal Audit Register Portal</h1><p>Internal Audit Department·</p></div></div>
-<div class="hrow" style="gap:10px"><div class="chip" id="uchip"></div>
-<button class="btn h" id="addB" onclick="fm()">+ Add finding</button><button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button><button class="btn h" onclick="reload()">⟳ Refresh</button><button class="btn h" onclick="rptPdf()">Report PDF</button><button class="btn h" onclick="xl()">Export Excel</button><button class="btn h" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn h" id="remC" onclick="remCfg()">⚙ Reminder settings</button><button class="btn h" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
+<div class="logo"><div class="lp"><img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:30px;width:auto;display:block"></div><div><h1>Internal Audit Register Portal</h1><p>Internal Audit Department</p></div></div>
+<div class="hrow" style="gap:10px"><div class="chip" id="uchip"></div><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
 <div class="main">
+<div class="tools"><button class="btn p" id="addB" onclick="fm()">+ Add finding</button><button class="btn" id="impB" onclick="show('impM')">⬆ Import data</button><button class="btn" onclick="reload()">⟳ Refresh</button><button class="btn" onclick="rptPdf()">Report PDF</button><button class="btn" onclick="xl()">Export Excel</button><button class="btn" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn" id="remC" onclick="remCfg()">⚙ Reminder settings</button><button class="btn" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button></div>
 <div class="alert" id="al"><div><b id="alT"></b><div style="font-size:13px;opacity:.85">Deadlines have passed. Admin can extend or manage overdue findings.</div></div><button class="btn d" onclick="g('fs').value='Overdue';rd()">View overdue</button></div>
 <div class="kpis" id="kp"></div>
 <div class="card" id="hm"></div>
