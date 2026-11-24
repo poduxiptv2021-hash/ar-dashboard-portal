@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.phb.com.my; connect-src 'self' https://graph.microsoft.com https://login.microsoftonline.com https://*.api.powerplatform.com; frame-src https://login.microsoftonline.com https://*.sharepoint.com https://onedrive.live.com https://1drv.ms https://*.officeapps.live.com https://*.office.com; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="same-origin">
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
@@ -107,35 +107,118 @@ h2,h3,.logo h1,.k b,.t{font-weight:800}
 .lc .phbf{padding:22px 0 0}
 @media(max-width:700px){.dv{grid-template-columns:1fr;grid-template-rows:auto 1fr}.vt{flex-direction:row;border-right:0;border-bottom:1px solid var(--bd)}.hb{grid-template-columns:100px 1fr 30px}}
 @media(prefers-reduced-motion:reduce){.hero:before{animation:none}.bt i{transition:none}}
+
+/* ===== CLEAN UI ===== */
+.hero{padding:12px 28px;box-shadow:0 2px 10px rgba(23,47,75,.18)}
+.hero:before{width:200px;opacity:.6}
+.hero .logo{gap:16px}.hero .lp{background:#fff;border-radius:12px;padding:6px 12px;display:grid;place-items:center}
+.hero .logo h1{font-size:20px;line-height:1.2}.hero .logo p{margin:2px 0 0;font-size:13px}
+.chip{font-size:13px;padding:7px 14px;display:flex;gap:8px;align-items:center}.chip br{display:none}.chip b{font-weight:700}.chip span{opacity:.9!important}
+.main{margin:22px auto 40px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tools .btn{background:#fff;border-color:var(--bd);color:var(--dn)}
+.tools .btn:hover{border-color:var(--g1);color:var(--g4)}
+.tools .btn.p{background:var(--g1);border-color:var(--g1);color:#fff}
+.kpis{gap:12px;margin-bottom:18px}
+.k{border-radius:14px;padding:14px 18px;box-shadow:none;border:1px solid var(--bd);border-top:3px solid var(--c)}
+.k small{display:block;color:var(--mut);font-size:13px;font-weight:600}.k b{font-size:28px;margin-top:4px}
+.card{border-radius:14px;box-shadow:none}
+#hm{padding:16px 20px;margin-bottom:18px}#hm h3{font-size:18px}#hm p{margin:0 0 6px}
+#hm:has(.hb) p{margin-bottom:12px}
+.bar{padding:12px 14px;gap:10px}
+th{padding:12px 16px;font-weight:700;color:var(--dn);background:var(--soft)}
+td{padding:14px 16px}
+tr.r:hover{background:#f7fbf1}
+.phbf{padding:18px 12px 26px}
+@media(max-width:700px){.hero{padding:12px 14px}.hero .logo h1{font-size:16px}.chip{display:none}}
+
+/* ===== ORBIT-STYLE LAYOUT ===== */
+:root{--bg:#f9fafb;--gr:#0d7a55;--mono:"JetBrains Mono",ui-monospace,Consolas,monospace}
+html{scroll-behavior:smooth}section{scroll-margin-top:92px}
+.nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid #e8ece9}
+.nv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;padding:14px 28px;max-width:1360px}
+.brand{display:flex;align-items:center;gap:14px}.vr{width:1px;height:34px;background:#dfe5e1}
+.pn{font-size:28px;font-weight:700;color:var(--gr);letter-spacing:-.01em;line-height:1}
+.pp{background:#e7f6ee;border:1px solid #bfe6d2;color:var(--gr);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700}
+.nl{display:flex;justify-content:center;gap:48px}.nl a{color:#2b3530;font-weight:600;font-size:16px;text-decoration:none;padding:6px 2px;border-bottom:2px solid transparent}.nl a:hover{color:var(--gr);border-color:var(--gr)}
+.nr{display:flex;gap:10px;align-items:center}
+.nav .chip{background:var(--soft);border:1px solid var(--bd);color:var(--tx)}.nav .btn{border-radius:12px;padding:10px 18px}
+.main{max-width:1360px;margin:22px auto 40px;padding:0 28px}
+.banner{border-radius:28px;padding:34px 38px;color:#fff;background:linear-gradient(105deg,#00704f 0%,#005a46 45%,#0b2a4e 100%);box-shadow:0 18px 40px rgba(11,42,78,.22);margin-bottom:24px}
+.bt1{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.14)}
+.eb{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.2em;color:#5ee6a8;margin-bottom:6px}
+.banner h1{margin:0;font-size:clamp(30px,4.4vw,54px);font-weight:800;letter-spacing:-.025em;line-height:1.1}.banner h1 em{font-style:normal;color:#5ee6a8}
+.bch{display:flex;gap:10px}.chp{padding:12px 20px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:700;text-decoration:none}.chp.on{background:#3fe0a0;border-color:#3fe0a0;color:#06281d}
+.bq{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-top:20px}.ql{font-weight:800;letter-spacing:.08em;color:#5ee6a8;font-size:14px;margin-right:6px}
+.qc{font:inherit;font-weight:700;font-size:14px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:10px 18px;cursor:pointer}.qc:hover{background:rgba(255,255,255,.2)}.qc.rs{background:rgba(0,0,0,.28);color:#5ee6a8}
+.sh{border-left:4px solid var(--gr);padding:2px 0 2px 18px;margin:38px 0 20px}
+.eb2{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.22em;color:var(--gr)}
+.sh h2{margin:4px 0;font-size:clamp(28px,3.2vw,40px);font-weight:800;letter-spacing:-.02em}.sh p{margin:0;color:#3a4540;font-size:17px}
+.card,.k,.st{border-radius:22px;border:1px solid #e3e9e5;background:#fff}
+.k{display:flex;flex-direction:column;gap:2px;padding:20px 24px;border-top:1px solid #e3e9e5;position:relative}.k:before{content:"";position:absolute;left:24px;top:0;width:36px;height:4px;border-radius:0 0 4px 4px;background:var(--c)}
+.k small{font-size:15px;font-weight:700;color:#1d2823}.k b{font-size:34px;font-family:var(--mono);color:var(--c)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.st{padding:24px}.st h3{margin:14px 0 6px;font-size:20px}.st p{margin:0;color:#3a4540}
+.sn{display:inline-block;font-family:var(--mono);font-weight:700;font-size:14px;color:var(--gr);background:#e7f6ee;border:1px solid #bfe6d2;border-radius:999px;padding:3px 12px}
+.tools{margin-bottom:16px}
+#toast{display:none;align-items:center;gap:10px;background:#0b1f3a;border-radius:999px;padding:14px 22px;font-weight:700;border:1px solid #1a3558}#toast:before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#3fe0a0;margin-right:10px}
+@media(max-width:980px){.nl,.pp{display:none}.nv{grid-template-columns:1fr auto;padding:12px 16px}.main{padding:0 14px}.banner{padding:24px 20px;border-radius:22px}}
+
+/* ===== ORBIT STRUCTURE ===== */
+#lgn{display:none}
+body:not(.auth) .priv{display:none!important}body.auth .pubo{display:none!important}
+.banner .lead{margin:10px 0 0;max-width:640px;color:#d3ece3;font-size:17px}
+.chp{border:0;font:inherit;font-weight:700;cursor:pointer}.chp:not(.on){border:1px solid rgba(255,255,255,.18)}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px}
+.cat{background:#fff;border:1px solid #e3e9e5;border-radius:22px;padding:24px;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:transform .15s,box-shadow .15s}
+.cat:hover,.cat.on{transform:translateY(-2px);box-shadow:var(--sh);border-color:var(--gr)}
+.cat h3{display:flex;justify-content:space-between;gap:10px;margin:0 0 6px;font-size:21px}.cat p{margin:0;color:#3a4540}
+.cnt{font-family:var(--mono);font-size:13px;background:#e7f6ee;border:1px solid #bfe6d2;color:var(--gr);border-radius:999px;padding:3px 12px;white-space:nowrap;font-weight:700}
+.kbc{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.kb{background:#fff;border:1px solid #e3e9e5;border-radius:18px;margin-bottom:10px;overflow:hidden}
+.kbh{all:unset;box-sizing:border-box;display:grid;grid-template-columns:80px 1fr auto;gap:14px;align-items:center;width:100%;padding:18px 22px;cursor:pointer}
+.kbh:focus-visible{outline:3px solid var(--lime,#b9c400);outline-offset:-3px}.kbh b{font-size:17px}.kid{font-family:var(--mono);font-size:13px;color:var(--gr);font-weight:700}
+.kbb{display:none;padding:0 22px 20px 116px;color:#2b3530}.kb.open .kbb{display:block}.kbb ol{margin:0;padding-left:20px}.kbb li{margin:6px 0}
+.anl{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin-bottom:18px}.anl .card{padding:22px}
+.tbars{display:flex;gap:10px;align-items:flex-end}.tc{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tbw{height:170px;width:100%;max-width:48px;display:flex;flex-direction:column-reverse;background:#f1f6ea;border-radius:8px;overflow:hidden}.tbw i{display:block;width:100%;transition:height 1s}
+@media(max-width:700px){.kbh{grid-template-columns:62px 1fr}.kbh .cnt{display:none}.kbb{padding-left:22px}}
 </style></head><body>
 <div id="lgn"><div class="lc">
 <div style="text-align:center;margin-bottom:20px">
   <div style="margin:0 auto 12px;background:#ffffff;border:1px solid var(--bd);border-radius:14px;padding:10px 18px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
     <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:38px;width:auto;object-fit:contain;display:block;">
   </div>
-<h2 style="margin:0;font-size:20px">Internal Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p></div>
+<h2 style="margin:0;font-size:20px">Sign in to Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p></div>
 <input class="in" id="ldp" list="dpl" placeholder="Please select your department (e.g., Finance, ITD, HRD)" style="margin-top:8px"><datalist id="dpl"></datalist>
 <button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in with Microsoft</button>
-<div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
+<button class="btn" style="width:100%;margin-top:10px" onclick="g('lgn').style.display='none'">Continue browsing without signing in</button>
+ <div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
 <div style="font-size:12px;color:var(--mut);margin-top:6px">IAD access is granted only to <b>Admin</b> users listed in <b>AuditUserDirectory</b>. All other staff sign in under their own department.</div>
 <div id="lNote" style="font-size:12px;color:var(--mut);margin-top:8px"></div>
 <div class="phbf"><b>WE ARE PHB</b><small>PROFESSIONAL | HARMONIOUS | BOLD</small></div>
 </div></div>
 
-<div class="hero"><div class="wrap hrow">
-<div class="logo">
-  <div style="background:#ffffff;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:6px 12px;display:grid;place-items:center;">
-    <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:28px;width:auto;object-fit:contain;display:block;">
-  </div>
-  <h1>Internal Audit Register Portal</h1><p>Internal Audit Department·</p></div></div>
-<div class="hrow" style="gap:10px"><div class="chip" id="uchip"></div>
-<button class="btn h" id="addB" onclick="fm()">+ Add finding</button><button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button><button class="btn h" onclick="reload()">⟳ Refresh</button><button class="btn h" onclick="rptPdf()">Report PDF</button><button class="btn h" onclick="xl()">Export Excel</button><button class="btn h" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn h" id="remC" onclick="remCfg()">⚙ Reminder settings</button><button class="btn h" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
-<div class="main">
+<header class="nav"><div class="wrap nv"><div class="brand"><img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:46px;width:auto;display:block"><i class="vr"></i><b class="pn">IAR</b><span class="pp">One Register for Internal Audit</span></div>
+<nav class="nl"><a href="#top">Homepage</a><a href="#sCat">Categories</a><a href="#sKB">Knowledge Base</a><a href="#s2" class="priv">Findings Queue (<span id="navN">0</span>)</a><a href="#s4" class="priv">Analytics &amp; Reports</a></nav>
+<div class="nr"><button class="btn p pubo" onclick="g('lgn').style.display='grid'">Sign in</button><button class="btn p priv" id="addN" onclick="fm()">+ Add finding</button><div class="chip priv" id="uchip"></div><button class="btn priv" onclick="logout()">Sign out</button></div></div></header>
+<div class="main" id="top">
+<section class="banner"><div class="bt1"><div><div class="eb">HOMEPAGE &middot; PHB INTERNAL AUDIT REGISTER</div><h1>Close audit findings <em>on time.</em></h1><p class="lead">Track findings, upload evidence from OneDrive and follow the three-layer closure approval. Built for PHB departments and Internal Audit.</p></div>
+<div class="bch"><button class="chp on pubo" onclick="g('lgn').style.display='grid'">Sign in to open the register</button><a class="chp on priv" href="#s2">Open Findings Queue</a><a class="chp" href="#sKB">Explore audit guides</a></div></div>
+<div class="bq"><span class="ql">POPULAR GUIDES:</span><button class="qc" onclick="kbOpen(0)">Update progress</button><button class="qc" onclick="kbOpen(2)">Upload evidence</button><button class="qc" onclick="kbOpen(4)">Submit for closure</button><button class="qc" onclick="kbOpen(6)">Deadline extension</button><button class="qc" onclick="kbOpen(7)">Overdue reminders</button><button class="qc rs" onclick="kbZ()">Reset Filter</button></div></section>
 <div class="alert" id="al"><div><b id="alT"></b><div style="font-size:13px;opacity:.85">Deadlines have passed. Admin can extend or manage overdue findings.</div></div><button class="btn d" onclick="g('fs').value='Overdue';rd()">View overdue</button></div>
-<div class="kpis" id="kp"></div>
-<div class="card" id="hm"></div>
+<section id="sDash" class="priv"><div class="sh"><span class="eb2">Dashboard Overview</span><h2>Audit Findings and Deadline Performance</h2><p>Live status of findings in your scope, from SharePoint.</p></div><div class="kpis" id="kp"></div><div class="card" id="hm"></div></section>
+<section id="s2" class="priv"><div class="sh"><span class="eb2">Findings Queue</span><h2>Findings Queue</h2><p>Grouped by department. Select a finding to open its details.</p></div>
+<div class="tools"><button class="btn p" id="addB" onclick="fm()">+ Add finding</button><button class="btn" id="impB" onclick="show('impM')">⬆ Import data</button><button class="btn" onclick="reload()">⟳ Refresh</button><button class="btn" onclick="rptPdf()">Report PDF</button><button class="btn" onclick="xl()">Export Excel</button><button class="btn" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn" id="remC" onclick="remCfg()">⚙ Reminder settings</button><button class="btn" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button></div>
 <div class="card"><div class="bar"><input id="q" placeholder="Search by title, audit issue, department, or owner name..." oninput="rd()"><select id="fs" onchange="rd()"><option value="">All statuses</option><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select><select id="fd" onchange="rd()"></select></div>
 <div class="tw"><table><thead><tr><th>Audit</th><th>Audit cycle</th><th>Open issue</th><th>Dept</th><th>Owner</th><th>Status</th><th>Risk</th><th>Deadline</th><th>Files</th></tr></thead><tbody id="tb"></tbody></table></div></div>
+</section>
+<section id="sCat"><div class="sh"><span class="eb2">Categories</span><h2>Browse by Topic</h2><p>Select a topic to filter the audit guides below.</p></div><div class="cats" id="cats"></div></section>
+<section id="sKB"><div class="sh"><span class="eb2">Knowledge Base</span><h2>Audit Guides</h2><p>Click any guide to expand the step-by-step instructions.</p></div><div class="kbc"><button class="btn" id="kbm" onclick="kbM()">Show all</button><button class="btn" onclick="kbX()">Expand All</button></div><div id="kbl"></div></section>
+<section id="s4" class="priv"><div class="sh"><span class="eb2">Analytics &amp; Reports</span><h2>Analytics and Reports Overview</h2><p>Findings by due month, department share and overdue ageing.</p></div><div class="anl"><div class="card"><h3 style="margin-top:0">Findings by due month</h3><div class="tbars" id="tr"></div><p style="margin:12px 0 0;font-size:13px;color:var(--mut)"><b style="color:var(--g1)">&#9632;</b> Closed &nbsp; <b style="color:#FFC000">&#9632;</b> Still open</p></div><div class="card"><h3 style="margin-top:0">Department share</h3><div id="ra"></div></div></div>
+<div class="tools"><button class="btn" onclick="rptPdf()">Report PDF</button><button class="btn" onclick="xl()">Export Excel</button></div><div class="card" id="rp"></div></section>
+<section id="s5" class="priv"><div class="sh"><span class="eb2">Settings</span><h2>Settings and Contacts</h2><p>Reminder timing, connection status and department contacts.</p></div><div id="sg"></div></section>
+<span id="nl4" hidden></span><span id="nl5" hidden></span>
 </div>
 <div id="hmw"></div><div class="phbf"><b>WE ARE PHB</b><small>PROFESSIONAL | HARMONIOUS | BOLD</small></div>
 <div class="ov" id="ov"><div style="position:absolute;inset:0" onclick="cl()"></div><div class="dr" id="dr"></div></div>
@@ -593,7 +676,7 @@ async function enter(){document.body.classList.add("auth");g("lgn").style.displa
  setP(U.admin?"ADMIN":"PIC");try{await spLoad()}catch(x){D=[];toast("SharePoint load warning: "+x.message)}
  fillDeps();rd();toast("Signed in successfully")}
 
-function logout(){U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
+function logout(){U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="none";g("ldp").value="";rd()}
 
 function fillDeps(){
 var l=["Risk, Compliance & Integrity Management Department (RCIMD)","Finance Department (FD)","Human Resource Department (HRD)","Internal Audit Department (IAD)","Investment Department (ID)","Learning & Development Department (LDD)","Corporate Administration Department (CAD)","Contract Management Department (CMD)","Procurement & Vendor Management Department (PVMD)","Information Technology Department (ITD)","Property Development Department (PDD)","PHB Asset Management (PAM)","PHB Facility Management (PFM)","PHB Property Ventures (PPV)","Portfolio Management Department (PMD)","Research Unit (RU)"];
@@ -602,7 +685,7 @@ g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join(""
 g("n3").innerHTML="<option value=''>Select Department</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
 }
 
-function boot(){fillDeps();var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"Sign in with your corporate Microsoft 365 account.";}
+function boot(){fillDeps();catR();kbR();var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"Sign in with your corporate Microsoft 365 account.";}
 
 var D=[];function sv(){}function g(i){return document.getElementById(i)}
 function e(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -612,8 +695,35 @@ function rk(l,i){var h=l==="High"||i==="High",m=l==="Medium"||i==="Medium";retur
 function toast(m){var t=g("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},Math.max(2800,String(m).length*75))}
 function show(i){g(i).classList.add("show")}function hide(i){g(i).classList.remove("show")}
 
-function setP(p){P=p;var a=p==="ADMIN";["addB","impB","cfgB","remB","remC"].forEach(function(i){if(g(i))g(i).style.display=a?"":"none"});if(cur)dr()}
+function setP(p){P=p;var a=p==="ADMIN";["addB","addN","impB","cfgB","remB","remC","s5","nl4","nl5"].forEach(function(i){if(g(i))g(i).style.display=a?"":"none"});if(cur)dr()}
 
+
+function rep(){var sts=["Open","In Progress","Extended","Overdue","Closed"],dm={},td=new Date().toISOString().slice(0,10),ag=[0,0,0];
+ V().forEach(function(r){var d=dm[r.dep]=dm[r.dep]||{t:0};d[r.st]=(d[r.st]||0)+1;d.t++;if(r.st!=="Closed"&&r.due&&r.due<td){var n=Math.floor((new Date(td)-new Date(r.due))/864e5);ag[n<=7?0:n<=30?1:2]++}});
+ var ks=Object.keys(dm).sort();
+ g("rp").innerHTML='<div class="tw"><table><thead><tr><th>Department</th>'+sts.map(function(x){return"<th>"+x+"</th>"}).join("")+'<th>Total</th></tr></thead><tbody>'+(ks.map(function(k){return"<tr><td><b>"+e(k)+"</b></td>"+sts.map(function(x){return"<td>"+(dm[k][x]||0)+"</td>"}).join("")+"<td><b>"+dm[k].t+"</b></td></tr>"}).join("")||'<tr><td colspan="7" style="text-align:center;color:var(--mut)">No data yet.</td></tr>')+'</tbody></table></div><div class="steps" style="padding:18px">'+[["1 - 7 DAYS",ag[0]],["8 - 30 DAYS",ag[1]],["OVER 30 DAYS",ag[2]]].map(function(a){return'<div class="st"><span class="sn">'+a[0]+'</span><h3>'+a[1]+' overdue</h3></div>'}).join("")+"</div>"}
+function saveRem(){REM.days=parseInt(g("rd7").value,10)||7;try{localStorage.setItem("iar_rem",REM.days)}catch(x){}toast("Overdue reminders repeat every "+REM.days+" days")}
+function stg(){var fl=Object.keys(CFG).filter(function(k){return k.indexOf("F_")===0}),cd={};
+ V().forEach(function(r){var c=cd[r.dep]=cd[r.dep]||{};if(r.oe)c[r.oe]=r.own});
+ g("sg").innerHTML='<div class="steps"><div class="st"><span class="sn">REMINDERS</span><h3>Overdue reminders</h3><p>Start the day after the deadline, then repeat every:</p><div class="row" style="margin-top:12px"><input class="in" id="rd7" type="number" min="1" value="'+REM.days+'" style="max-width:110px"><span style="align-self:center">days</span><button class="btn p" onclick="saveRem()">Save</button></div></div>'
+ +'<div class="st"><span class="sn">CONNECTIONS</span><h3>Power Automate flows</h3>'+fl.map(function(k){var ok=isSet(CFG[k]);return'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px"><span>'+k.slice(2)+'</span><b style="color:'+(ok?"#51920A":"#a4231b")+'">'+(ok?"Connected":"Not set")+"</b></div>"}).join("")+'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px"><span>OneDrive DRIVE_ID</span><b style="color:'+(isSet(CFG.DRIVE_ID)?"#51920A":"#a4231b")+'">'+(isSet(CFG.DRIVE_ID)?"Connected":"Not set")+"</b></div></div>"
+ +'<div class="st"><span class="sn">CONTACTS</span><h3>Department contacts</h3>'+(Object.keys(cd).sort().map(function(d){return'<div style="padding:5px 0;font-size:14px"><b>'+e(d)+"</b><br>"+Object.keys(cd[d]).map(function(m){return e(cd[d][m])+" · "+e(m)}).join("<br>")+"</div>"}).join("")||'<p>Contacts appear once findings have owner emails.</p>')+"</div></div>"}
+var KB=[["Progress", "Update your monthly progress", "Open your finding from the Findings Queue|Go to the Progress update tab|Choose the month and status, then write the key milestones|Press Update at the bottom"], ["Progress", "Understand risk and status", "Risk is set by IAD from likelihood and impact|Department users can set Open or In Progress|IAD sets Extended, Overdue and Closed"], ["Evidence", "Attach evidence from OneDrive", "Open the finding, then the Evidence tab|Upload the file or paste the OneDrive share link|Check the file name appears in the list"], ["Evidence", "Why can I not download a file?", "Evidence stays in OneDrive for control|IAD views files inside the portal|Department users use Open to go to OneDrive"], ["Closure", "Submit a finding for closure", "Attach evidence first|Open Progress update and press Submit for closure|IAD Admin reviews, then HOD IAD gives final approval"], ["Closure", "What if IAD returns my submission?", "You receive an email with the reason|Fix the point and update the evidence|Submit for closure again"], ["Deadlines", "Request a deadline extension", "Contact IAD before the due date|IAD Admin can extend an overdue finding up to 3 times|You receive an email and Teams message with the new date"], ["Notifications", "Overdue reminders", "Reminders start the day after the deadline|They repeat every 7 days by default|They go by Teams and email until the finding is closed"], ["Access", "Who can see what", "Department users see their own department and findings they own|IAD Admin and HOD IAD see every department|Only IAD Admin can add or edit findings"]],CATS=[["Progress", "Monthly updates and risk status"], ["Evidence", "OneDrive files and viewing"], ["Closure", "Three-layer approval"], ["Deadlines", "Due dates and extensions"], ["Notifications", "Teams and email reminders"], ["Access", "Roles and visibility"]],kbCat="",kbAll=false;
+function catR(){g("cats").innerHTML=CATS.map(function(c){var n=KB.filter(function(k){return k[0]===c[0]}).length;return'<button class="cat'+(kbCat===c[0]?" on":"")+'" onclick="kbF(\''+c[0]+'\')"><h3>'+c[0]+'<span class="cnt">'+n+' guides</span></h3><p>'+c[1]+"</p></button>"}).join("")}
+function kbR(){var L=KB.map(function(k,i){return[k,i]}).filter(function(x){return!kbCat||x[0][0]===kbCat});if(!kbCat&&!kbAll)L=L.slice(0,5);
+ g("kbl").innerHTML=L.map(function(x){var k=x[0];return'<div class="kb" id="kb'+x[1]+'"><button class="kbh" onclick="kbT('+x[1]+')"><span class="kid">KB-'+String(x[1]+1).padStart(3,"0")+"</span><b>"+k[1]+'</b><span class="cnt">'+k[0]+'</span></button><div class="kbb"><ol>'+k[2].split("|").map(function(t){return"<li>"+t+"</li>"}).join("")+"</ol></div></div>"}).join("");
+ g("kbm").textContent=kbCat||kbAll?"Back to Top 5":"Show all "+KB.length}
+function kbT(i){var d=g("kb"+i);if(d)d.classList.toggle("open")}
+function kbF(c){kbCat=kbCat===c?"":c;catR();kbR();g("sKB").scrollIntoView({behavior:"smooth"})}
+function kbM(){if(kbCat||kbAll){kbCat="";kbAll=false}else kbAll=true;catR();kbR()}
+function kbZ(){kbCat="";kbAll=false;catR();kbR()}
+function kbOpen(i){kbCat="";kbAll=true;catR();kbR();kbT(i);g("kb"+i).scrollIntoView({behavior:"smooth",block:"center"})}
+function kbX(){var a=[].slice.call(document.querySelectorAll(".kb")),o=a.every(function(d){return d.classList.contains("open")});a.forEach(function(d){d.classList.toggle("open",!o)})}
+function trend(){if(!g("tr"))return;var m={},dm={},n=0;V().forEach(function(r){if(r.due){var k=r.due.slice(0,7),x=m[k]=m[k]||{o:0,c:0};r.st==="Closed"?x.c++:x.o++}dm[r.dep]=(dm[r.dep]||0)+1;n++});
+ var ks=Object.keys(m).sort().slice(-8),mx=Math.max(1,Math.max.apply(null,ks.map(function(k){return m[k].o+m[k].c})));
+ g("tr").innerHTML=ks.map(function(k){return'<div class="tc"><b style="font-size:13px">'+(m[k].o+m[k].c)+'</b><div class="tbw"><i style="height:'+m[k].c/mx*100+'%;background:var(--g1)"></i><i style="height:'+m[k].o/mx*100+'%;background:#FFC000"></i></div><small>'+k.slice(5)+"/"+k.slice(2,4)+"</small></div>"}).join("")||'<span style="color:var(--mut)">No data yet.</span>';
+ g("ra").innerHTML=Object.keys(dm).sort(function(a,b){return dm[b]-dm[a]}).map(function(k){return'<div class="hb"><span>'+e(k)+'</span><div class="bt"><i style="width:'+dm[k]/n*100+'%"></i></div><b>'+Math.round(dm[k]/n*100)+"%</b></div>"}).join("")||'<span style="color:var(--mut)">No data yet.</span>'}
+function qf(v){g("fs").value=v;rd();g("s2").scrollIntoView({behavior:"smooth"})}
 function rd(){
  var q=g("q").value.toLowerCase(),fs=g("fs").value,fd=g("fd").value;
  var deps=[];V().forEach(function(r){if(deps.indexOf(r.dep)<0)deps.push(r.dep)});
@@ -623,6 +733,7 @@ function rd(){
  var K=[["Total findings",V().length,"#172F4B"],["Open",c("Open"),"#969100"],["In progress",c("In Progress"),"#265856"],["Extended",c("Extended"),"#4D6B1A"],["Overdue",c("Overdue"),"#a4231b"],["Closed",c("Closed"),"#51920A"]];
  g("kp").innerHTML=K.map(function(k){return'<div class="k" style="--c:'+k[2]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join("");
  
+ if(g("navN"))g("navN").textContent=V().length;rep();stg();trend();
  var sig=V().map(function(r){return r.id+r.st+r.dep}).join("|");
  if(window.__sig!==sig){var first=!window.__sig;window.__sig=sig;
   var dm={};V().forEach(function(r){if(r.st!=="Closed")dm[r.dep]=(dm[r.dep]||0)+1});var dk=Object.keys(dm).sort(function(a,b){return dm[b]-dm[a]}).slice(0,6),mx=Math.max(1,dk.length?dm[dk[0]]:1),nO=V().filter(function(r){return r.st!=="Closed"}).length,h=new Date().getHours();
