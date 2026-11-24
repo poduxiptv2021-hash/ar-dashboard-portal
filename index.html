@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><title>Internal Audit Register Portal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.phb.com.my; connect-src 'self' https://graph.microsoft.com https://login.microsoftonline.com https://*.api.powerplatform.com; frame-src https://login.microsoftonline.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://www.phb.com.my; connect-src 'self' https://graph.microsoft.com https://login.microsoftonline.com https://*.api.powerplatform.com; frame-src https://login.microsoftonline.com https://*.sharepoint.com https://onedrive.live.com https://1drv.ms https://*.officeapps.live.com https://*.office.com; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="same-origin">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
 <style>
 :root{--bg:#eef1f8;--card:#fff;--tx:#0f172a;--mut:#64748b;--bd:#e5e9f2;--soft:#f6f8fc;--pri:#4f46e5;--sh:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.06);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1020;--card:#121a2e;--tx:#e8edf8;--mut:#94a3c0;--bd:#223052;--soft:#0f172b;--sh:0 8px 24px rgba(0,0,0,.35);color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0a1020;--card:#121a2e;--tx:#e8edf8;--mut:#94a3c0;--bd:#223052;--soft:#0f172b;--sh:0 8px 24px rgba(0,0,0,.35);color-scheme:dark}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 Inter,"Segoe UI",system-ui,sans-serif}
 button,input,select,textarea{font:inherit;color:var(--tx)}
@@ -29,7 +27,6 @@ button,input,select,textarea{font:inherit;color:var(--tx)}
 .k{background:var(--card);border-radius:16px;padding:16px 18px;box-shadow:var(--sh);border-top:4px solid var(--c)}
 .k small{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.6px}.k b{display:block;font-size:30px;font-weight:800;margin-top:2px;color:var(--c)}
 .alert{display:none;align-items:center;gap:12px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:14px;padding:12px 16px;margin-bottom:16px;justify-content:space-between}
-@media (prefers-color-scheme:dark){.alert{background:#3b1217;border-color:#7f1d1d;color:#fecaca}}
 .card{background:var(--card);border-radius:16px;box-shadow:var(--sh);border:1px solid var(--bd)}
 .bar{display:flex;gap:10px;padding:14px;flex-wrap:wrap;border-bottom:1px solid var(--bd)}
 .bar input,.bar select,.in{background:var(--soft);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;width:100%}
@@ -54,7 +51,6 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 .box{background:var(--soft);border:1px solid var(--bd);border-radius:12px;padding:12px 14px}
 .adm{background:#faf5ff;border:1px solid #e9d5ff;border-radius:14px;padding:14px;margin-top:14px}
 .adm.od{background:#fef2f2;border-color:#fecaca}
-@media (prefers-color-scheme:dark){.adm{background:#241338;border-color:#4c1d95}.adm.od{background:#3b1217;border-color:#7f1d1d}}
 .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}.row>*{flex:1}
 .tl{border-left:2px solid var(--bd);margin-left:6px;padding-left:20px}
 .tl>div{position:relative;margin-bottom:18px}.tl>div:before{content:"";position:absolute;left:-27px;top:5px;width:12px;height:12px;border-radius:4px;background:var(--pri)}
@@ -71,34 +67,156 @@ h4{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px
 .chip{background:rgba(255,255,255,.14);border-radius:10px;padding:6px 12px;font-size:12px;line-height:1.35}
 body.auth #lgn{display:none!important}
 .stage-badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,.18);margin-left:6px;font-weight:600}
+
+/* ===== PHB TEMPLATE ===== */
+:root{--bg:#f4f8ee;--tx:#0b1b14;--mut:#4d5b52;--bd:#dbe6cc;--soft:#f3f8ec;--pri:#51920A;--g1:#51920A;--g2:#94D14F;--g3:#D6E9B0;--g4:#4D6B1A;--navy:#012060;--dn:#172F4B;--teal:#265856;--sh:0 1px 2px rgba(23,47,75,.06),0 8px 22px rgba(23,47,75,.07)}
+body{font:15px/1.55 "DIN Alternate","DIN Alternate 2014","DIN 2014",Barlow,"Segoe UI",system-ui,sans-serif}
+h2,h3,.logo h1,.k b,.t{font-weight:800}
+.hero,.dh{background:linear-gradient(90deg,#51920A 0%,#265856 55%,#172F4B 100%)}
+.hero{position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;left:0;top:0;width:300px;height:100%;background:radial-gradient(circle,rgba(148,209,79,.55) 1.6px,transparent 2.2px) 0 0/10px 10px;-webkit-mask-image:linear-gradient(90deg,#000,transparent);mask-image:linear-gradient(90deg,#000,transparent);animation:dots 40s linear infinite}
+@keyframes dots{to{background-position:200px 0}}
+.hero>*{position:relative}
+.logo p{opacity:.85;font-weight:500}
+#lgn{background:linear-gradient(120deg,#51920A 0%,#265856 50%,#172F4B 100%)}
+.lc{width:min(630px,100%);border-radius:26px;padding:44px}
+.lc h2{font-size:30px!important;font-weight:800}
+.lc .in,.msb{padding:15px 18px;font-size:16px;border-radius:12px}
+.btn{font-size:14px;padding:9px 16px}
+.btn.p,.btn.s{background:var(--g1);border-color:var(--g1);color:#fff}
+.btn.v{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn:hover{border-color:var(--g1)}
+.k small,th,h4,.f small{text-transform:none;letter-spacing:0;font-size:13px}
+.k{border-top-color:var(--c)}
+.pill{font-size:13px}
+.s-Open{background:#fff0c2;color:#6b5200}.s-In-Progress{background:#dcebea;color:#265856}.s-Extended{background:#eaedbd;color:#5f5c00}.s-Overdue{background:#fbe3e1;color:#a4231b}.s-Closed{background:var(--g3);color:#2f5a05}
+.adm{background:var(--soft);border-color:var(--g3)}.adm.od{background:#fdecea;border-color:#f3b8b3}
+.tl>div:before{background:var(--g1)}
+.dr{width:min(1000px,100%);height:min(88vh,780px)}
+.dv{flex:1;min-height:0;display:grid;grid-template-columns:210px 1fr}
+.vt{background:var(--soft);border-right:1px solid var(--bd);padding:12px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+.vt a{padding:11px 14px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--mut)}
+.vt a.on{background:#fff;color:var(--g4);box-shadow:inset 3px 0 var(--g1),0 1px 4px rgba(0,0,0,.08)}
+.dfoot{padding:12px 22px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;background:#fff}
+.dfoot .sp{margin-right:auto}
+.grp td{background:var(--g3);color:var(--g4);font-weight:800;padding:9px 16px;border-top:0}
+.hb{display:grid;grid-template-columns:minmax(120px,300px) 1fr 36px;gap:12px;align-items:center;margin:8px 0;font-size:14px}
+.bt{height:12px;background:#e8f0da;border-radius:8px;overflow:hidden}.bt i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g1),var(--g2));transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+#hm{padding:20px 22px;margin-bottom:16px}#hm h3{margin:0 0 2px;font-size:20px}#hm p{margin:0 0 12px;color:var(--mut)}
+.phbf{text-align:center;padding:26px 12px 30px;color:#000}.phbf b{display:block;letter-spacing:.55em;font-weight:800;font-size:15px}.phbf small{display:block;letter-spacing:.2em;font-weight:700;font-size:11px;margin-top:4px}
+.lc .phbf{padding:22px 0 0}
+@media(max-width:700px){.dv{grid-template-columns:1fr;grid-template-rows:auto 1fr}.vt{flex-direction:row;border-right:0;border-bottom:1px solid var(--bd)}.hb{grid-template-columns:100px 1fr 30px}}
+@media(prefers-reduced-motion:reduce){.hero:before{animation:none}.bt i{transition:none}}
+
+/* ===== CLEAN UI ===== */
+.hero{padding:12px 28px;box-shadow:0 2px 10px rgba(23,47,75,.18)}
+.hero:before{width:200px;opacity:.6}
+.hero .logo{gap:16px}.hero .lp{background:#fff;border-radius:12px;padding:6px 12px;display:grid;place-items:center}
+.hero .logo h1{font-size:20px;line-height:1.2}.hero .logo p{margin:2px 0 0;font-size:13px}
+.chip{font-size:13px;padding:7px 14px;display:flex;gap:8px;align-items:center}.chip br{display:none}.chip b{font-weight:700}.chip span{opacity:.9!important}
+.main{margin:22px auto 40px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tools .btn{background:#fff;border-color:var(--bd);color:var(--dn)}
+.tools .btn:hover{border-color:var(--g1);color:var(--g4)}
+.tools .btn.p{background:var(--g1);border-color:var(--g1);color:#fff}
+.kpis{gap:12px;margin-bottom:18px}
+.k{border-radius:14px;padding:14px 18px;box-shadow:none;border:1px solid var(--bd);border-top:3px solid var(--c)}
+.k small{display:block;color:var(--mut);font-size:13px;font-weight:600}.k b{font-size:28px;margin-top:4px}
+.card{border-radius:14px;box-shadow:none}
+#hm{padding:16px 20px;margin-bottom:18px}#hm h3{font-size:18px}#hm p{margin:0 0 6px}
+#hm:has(.hb) p{margin-bottom:12px}
+.bar{padding:12px 14px;gap:10px}
+th{padding:12px 16px;font-weight:700;color:var(--dn);background:var(--soft)}
+td{padding:14px 16px}
+tr.r:hover{background:#f7fbf1}
+.phbf{padding:18px 12px 26px}
+@media(max-width:700px){.hero{padding:12px 14px}.hero .logo h1{font-size:16px}.chip{display:none}}
+
+/* ===== ORBIT-STYLE LAYOUT ===== */
+:root{--bg:#f9fafb;--gr:#0d7a55;--mono:"JetBrains Mono",ui-monospace,Consolas,monospace}
+html{scroll-behavior:smooth}section{scroll-margin-top:92px}
+.nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid #e8ece9}
+.nv{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;padding:14px 28px;max-width:1360px}
+.brand{display:flex;align-items:center;gap:14px}.vr{width:1px;height:34px;background:#dfe5e1}
+.pn{font-size:28px;font-weight:700;color:var(--gr);letter-spacing:-.01em;line-height:1}
+.pp{background:#e7f6ee;border:1px solid #bfe6d2;color:var(--gr);border-radius:999px;padding:3px 12px;font-size:13px;font-weight:700}
+.nl{display:flex;justify-content:center;gap:48px}.nl a{color:#2b3530;font-weight:600;font-size:16px;text-decoration:none;padding:6px 2px;border-bottom:2px solid transparent}.nl a:hover{color:var(--gr);border-color:var(--gr)}
+.nr{display:flex;gap:10px;align-items:center}
+.nav .chip{background:var(--soft);border:1px solid var(--bd);color:var(--tx)}.nav .btn{border-radius:12px;padding:10px 18px}
+.main{max-width:1360px;margin:22px auto 40px;padding:0 28px}
+.banner{border-radius:28px;padding:34px 38px;color:#fff;background:linear-gradient(105deg,#00704f 0%,#005a46 45%,#0b2a4e 100%);box-shadow:0 18px 40px rgba(11,42,78,.22);margin-bottom:24px}
+.bt1{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid rgba(255,255,255,.14)}
+.eb{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.2em;color:#5ee6a8;margin-bottom:6px}
+.banner h1{margin:0;font-size:clamp(30px,4.4vw,54px);font-weight:800;letter-spacing:-.025em;line-height:1.1}.banner h1 em{font-style:normal;color:#5ee6a8}
+.bch{display:flex;gap:10px}.chp{padding:12px 20px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:700;text-decoration:none}.chp.on{background:#3fe0a0;border-color:#3fe0a0;color:#06281d}
+.bq{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding-top:20px}.ql{font-weight:800;letter-spacing:.08em;color:#5ee6a8;font-size:14px;margin-right:6px}
+.qc{font:inherit;font-weight:700;font-size:14px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:10px 18px;cursor:pointer}.qc:hover{background:rgba(255,255,255,.2)}.qc.rs{background:rgba(0,0,0,.28);color:#5ee6a8}
+.sh{border-left:4px solid var(--gr);padding:2px 0 2px 18px;margin:38px 0 20px}
+.eb2{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.22em;color:var(--gr)}
+.sh h2{margin:4px 0;font-size:clamp(28px,3.2vw,40px);font-weight:800;letter-spacing:-.02em}.sh p{margin:0;color:#3a4540;font-size:17px}
+.card,.k,.st{border-radius:22px;border:1px solid #e3e9e5;background:#fff}
+.k{display:flex;flex-direction:column;gap:2px;padding:20px 24px;border-top:1px solid #e3e9e5;position:relative}.k:before{content:"";position:absolute;left:24px;top:0;width:36px;height:4px;border-radius:0 0 4px 4px;background:var(--c)}
+.k small{font-size:15px;font-weight:700;color:#1d2823}.k b{font-size:34px;font-family:var(--mono);color:var(--c)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.st{padding:24px}.st h3{margin:14px 0 6px;font-size:20px}.st p{margin:0;color:#3a4540}
+.sn{display:inline-block;font-family:var(--mono);font-weight:700;font-size:14px;color:var(--gr);background:#e7f6ee;border:1px solid #bfe6d2;border-radius:999px;padding:3px 12px}
+.tools{margin-bottom:16px}
+#toast{display:none;align-items:center;gap:10px;background:#0b1f3a;border-radius:999px;padding:14px 22px;font-weight:700;border:1px solid #1a3558}#toast:before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#3fe0a0;margin-right:10px}
+@media(max-width:980px){.nl,.pp{display:none}.nv{grid-template-columns:1fr auto;padding:12px 16px}.main{padding:0 14px}.banner{padding:24px 20px;border-radius:22px}}
+
+/* ===== ORBIT STRUCTURE ===== */
+#lgn{display:none}
+body:not(.auth) .priv{display:none!important}body.auth .pubo{display:none!important}
+.banner .lead{margin:10px 0 0;max-width:640px;color:#d3ece3;font-size:17px}
+.chp{border:0;font:inherit;font-weight:700;cursor:pointer}.chp:not(.on){border:1px solid rgba(255,255,255,.18)}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px}
+.cat{background:#fff;border:1px solid #e3e9e5;border-radius:22px;padding:24px;cursor:pointer;text-align:left;font:inherit;color:inherit;transition:transform .15s,box-shadow .15s}
+.cat:hover,.cat.on{transform:translateY(-2px);box-shadow:var(--sh);border-color:var(--gr)}
+.cat h3{display:flex;justify-content:space-between;gap:10px;margin:0 0 6px;font-size:21px}.cat p{margin:0;color:#3a4540}
+.cnt{font-family:var(--mono);font-size:13px;background:#e7f6ee;border:1px solid #bfe6d2;color:var(--gr);border-radius:999px;padding:3px 12px;white-space:nowrap;font-weight:700}
+.kbc{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.kb{background:#fff;border:1px solid #e3e9e5;border-radius:18px;margin-bottom:10px;overflow:hidden}
+.kbh{all:unset;box-sizing:border-box;display:grid;grid-template-columns:80px 1fr auto;gap:14px;align-items:center;width:100%;padding:18px 22px;cursor:pointer}
+.kbh:focus-visible{outline:3px solid var(--lime,#b9c400);outline-offset:-3px}.kbh b{font-size:17px}.kid{font-family:var(--mono);font-size:13px;color:var(--gr);font-weight:700}
+.kbb{display:none;padding:0 22px 20px 116px;color:#2b3530}.kb.open .kbb{display:block}.kbb ol{margin:0;padding-left:20px}.kbb li{margin:6px 0}
+.anl{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin-bottom:18px}.anl .card{padding:22px}
+.tbars{display:flex;gap:10px;align-items:flex-end}.tc{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.tbw{height:170px;width:100%;max-width:48px;display:flex;flex-direction:column-reverse;background:#f1f6ea;border-radius:8px;overflow:hidden}.tbw i{display:block;width:100%;transition:height 1s}
+@media(max-width:700px){.kbh{grid-template-columns:62px 1fr}.kbh .cnt{display:none}.kbb{padding-left:22px}}
 </style></head><body>
 <div id="lgn"><div class="lc">
 <div style="text-align:center;margin-bottom:20px">
   <div style="margin:0 auto 12px;background:#ffffff;border:1px solid var(--bd);border-radius:14px;padding:10px 18px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.06);">
     <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:38px;width:auto;object-fit:contain;display:block;">
   </div>
-<h2 style="margin:0;font-size:20px">Internal Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p></div>
+<h2 style="margin:0;font-size:20px">Sign in to Audit Register</h2><p style="color:var(--mut);margin:4px 0 0;font-size:13px">Sign in with your company Microsoft 365 account</p></div>
 <input class="in" id="ldp" list="dpl" placeholder="Please select your department (e.g., Finance, ITD, HRD)" style="margin-top:8px"><datalist id="dpl"></datalist>
 <button class="msb" style="margin-top:14px" onclick="login()"><i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>Sign in with Microsoft</button>
 <div id="lErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
 <div style="font-size:12px;color:var(--mut);margin-top:6px">IAD access is granted only to <b>Admin</b> users listed in <b>AuditUserDirectory</b>. All other staff sign in under their own department.</div>
-<div id="lNote" style="font-size:11px;color:var(--mut);margin-top:8px"></div>
+<div id="lNote" style="font-size:12px;color:var(--mut);margin-top:8px"></div>
+<div class="phbf"><b>WE ARE PHB</b><small>PROFESSIONAL | HARMONIOUS | BOLD</small></div>
 </div></div>
 
-<div class="hero"><div class="wrap hrow">
-<div class="logo">
-  <div style="background:#ffffff;border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:6px 12px;display:grid;place-items:center;">
-    <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:28px;width:auto;object-fit:contain;display:block;">
-  </div>
-  <h1>Internal Audit Register Portal</h1><p>Internal Audit Department·</p></div></div>
-<div class="hrow" style="gap:10px"><div class="chip" id="uchip"></div>
-<button class="btn h" id="addB" onclick="fm()">+ Add finding</button><button class="btn h" id="impB" onclick="show('impM')" style="background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.4)">⬆ Import data</button><button class="btn h" onclick="reload()">⟳ Refresh</button><button class="btn h" onclick="rptPdf()">Report PDF</button><button class="btn h" onclick="xl()">Export Excel</button><button class="btn h" id="remB" onclick="sendReminders()">✉ Send reminders</button><button class="btn h" id="cfgB" onclick="runOverdue()">⟳ Run overdue check</button><button class="btn h" onclick="logout()">Sign out</button></div></div></div>
-<div class="main">
+<header class="nav"><div class="wrap nv"><div class="brand"><img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:46px;width:auto;display:block"><i class="vr"></i><b class="pn">IAR</b><span class="pp">One Register for Internal Audit</span></div>
+<nav class="nl"><a href="#top">Homepage</a><a href="#s2" class="priv">Findings Queue (<span id="navN">0</span>)</a><a href="#s4" class="priv">Reports</a></nav>
+<div class="nr"><button class="btn p pubo" onclick="g('lgn').style.display='grid'">Sign in</button><button class="btn p priv" id="addN" onclick="fm()">+ Add finding</button><div class="chip priv" id="uchip"></div><button class="btn priv" onclick="logout()">Sign out</button></div></div></header>
+<div class="main" id="top">
+<section class="banner"><div class="bt1"><div><div class="eb">HOMEPAGE &middot; PHB INTERNAL AUDIT REGISTER</div><h1>Audit findings, <em>closed on time.</em></h1><p class="lead">Track findings, attach OneDrive evidence and follow the three-layer closure approval.</p></div>
+<div class="bch"><button class="chp on pubo" onclick="g('lgn').style.display='grid'">Sign in to open the register</button><a class="chp on priv" href="#s2">Open Findings Queue</a></div></div>
+</section>
 <div class="alert" id="al"><div><b id="alT"></b><div style="font-size:13px;opacity:.85">Deadlines have passed. Admin can extend or manage overdue findings.</div></div><button class="btn d" onclick="g('fs').value='Overdue';rd()">View overdue</button></div>
-<div class="kpis" id="kp"></div>
+<section id="sDash" class="priv"><div class="sh"><span class="eb2">Dashboard Overview</span><h2>Audit Findings and Deadline Performance</h2><p>Live status of findings in your scope, from SharePoint.</p></div><div class="kpis" id="kp"></div><div class="card" id="hm"></div></section>
+<section id="s2" class="priv"><div class="sh"><span class="eb2">Findings Queue</span><h2>Findings Queue</h2><p>Grouped by department. Select a finding to open its details.</p></div>
+<div class="tools"><button class="btn" id="impB" onclick="show('impM')">Import historical data</button><button class="btn" onclick="reload()">Refresh</button><button class="btn" onclick="xl()">Export Excel</button></div>
 <div class="card"><div class="bar"><input id="q" placeholder="Search by title, audit issue, department, or owner name..." oninput="rd()"><select id="fs" onchange="rd()"><option value="">All statuses</option><option>Open</option><option>In Progress</option><option>Extended</option><option>Overdue</option><option>Closed</option></select><select id="fd" onchange="rd()"></select></div>
 <div class="tw"><table><thead><tr><th>Audit</th><th>Audit cycle</th><th>Open issue</th><th>Dept</th><th>Owner</th><th>Status</th><th>Risk</th><th>Deadline</th><th>Files</th></tr></thead><tbody id="tb"></tbody></table></div></div>
+</section>
+<section id="s4" class="priv"><div class="sh"><span class="eb2">Reports</span><h2>Findings by department</h2><p>Status counts per department and how long overdue items have waited.</p></div><div class="card" id="rp"></div></section>
+<section id="s5" class="priv"><div class="sh"><span class="eb2">Settings</span><h2>Settings and Contacts</h2><p>Reminder timing, connection status and department contacts.</p></div><div id="sg"></div></section>
+<span id="nl4" hidden></span><span id="nl5" hidden></span>
 </div>
+<div id="hmw"></div><div class="phbf"><b>WE ARE PHB</b><small>PROFESSIONAL | HARMONIOUS | BOLD</small></div>
 <div class="ov" id="ov"><div style="position:absolute;inset:0" onclick="cl()"></div><div class="dr" id="dr"></div></div>
 
 <!-- Add Finding Modal -->
@@ -199,8 +317,11 @@ body.auth #lgn{display:none!important}
 </div>
 
 </div></div>
+<div class="md" id="vwM"><div style="width:min(1000px,100%);height:88vh;display:flex;flex-direction:column;padding:0"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--bd)"><b id="vwT"></b><span style="display:flex;gap:8px"><a id="vwO" class="btn" target="_blank" rel="noopener">Open in OneDrive</a><button class="btn" onclick="g('vwF').src='about:blank';hide('vwM')">Close</button></span></div><iframe id="vwF" style="flex:1;border:0;width:100%" sandbox="allow-scripts allow-same-origin allow-popups"></iframe></div></div>
 <div id="toast"></div>
 <script>
+var REM={days:7};try{REM.days=parseInt(localStorage.getItem("iar_rem"),10)||7}catch(x){}
+function remCfg(){var v=prompt("Repeat overdue reminders every how many days? (reminders only start once a finding is overdue)",REM.days);if(v===null)return;v=parseInt(v,10);if(!(v>0)){toast("Enter a number of days");return}REM.days=v;try{localStorage.setItem("iar_rem",v)}catch(x){}toast("Overdue reminders will repeat every "+v+" days")}
 var KEY="iar_v3",P="ADMIN",cur=null,tab="d",F={};
 var CFG={
  TENANT_ID:"cc9afa77-5900-4c38-8262-c226c4c2e27d",
@@ -219,8 +340,8 @@ var CFG={
  F_UPLOAD_EVIDENCE:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/01/workflows/b1f92876fa874fa09f2b7c2ee265a804/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=h3bVow3X8zu6B4kBPQ35ZFKm2k8Tj88mAj_AE7N-Pfc",
  F_NOTIFY:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/23/workflows/ac4aa82fb5bc4833affc95635d7f3f50/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=E4pgI8G78TqLb-FQMNE3ULXJnW1yOtVN6ftmfGVbaEU",
  F_EXTENSION_ALERT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/25/workflows/extension_teams_flow_placeholder/triggers/manual/paths/invoke?api-version=1",
- IA_PIC_EMAIL:"nurhaliza@phb.com.my",
- IA_BOSS_EMAIL:"nurhaliza@phb.com.my",
+ IA_PIC_EMAIL:"maslinda@phb.com.my",
+ IA_BOSS_EMAIL:"maslinda@phb.com.my",
  FLOW_AUTH:"url",
  F_ISSUE_DEPARTMENT:"https://defaultcc9afa7759004c388262c226c4c2e2.7d.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/09/workflows/628bf8070e9a41d8a83a5ca1e12af280/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3b6DPv8WfN9LFY9DQqv6rTtX5uLPcqovRV_1AdS9ihE"
 };
@@ -365,6 +486,7 @@ async function sendReminders(silent){
   if(dueMs<todayMs){k="overdue";odCnt++;}
   else if(dueMs<=threeDaysMs){k="due3";due3++;}
   if(!k)continue;
+  if(k==="overdue"&&silent){var dO=Math.round((todayMs-dueMs)/86400000);if(dO!==1&&dO%REM.days!==0)continue}
   var x=remTpl(r,k,daysLeft);
   try{await notifyMany(r.oe,x.s,x.h);n++;}catch(z){}
  }
@@ -518,6 +640,7 @@ function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v
 
 async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
  var id=g("n0").value,r=id?D.find(function(x){return x.id===id}):null,isNew=!r;
+ var snap=function(x){return{Title:x.t,Cycle:x.cy,Department:x.dep,Owner:x.own,"Owner email":x.oe,"Due date":x.due,Status:x.st,Issues:x.iss,Recommendation:x.rec,Remarks:x.rm}},o0=r?snap(r):null;
  if(isNew)r={id:nextId(),lg:[],at:[]};
  r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
  if(isNew){
@@ -528,6 +651,8 @@ async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required"
   if(!(await spCreate(r)))return;
   D.unshift(r);
  }else{
+  var n0=snap(r),df=[];Object.keys(n0).forEach(function(k){if(String(n0[k]||"")!==String(o0[k]||""))df.push(k+": "+String(o0[k]||"-").slice(0,60)+" → "+String(n0[k]||"-").slice(0,60))});
+  if(df.length)r.lg.push({m:"IAD Edit",s:"Details",n:df.join("\n"),a:U.name,d:stamp()});
   await spUpdate(r);
  }
  hide("addM");rd();toast(isNew?"Finding saved (In Progress). Submit for IAD Check when ready.":"Finding updated")}
@@ -556,7 +681,7 @@ g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join(""
 g("n3").innerHTML="<option value=''>Select Department</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
 }
 
-function boot(){fillDeps();var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"Sign in with your corporate Microsoft 365 account.";}
+function boot(){fillDeps();g("lgn").style.display="grid";var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"Sign in with your corporate Microsoft 365 account.";}
 
 var D=[];function sv(){}function g(i){return document.getElementById(i)}
 function e(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -566,22 +691,42 @@ function rk(l,i){var h=l==="High"||i==="High",m=l==="Medium"||i==="Medium";retur
 function toast(m){var t=g("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},Math.max(2800,String(m).length*75))}
 function show(i){g(i).classList.add("show")}function hide(i){g(i).classList.remove("show")}
 
-function setP(p){P=p;var a=p==="ADMIN";["addB","impB","cfgB","remB"].forEach(function(i){if(g(i))g(i).style.display=a?"":"none"});if(cur)dr()}
+function setP(p){P=p;var a=p==="ADMIN";["addN","impB","s5","nl4","nl5"].forEach(function(i){if(g(i))g(i).style.display=a?"":"none"});if(cur)dr()}
 
+
+function rep(){var sts=["Open","In Progress","Extended","Overdue","Closed"],dm={},td=new Date().toISOString().slice(0,10),ag=[0,0,0];
+ V().forEach(function(r){var d=dm[r.dep]=dm[r.dep]||{t:0};d[r.st]=(d[r.st]||0)+1;d.t++;if(r.st!=="Closed"&&r.due&&r.due<td){var n=Math.floor((new Date(td)-new Date(r.due))/864e5);ag[n<=7?0:n<=30?1:2]++}});
+ var ks=Object.keys(dm).sort();
+ g("rp").innerHTML='<div class="tw"><table><thead><tr><th>Department</th>'+sts.map(function(x){return"<th>"+x+"</th>"}).join("")+'<th>Total</th></tr></thead><tbody>'+(ks.map(function(k){return"<tr><td><b>"+e(k)+"</b></td>"+sts.map(function(x){return"<td>"+(dm[k][x]||0)+"</td>"}).join("")+"<td><b>"+dm[k].t+"</b></td></tr>"}).join("")||'<tr><td colspan="7" style="text-align:center;color:var(--mut)">No data yet.</td></tr>')+'</tbody></table></div><div class="steps" style="padding:18px">'+[["1 - 7 DAYS",ag[0]],["8 - 30 DAYS",ag[1]],["OVER 30 DAYS",ag[2]]].map(function(a){return'<div class="st"><span class="sn">'+a[0]+'</span><h3>'+a[1]+' overdue</h3></div>'}).join("")+"</div>"}
+function saveRem(){REM.days=parseInt(g("rd7").value,10)||7;try{localStorage.setItem("iar_rem",REM.days)}catch(x){}toast("Overdue reminders repeat every "+REM.days+" days")}
+function stg(){var fl=Object.keys(CFG).filter(function(k){return k.indexOf("F_")===0}),cd={};
+ V().forEach(function(r){var c=cd[r.dep]=cd[r.dep]||{};if(r.oe)c[r.oe]=r.own});
+ g("sg").innerHTML='<div class="steps"><div class="st"><span class="sn">REMINDERS</span><h3>Overdue reminders</h3><p>Start the day after the deadline, then repeat every:</p><div class="row" style="margin-top:12px"><input class="in" id="rd7" type="number" min="1" value="'+REM.days+'" style="max-width:110px"><span style="align-self:center">days</span><button class="btn p" onclick="saveRem()">Save</button></div><div class="row" style="margin-top:10px"><button class="btn" onclick="sendReminders()">Send reminders now</button><button class="btn" onclick="runOverdue()">Run overdue check</button></div></div>'
+ +'<div class="st"><span class="sn">CONNECTIONS</span><h3>Power Automate flows</h3>'+fl.map(function(k){var ok=isSet(CFG[k]);return'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px"><span>'+k.slice(2)+'</span><b style="color:'+(ok?"#51920A":"#a4231b")+'">'+(ok?"Connected":"Not set")+"</b></div>"}).join("")+'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px"><span>OneDrive DRIVE_ID</span><b style="color:'+(isSet(CFG.DRIVE_ID)?"#51920A":"#a4231b")+'">'+(isSet(CFG.DRIVE_ID)?"Connected":"Not set")+"</b></div></div>"
+ +'<div class="st"><span class="sn">CONTACTS</span><h3>Department contacts</h3>'+(Object.keys(cd).sort().map(function(d){return'<div style="padding:5px 0;font-size:14px"><b>'+e(d)+"</b><br>"+Object.keys(cd[d]).map(function(m){return e(cd[d][m])+" · "+e(m)}).join("<br>")+"</div>"}).join("")||'<p>Contacts appear once findings have owner emails.</p>')+"</div></div>"}
+function qf(v){g("fs").value=v;rd();g("s2").scrollIntoView({behavior:"smooth"})}
 function rd(){
  var q=g("q").value.toLowerCase(),fs=g("fs").value,fd=g("fd").value;
  var deps=[];V().forEach(function(r){if(deps.indexOf(r.dep)<0)deps.push(r.dep)});
  g("fd").innerHTML='<option value="">All departments</option>'+deps.map(function(d){return'<option'+(d===fd?" selected":"")+'>'+e(d)+'</option>'}).join("");
  
  var c=function(s){return V().filter(function(r){return r.st===s}).length};
- var K=[["Total findings",V().length,"#4f46e5"],["Open",c("Open"),"#d97706"],["In progress",c("In Progress"),"#2563eb"],["Extended",c("Extended"),"#7c3aed"],["Overdue",c("Overdue"),"#dc2626"],["Closed",c("Closed"),"#059669"]];
+ var K=[["Total findings",V().length,"#172F4B"],["Open",c("Open"),"#969100"],["In progress",c("In Progress"),"#265856"],["Extended",c("Extended"),"#4D6B1A"],["Overdue",c("Overdue"),"#a4231b"],["Closed",c("Closed"),"#51920A"]];
  g("kp").innerHTML=K.map(function(k){return'<div class="k" style="--c:'+k[2]+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join("");
  
+ if(g("navN"))g("navN").textContent=V().length;rep();stg();
+ var sig=V().map(function(r){return r.id+r.st+r.dep}).join("|");
+ if(window.__sig!==sig){var first=!window.__sig;window.__sig=sig;
+  var dm={};V().forEach(function(r){if(r.st!=="Closed")dm[r.dep]=(dm[r.dep]||0)+1});var dk=Object.keys(dm).sort(function(a,b){return dm[b]-dm[a]}).slice(0,6),mx=Math.max(1,dk.length?dm[dk[0]]:1),nO=V().filter(function(r){return r.st!=="Closed"}).length,h=new Date().getHours();
+  g("hm").innerHTML='<h3>Good '+(h<12?"morning":h<18?"afternoon":"evening")+(U?", "+e(String(U.name||"").split(" ")[0]):"")+'</h3><p>'+(U&&U.admin?"Open findings across all departments.":"Open findings for "+e(U?U.dep:"your department")+".")+" "+nO+" still open.</p>"+(dk.map(function(k){return'<div class="hb"><span>'+e(k)+'</span><div class="bt"><i data-w="'+(dm[k]/mx*100)+'"></i></div><b>'+dm[k]+'</b></div>'}).join("")||'<div style="color:var(--mut)">No open findings.</div>');
+  setTimeout(function(){document.querySelectorAll("#hm [data-w]").forEach(function(x){x.style.width=x.dataset.w+"%"})},60);
+  if(first)document.querySelectorAll("#kp .k b").forEach(function(b){var n=+b.textContent,t0=performance.now();(function st(t){var p=Math.min(1,(t-t0)/900);b.textContent=Math.round(n*p);if(p<1)requestAnimationFrame(st)})(t0)})}
  var o=c("Overdue");g("al").style.display=o?"flex":"none";g("alT").textContent="Action required: "+o+" overdue finding"+(o>1?"s":"");
  var L=D.filter(function(r){return(!fs||r.st===fs)&&(!fd||r.dep===fd)&&(r.t+r.iss+r.dep+r.own+r.id).toLowerCase().indexOf(q)>-1&&vis(r)});
- g("tb").innerHTML=L.map(function(r){
+ var lastD=null,cntD={};L.sort(function(a,b){return String(a.dep).localeCompare(String(b.dep))});L.forEach(function(r){cntD[r.dep]=(cntD[r.dep]||0)+1});
+ g("tb").innerHTML=L.map(function(r){var gh=r.dep!==lastD?(lastD=r.dep,'<tr class="grp"><td colspan="9">'+e(r.dep)+" · "+cntD[r.dep]+" finding(s)</td></tr>"):"";
   var stg=(U&&U.admin&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?' <span style="font-size:10px;background:#ede9fe;color:#5b21b6;padding:1px 6px;border-radius:4px;font-weight:600">'+e(r.rv)+'</span>':"";
-  return'<tr class="r" data-id="'+e(r.id)+'"><td><div class="t">'+e(r.t)+'</div><div class="id">'+e(r.id)+stg+(r.sync===false?' <span style="color:#b45309">⚠ not confirmed</span>':'')+'</div></td><td style="white-space:nowrap"><b>'+e(r.cy)+'</b></td><td><div class="cl">'+e(r.iss)+'</div></td><td>'+e(r.dep)+'</td><td>'+e(r.own)+'</td><td>'+pill(r.st)+'</td><td style="white-space:nowrap">'+rk(r.lk,r.im)+'</td><td style="white-space:nowrap">'+e(r.dl)+'</td><td>📎 '+r.at.length+'</td></tr>';
+  return gh+'<tr class="r" data-id="'+e(r.id)+'"><td><div class="t">'+e(r.t)+'</div><div class="id">'+e(r.id)+stg+(r.sync===false?' <span style="color:#b45309">⚠ not confirmed</span>':'')+'</div></td><td style="white-space:nowrap"><b>'+e(r.cy)+'</b></td><td><div class="cl">'+e(r.iss)+'</div></td><td>'+e(r.dep)+'</td><td>'+e(r.own)+'</td><td>'+pill(r.st)+'</td><td style="white-space:nowrap">'+rk(r.lk,r.im)+'</td><td style="white-space:nowrap">'+e(r.dl)+'</td><td>📎 '+r.at.length+'</td></tr>';
  }).join("")||'<tr><td colspan="9" style="text-align:center;color:var(--mut);padding:36px">No findings match your filters.</td></tr>';
 }
 
@@ -597,62 +742,51 @@ function chronoLogs(arr){
  });
 }
 
+function isOD(r){return r.st!=="Closed"&&(r.st==="Overdue"||(!!r.due&&r.due<new Date().toISOString().slice(0,10)))}
 function dr(){
- var r=cur_();if(!r)return;var ad=P==="ADMIN",body="",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
- var locked=r.st==="Closed";
- var uLogs=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))}));
- var adminLogs=chronoLogs((r.lg||[]).filter(function(l){return/^(Workflow|Extension|IAD)/i.test(String(l.m||""))}));
-
- body='<div class="g4"><div class="f"><small>Department</small>'+e(r.dep)+'</div><div class="f"><small>Responsible party</small>'+e(r.own)+'</div><div class="f"><small>Owner email</small>'+e(r.oe||"-")+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Due date</small>'+e(r.due||"-")+'</div><div class="f"><small>Extensions</small>'+(r.ex||0)+'/3</div></div>';
- var canStat=ad?!locked&&r.st!=="Closed":["Open","In Progress"].indexOf(r.st)>=0;
- var opts=(ad?["Open","In Progress","Extended","Overdue","Closed"]:["Open","In Progress"]);
- body+='<div class="row" style="align-items:center;margin-bottom:4px"><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(canStat?"":"disabled")+' onchange="ss(this.value)" style="max-width:180px;flex:none">'+opts.map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>';
-
- if(ad)body+=wfPanel(r);
-
- body+='<h4>Details of open issues and risk</h4><div class="box" style="white-space:pre-wrap">'+e(r.iss)+'</div>';
- body+='<h4>Recommendations made</h4><div class="box" style="white-space:pre-wrap">'+e(r.rec)+'</div>';
- body+='<h4>IAD remarks</h4><div class="box" style="white-space:pre-wrap;font-style:italic">'+e(r.rm)+'</div>';
-
- if(ad){
-  if(r.st!=="Closed"){
-   body+='<div class="adm '+(r.st==="Overdue"?"od":"")+'"><b>'+(r.st==="Overdue"?"⚠ Overdue – ":"")+'Deadline extension ('+(r.ex||0)+'/3)</b><div class="row"><input class="in" id="xd" type="date"></div><div class="row"><input class="in" id="xr" placeholder="Reason (required)"></div><div class="row"><button class="btn v" onclick="ext()">Extend deadline and notify</button></div></div>';
-  }
-  body+='<h4>Add IAD comment or recommendation</h4><div class="row"><select class="in" id="inT" style="max-width:200px;flex:none"><option>Comment</option><option>Recommendation</option></select><input class="in" id="inX" placeholder="Enter text…"></div><div class="row"><button class="btn p" onclick="iadNote()">Add and notify owner</button></div>';
-  body+='<h4>Monthly status log (submitted by department)</h4><div class="tl">'+(uLogs.length?uLogs.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div style="white-space:pre-wrap">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">No department updates yet.</div>')+'</div>';
-  if(adminLogs.length)body+='<details open style="margin-top:14px"><summary style="cursor:pointer;color:var(--mut);font-weight:600">Workflow history</summary><div class="tl" style="margin-top:8px">'+adminLogs.map(function(l){return'<div><b>'+e(l.m)+'</b><div>'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join("")+'</div></details>';
-  body+='<h4>Email respective person</h4><div class="row"><input class="in" id="em" value="'+e(r.oe||"")+'" placeholder="recipient@company.com"><button class="btn p" style="flex:none" onclick="mail()">Send email</button></div>';
-  body+='<h4>Supporting evidence and documents</h4><div class="drop"><div class="row"><input type="file" id="uf" class="in"></div><div class="row"><button class="btn p" onclick="up()">Upload to OneDrive</button></div><div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input class="in" id="lu" placeholder="Or paste a OneDrive/SharePoint https:// link" style="flex:1"><button class="btn" onclick="addLink()">Add link</button></div></div>'
-  +'<h4>Attached files</h4>'+(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+i+')">'+(a.url&&!a.k?"Open":"Download")+'</button><button class="btn" onclick="da('+i+')">✕</button></div></div>'}).join("")||'<div style="color:var(--mut)">No files attached yet.</div>');
+ var r=cur_();if(!r)return;var ad=P==="ADMIN",locked=r.st==="Closed",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
+ var uL=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})),all=chronoLogs(r.lg||[]);
+ var LH=function(a,em){return'<div class="tl">'+(a.length?a.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div style="white-space:pre-wrap">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">'+em+'</div>')+'</div>'};
+ var T=[["d","Details"]];
+ if(ad&&isOD(r))T.push(["x","Deadline extension"]);
+ T.push(ad?["c","Comments & email"]:["p","Progress update"],["e","Evidence (OneDrive)"]);
+ if(ad)T.push(["t","Audit trail"]);
+ if(!T.some(function(x){return x[0]===tab}))tab="d";
+ var body="",act="";
+ if(tab==="d"){
+  body='<div class="g4"><div class="f"><small>Department</small>'+e(r.dep)+'</div><div class="f"><small>Responsible party</small>'+e(r.own)+'</div><div class="f"><small>Owner email</small>'+e(r.oe||"-")+'</div><div class="f"><small>Deadline</small>'+e(r.dl)+'</div><div class="f"><small>Due date</small>'+e(r.due||"-")+'</div><div class="f"><small>Extensions</small>'+(r.ex||0)+'/3</div></div>';
+  var canStat=ad?!locked:["Open","In Progress"].indexOf(r.st)>=0,opts=ad?["Open","In Progress","Extended","Overdue","Closed"]:["Open","In Progress"];
+  body+='<div class="row" style="align-items:center;margin-bottom:4px"><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span><select class="in" '+(canStat?"":"disabled")+' onchange="ss(this.value)" style="max-width:180px;flex:none">'+opts.map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div>';
+  if(ad)body+=wfPanel(r);
+  body+='<h4>Details of open issues and risk</h4><div class="box" style="white-space:pre-wrap">'+e(r.iss)+'</div><h4>Recommendations made</h4><div class="box" style="white-space:pre-wrap">'+e(r.rec)+'</div><h4>IAD remarks</h4><div class="box" style="white-space:pre-wrap;font-style:italic">'+e(r.rm)+'</div>';
+  if(!ad&&(r.ap==="IA Review"||r.ap==="Boss Approval"))body+='<div class="adm" style="margin-top:16px"><b>Submitted for closure.</b> Currently under IAD review.</div>';
  }
-
- if(!ad){
-  body+='<h4>Monthly status log</h4><div class="tl">'+(uLogs.length?uLogs.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut)">'+e(l.s)+'</span><div style="white-space:pre-wrap">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">No updates yet.</div>')+'</div>';
-
-  if(r.st!=="Closed"){
-   body+='<h4>Update progress</h4><div class="row"><select class="in" id="lm">'+monthOpts()+'</select><select class="in" id="ls"><option>On Track</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div><div class="row"><textarea class="in" id="ln" rows="3" placeholder="Key in progress narrative and milestones…"></textarea></div>';
-  }
-
-  body+='<h4>Supporting evidence and documents (OneDrive)</h4><div class="drop"><div class="row"><input type="file" id="uf" class="in"></div><div class="row"><button class="btn p" onclick="up()">Upload to OneDrive</button></div><div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input class="in" id="lu" placeholder="Or paste a OneDrive/SharePoint https:// link" style="flex:1"><button class="btn" onclick="addLink()">Add link</button></div></div>'
-  +'<h4>Attached files</h4>'+(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+i+')">'+(a.url&&!a.k?"Open":"Download")+'</button></div></div>'}).join("")||'<div style="color:var(--mut)">No files attached yet.</div>');
-
-  if(r.ap==="IA Review"||r.ap==="Boss Approval"){
-   body+='<div class="adm" style="margin-top:16px"><div style="font-size:13px;font-weight:600">✓ Submitted for closure — currently under IAD review.</div></div>';
-  }
-
-  if(r.st!=="Closed"){
-   var canSubClosure=!r.ap;
-   body+='<div class="row" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--bd)">'
-    +'<button class="btn p" onclick="lg()">Update</button>'
-    +(canSubClosure?'<button class="btn s" onclick="wf(\'cl_sub\')">Submit for closure</button>':'')
-    +'</div>';
-  }
+ if(tab==="x"){
+  body='<div class="adm od"><b>Deadline extension ('+(r.ex||0)+'/3)</b><p style="margin:6px 0 0">This finding is overdue. Set a new due date and give a reason. The owner is notified.</p><div class="row"><input class="in" id="xd" type="date"></div><div class="row"><input class="in" id="xr" placeholder="Reason (required)"></div></div>';
+  act='<button class="btn v" onclick="ext()">Extend deadline and notify</button>';
  }
-
- var stgBadge=(ad&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?'<span class="stage-badge">'+e(r.rv)+'</span>':(ad?'<span class="stage-badge">Issued To Department</span>':'');
- g("dr").innerHTML='<div class="dh"><div><small style="opacity:.7">'+e(r.id)+' · '+e(r.cy)+'</small><div style="font-weight:700;font-size:16px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+stgBadge+'</div><div style="display:flex;gap:8px;align-self:flex-start"><button class="btn h" onclick="dlpdf()" title="Download PDF">⬇ PDF</button><button class="btn h" onclick="dlSingleXl()" title="Download Excel">⬇ Excel</button><button class="btn h" onclick="cl()">✕</button></div></div>'
- +'<div class="db">'+body+'</div>'
- +(ad&&!locked?'<div style="padding:12px 22px;border-top:1px solid var(--bd);display:flex;justify-content:space-between"><button class="btn" onclick="del()" style="color:#dc2626">Delete record</button><button class="btn p" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit finding</button></div>':ad&&locked?'<div style="padding:10px 22px;border-top:1px solid var(--bd);font-size:12px;color:var(--mut)">Finding is Closed – editing is locked.</div>':"");
+ if(tab==="c"){
+  body='<h4 style="margin-top:0">Add IAD comment or recommendation</h4><div class="row"><select class="in" id="inT" style="max-width:200px;flex:none"><option>Comment</option><option>Recommendation</option></select><input class="in" id="inX" placeholder="Enter text…"></div><div class="row"><button class="btn p" onclick="iadNote()">Add and notify owner</button></div>'
+   +'<h4>Email respective person</h4><div class="row"><input class="in" id="em" value="'+e(r.oe||"")+'" placeholder="recipient@company.com"><button class="btn p" style="flex:none" onclick="mail()">Send email</button></div>'
+   +'<h4>Monthly status log (submitted by department)</h4>'+LH(uL,"No department updates yet.");
+ }
+ if(tab==="p"){
+  body='<h4 style="margin-top:0">Monthly status log</h4>'+LH(uL,"No updates yet.");
+  if(!locked)body+='<h4>Update progress</h4><div class="row"><select class="in" id="lm">'+monthOpts()+'</select><select class="in" id="ls"><option>On Track</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div><div class="row"><textarea class="in" id="ln" rows="3" placeholder="Key in progress narrative and milestones…"></textarea></div>';
+  if(!locked){act='<button class="btn p" onclick="lg()">Update</button>';if(!r.ap)act+='<button class="btn s" onclick="wf(\'cl_sub\')">Submit for closure</button>'}
+ }
+ if(tab==="e"){
+  body=(locked?'':'<div class="drop"><div class="row"><input type="file" id="uf" class="in"></div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap"><input class="in" id="lu" placeholder="Or paste a OneDrive/SharePoint https:// link" style="flex:1"><button class="btn" onclick="addLink()">Add link</button></div></div>')
+   +'<h4>Attached files</h4><p style="margin:0 0 6px;color:var(--mut);font-size:13px">Files are stored in OneDrive only.'+(ad?" Use View to read them here without downloading.":"")+'</p>'
+   +(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+i+')">'+(ad?"View":"Open")+'</button>'+(ad&&!locked?'<button class="btn" onclick="da('+i+')">✕</button>':"")+'</div></div>'}).join("")||'<div style="color:var(--mut)">No files attached yet.</div>');
+  if(!locked)act='<button class="btn p" onclick="up()">Upload to OneDrive</button>';
+ }
+ if(tab==="t")body='<h4 style="margin-top:0">Audit trail</h4><p style="margin:0 0 8px;color:var(--mut);font-size:13px">Every workflow step, edit, extension and attachment view.</p>'+LH(all,"Nothing recorded yet.");
+ var foot=(ad&&!locked?'<button class="btn sp" onclick="del()" style="color:#a4231b">Delete record</button><button class="btn" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit finding</button>':ad?'<span class="sp" style="color:var(--mut);font-size:13px">Finding is Closed. Editing is locked.</span>':"")+act;
+ var stg=(ad&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?'<span class="stage-badge">'+e(r.rv)+'</span>':(ad?'<span class="stage-badge">Issued To Department</span>':'');
+ g("dr").innerHTML='<div class="dh"><div><small style="opacity:.85">'+e(r.id)+' · '+e(r.cy)+'</small><div style="font-weight:800;font-size:19px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+stg+'</div><div style="display:flex;gap:8px;align-self:flex-start"><button class="btn h" onclick="cl()">✕</button></div></div>'
+  +'<div class="dv"><nav class="vt">'+T.map(function(t){return'<a class="'+(tab===t[0]?"on":"")+'" onclick="tab=\''+t[0]+'\';dr()">'+t[1]+'</a>'}).join("")+'</nav><div class="db">'+body+'</div></div>'
+  +(foot?'<div class="dfoot">'+foot+'</div>':"");
  var n=g("dr").querySelector(".db");if(n)n.scrollTop=y;
 }
 
@@ -672,7 +806,10 @@ async function ext(){
  }
 }
 
-async function dl(i){var a=cur_().at[i],f=a.k&&F[a.k];if(a.url&&!a.k){window.open(a.url,"_blank","noopener");return}if(a.did&&live()){try{await saveFile(a.n,await graph("/drives/"+CFG.DRIVE_ID+"/items/"+a.did+"/content",{raw:true}))}catch(x){toast("Download failed: "+x.message)}return}var b=f||new Blob(["AUDIT EVIDENCE\n"+a.n],{type:"text/plain"});saveFile(a.n,b)}
+async function dl(i){var r=cur_(),a=r.at[i];if(!a||!a.url){toast("No OneDrive link saved for this file.");return}
+ if(P!=="ADMIN"){window.open(a.url,"_blank","noopener");return}
+ g("vwT").textContent=a.n;g("vwO").href=a.url;g("vwF").src=a.url.indexOf("embedview")<0?a.url+(a.url.indexOf("?")<0?"?":"&")+"action=embedview":a.url;show("vwM");
+ r.lg.push({m:"IAD View",s:"Evidence",n:"Viewed attachment "+a.n,a:U.name,d:stamp()});spUpdate(r)}
 function da(i){cur_().at.splice(i,1);upd("Attachment removed")}
 async function del(){var r=cur_();if(!r||!confirm("Are you sure you want to delete this record?"))return;if(!(await spDelete(r)))return;D=D.filter(function(x){return x!==r});cl();rd();toast("Record deleted")}
 
