@@ -621,7 +621,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
     <button class="btn d" onclick="g('fs').value='Overdue';rd();g('s2').scrollIntoView({behavior:'smooth'})">View overdue</button>
   </div>
 
-  <!-- DASHBOARD OVERVIEW (MONOCHROME KPIS, NO GREETING CARD) -->
+  <!-- DASHBOARD OVERVIEW -->
   <section id="sDash" class="priv">
     <div class="sh">
       <span class="eb2">Dashboard Overview</span>
@@ -912,7 +912,6 @@ var SVG={
  extLink:'<svg class="ico" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
  send:'<svg class="ico" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>',
  check:'<svg class="ico" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',
- back:'<svg class="ico" viewBox="0 0 24 24"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>',
  close:'<svg class="ico" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
  dl:'<svg class="ico" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
  warn:'<svg class="ico" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
@@ -932,64 +931,51 @@ function deptList(sel){
  return l;
 }
 
-/* ── BOTTOM WORKFLOW & CLOSURE BUTTONS (CLEAN FLOW, NO MIDDLE BUTTONS) ── */
+/* ── COMPACT WORKFLOW ACTION BUTTONS (MAX 2 ON RIGHT, 3 TOTAL WITH DELETE & EDIT) ── */
 function wfBottomButtons(r,dirtyDeptOwner){
  if(!U||!U.admin)return[];
- var boss=String(U.email||"").trim().toLowerCase()===String(CFG.IA_BOSS_EMAIL||"").trim().toLowerCase();
  var btns=[];
  var b=function(a,l,c,ic){return'<button class="btn '+(c||"")+'" onclick="wf(\''+a+'\')">'+(ic||"")+l+'</button>'};
 
  if(!r.rv||r.rv==="Draft"||r.rv==="In Progress"){
   btns.push(b("submit_review","Submit for IAD Check","p",SVG.send));
- }
- if(r.rv==="IAD Check"||r.rv==="Checker Review"){
-  btns.push(b("iad_return","Return to Auditor","",SVG.back));
-  btns.push(b("iad_approve_issue","Approve & Issue to Dept","p",SVG.check));
- }
- if(r.rv==="Pending Head IAD Approval"){
-  btns.push(b("iad_approve_issue","Head IAD Approve & Issue","p",SVG.check));
- }
- // Re-issue button appears when department/owner is changed (or when already issued)
- if(dirtyDeptOwner||(r.rv==="Issued To Department"||r.rv==="Approved")){
+ }else if(r.rv==="IAD Check"||r.rv==="Checker Review"||r.rv==="Pending Head IAD Approval"){
+  btns.push(b("iad_approve_issue","Approve & Issue","p",SVG.check));
+ }else if(dirtyDeptOwner){
   btns.push(b("reissue","Re-Issue to Department","v",SVG.send));
+ }else{
+  btns.push('<button class="btn" onclick="saveAdminInline()">Save Changes</button>');
  }
- // Cleaner closure flow
+
  if(r.st!=="Closed"){
-  if(!r.ap){
+  if(r.ap==="Boss Approval"){
+   btns.push(b("cl_boss","Approve & Close","p",SVG.check));
+  }else{
    btns.push(b("cl_ia","Submit Closure to Head IAD","v",SVG.check));
-  }else if(r.ap==="IA Review"){
-   btns.push(b("cl_back","Return Closure","",SVG.back));
-   btns.push(b("cl_ia","Recommend Closure to Head IAD","p",SVG.check));
-  }else if(r.ap==="Boss Approval"&&(boss||U.admin)){
-   btns.push(b("cl_back","Reject Closure","",SVG.back));
-   btns.push(b("cl_boss","Approve & Close Finding","p",SVG.check));
   }
  }
- return btns;
+ return btns.slice(0,2);
 }
 
 async function wf(a){
  var r=cur_(),who=U.name;
- // Sync any inline department/owner edits first
  if(U&&U.admin){
   var dEl=g("ed_dep"),oEl=g("ed_own"),eEl=g("ed_oe");
   if(dEl&&dEl.value.trim())r.dep=dEl.value.trim();
   if(oEl&&oEl.value.trim())r.own=oEl.value.trim();
   if(eEl){
    var newOe=eEl.value.trim();
-   if(newOe)r.oe=newOe; // if empty, retain first/existing email responsibility
+   if(newOe)r.oe=newOe;
   }
  }
  var firstEmail=String(r.oe||"").split(/[;, ]+/).filter(function(x){return x.indexOf("@")>0})[0]||"";
 
  var T={
   submit_review:    ["rv","IAD Check",CFG.IA_PIC_EMAIL,"Auditor submitted finding for IAD Check by "+who+" (Status automatically set to Open)"],
-  iad_return:       ["rv","Draft",r.mk||CFG.IA_PIC_EMAIL,"Returned by IAD Check to Auditor for revision by "+who],
   iad_approve_issue:["rv","Issued To Department","__issue__","IAD Check completed & approved. Finding issued to "+r.dep+" by "+who+"."],
   reissue:          ["rv","Issued To Department","__issue__","Finding re-issued to "+r.dep+" ("+r.own+") by "+who+"."],
   cl_ia:            ["ap","Boss Approval",CFG.IA_BOSS_EMAIL,"Closure submitted for Head IAD approval by "+who+"."],
-  cl_boss:          ["ap","",firstEmail,"Closure approved by "+who+". Finding closed."],
-  cl_back:          ["ap","",firstEmail,"Closure returned by "+who+"."]
+  cl_boss:          ["ap","",firstEmail,"Closure approved by "+who+". Finding closed."]
  }[a];
  if(!T)return;
  r[T[0]]=T[1];
@@ -1030,14 +1016,13 @@ async function saveAdminInline(){
  var newDep=g("ed_dep")?g("ed_dep").value.trim():r.dep;
  var newOwn=g("ed_own")?g("ed_own").value.trim():r.own;
  var inputOe=g("ed_oe")?g("ed_oe").value.trim():"";
- var newOe=inputOe||oldOe; // If no email entered, keep first/existing email responsibility
+ var newOe=inputOe||oldOe;
 
  var changes=[];
  if(newDep&&newDep!==oldDep){r.dep=newDep;changes.push("Department: "+oldDep+" → "+newDep);}
  if(newOwn&&newOwn!==oldOwn){r.own=newOwn;changes.push("Owner: "+oldOwn+" → "+newOwn);}
  if(newOe!==oldOe){r.oe=newOe;changes.push("Owner Email: "+(oldOe||"-")+" → "+newOe);}
 
- // Also capture optional IAD note if filled
  var noteTxt=g("inX")?g("inX").value.trim():"";
  var noteType=g("inT")?g("inT").value:"Comment";
  if(noteTxt){
@@ -1057,7 +1042,7 @@ async function saveAdminInline(){
   return;
  }
 
- upd(changes.length?"Assignment updated — you can now Re-Issue to Department":"IAD note saved");
+ upd(changes.length?"Changes saved":"IAD note saved");
  var targetEmail=String(r.oe||"").split(/[;, ]+/).filter(function(x){return x.indexOf("@")>0})[0]||"";
  if(noteTxt&&targetEmail){
   notifyMany(targetEmail,"[Audit "+r.id+"] New IAD "+noteType,"<p><b>"+e(r.t)+"</b> ("+e(r.id)+")</p><p>"+e(noteTxt)+"</p>").catch(function(){});
@@ -1092,7 +1077,6 @@ function deptMatches(findingDept,userDept){
  return a.indexOf(b)>=0||b.indexOf(a)>=0;
 }
 
-/* ── STAFF VISIBILITY: OWN FINDINGS OR DEPARTMENT FINDINGS (FROM OUTLOOK) ── */
 function vis(r){
  if(!U)return false;
  if(U.admin)return true;
@@ -1112,29 +1096,6 @@ function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Titl
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(function(r){return!isH(r)}).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Active");
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(isH).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Historical");
  saveFile("audit_register_"+new Date().toISOString().slice(0,10)+".xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}))}
-
-function dlSingleXl(){
- var r=cur_();if(!r)return;
- var W=XLSX.utils.book_new();
- var mainRow=[{
-  AuditID:sx(r.id),Title:sx(r.t),Cycle:sx(r.cy),Department:sx(r.dep),Owner:sx(r.own),OwnerEmail:sx(r.oe),
-  Deadline:sx(r.dl),DueDate:sx(r.due),Status:sx(r.st),WorkflowStage:sx(r.rv||"Draft"),
-  ApprovalStage:sx(r.ap||"-"),Likelihood:sx(r.lk),Impact:sx(r.im),
-  OpenIssues:sx(r.iss),Recommendations:sx(r.rec),IADRemarks:sx(r.rm)
- }];
- XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(mainRow),"Finding Details");
- 
- var uLogs=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})).map(function(l){return{Type:sx(l.m),Status:sx(l.s),Narrative:sx(l.n),SubmittedBy:sx(l.a),Date:sx(l.d)}});
- if(uLogs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(uLogs),"Monthly Status Logs");
-
- var adLogs=chronoLogs((r.lg||[]).filter(function(l){return/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})).map(function(l){return{Type:sx(l.m),Details:sx(l.n),ActionBy:sx(l.a),Date:sx(l.d)}});
- if(adLogs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(adLogs),"Workflow History");
-
- var atts=(r.at||[]).map(function(a){return{LinkName:sx(a.n),Source:sx(a.ms),URL:sx(a.url||"-"),Date:sx(a.d)}});
- if(atts.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(atts),"SharePoint Links");
-
- saveFile(r.id+"_CompleteAuditFindingDetails.xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}));
-}
 
 async function callFlow(n,p){var u=CFG["F_"+n];if(!isSet(u))throw new Error("F_"+n+": please input the api");
  var h={"Content-Type":"application/json"},b=Object.assign({},p||{});
@@ -1222,7 +1183,6 @@ async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required"
 
 async function getRole(email){var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
 
-/* ── AUTOMATIC OUTLOOK PROFILE DEPARTMENT DETECTION ── */
 async function login(){
  var er=g("lErr");er.textContent="";
  var m=missing();if(m.length){er.textContent="Please input configuration keys for: "+m.join(", ");return}
@@ -1268,7 +1228,6 @@ function rk(l,i){var h=l==="High"||i==="High",m=l==="Medium"||i==="Medium";retur
 function toast(m){var t=g("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},Math.max(2800,String(m).length*75))}
 function show(i){g(i).classList.add("show")}function hide(i){g(i).classList.remove("show")}
 
-/* ── ROLE VISIBILITY: STAFF HAS NO REPORTS, ADMIN HAS REPORTS & ANALYTICS ── */
 function setP(p){
  P=p;
  var a=p==="ADMIN";
@@ -1308,7 +1267,6 @@ function rd(){
   setTimeout(function(){document.querySelectorAll("#hm [data-w]").forEach(function(x){x.style.width=x.dataset.w+"%"})},60);
  }
 
- // 7-day reminder banner ("Just a reminder") + Overdue banner
  var todayStr=new Date().toISOString().slice(0,10);
  var todayMs=new Date(todayStr+"T00:00:00").getTime();
  var sevenDaysMs=todayMs+7*86400000;
@@ -1344,21 +1302,15 @@ function chronoLogs(arr){
  });
 }
 
-function isOD(r){return r.st!=="Closed"&&(r.st==="Overdue"||(!!r.due&&r.due<new Date().toISOString().slice(0,10)))}
-
 function checkReissueDirty(){
  var r=cur_();if(!r||!U||!U.admin)return;
  var dEl=g("ed_dep"),oEl=g("ed_own"),eEl=g("ed_oe");
  var dirty=(dEl&&dEl.value!==r.dep)||(oEl&&oEl.value.trim()!==r.own)||(eEl&&eEl.value.trim()!==(r.oe||""));
- var foot=g("dfootBar");
- if(foot){
-  var wfBtns=wfBottomButtons(r,dirty);
-  var slot=g("wfSlot");
-  if(slot)slot.innerHTML=wfBtns.join("");
- }
+ var slot=g("wfSlot");
+ if(slot)slot.innerHTML=wfBottomButtons(r,dirty).join("");
 }
 
-/* ── CLEAN SINGLE-PAGE FINDING DRAWER (NO MIDDLE BUTTONS, ALL SUBMITS AT BOTTOM) ── */
+/* ── SINGLE-PAGE FINDING DRAWER (PDF IN HEADER CARD, "EDIT" & CLEAN BOTTOM BAR) ── */
 function dr(){
  var r=cur_();if(!r)return;
  var ad=P==="ADMIN",locked=r.st==="Closed",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
@@ -1369,7 +1321,6 @@ function dr(){
  var secNum=1;
  var html='';
 
- // SECTION 1: OVERVIEW & ASSIGNMENT (ADMIN CAN EDIT DEPT/OWNER/EMAIL INLINE)
  var depField=ad&&!locked
   ?'<select class="in" id="ed_dep" onchange="checkReissueDirty()">'+deptList(r.dep).map(function(d){return'<option value="'+e(d)+'"'+(d===r.dep?' selected':'')+'>'+e(d)+'</option>'}).join("")+'</select>'
   :'<b>'+e(r.dep)+'</b>';
@@ -1403,7 +1354,6 @@ function dr(){
   +stageInfo
  +'</div>';
 
- // SECTION 2: AUDIT ISSUES & RECOMMENDATIONS
  html+='<div class="sec-card">'
   +'<div class="sec-title"><span>'+(secNum++)+'. Audit Issues &amp; Recommendations</span></div>'
   +'<h4 style="margin-top:0">Details of Open Issues &amp; Risk</h4><div class="box" style="white-space:pre-wrap">'+e(r.iss)+'</div>'
@@ -1411,22 +1361,10 @@ function dr(){
   +'<h4>IAD Remarks</h4><div class="box" style="white-space:pre-wrap;font-style:italic">'+e(r.rm)+'</div>'
  +'</div>';
 
- // SECTION 3: DEADLINE EXTENSION (SHOWN ONLY IF OVERDUE FOR ADMIN OR ALREADY EXTENDED)
- if((ad&&isOD(r))||hasExt){
-  html+='<div class="sec-card" style="border-color:#fecaca;background:#fffafa">'
-   +'<div class="sec-title" style="color:var(--danger)"><span>'+(secNum++)+'. Deadline Extension ('+(r.ex||0)+'/3)</span></div>'
-   +(ad&&isOD(r)
-     ?'<p style="margin:0 0 10px;font-size:13.5px;color:var(--mut)">This finding is overdue. Enter a new due date and reason below, then click <b>Extend Deadline</b> in the bottom bar.</p>'
-      +'<div class="row" style="margin-top:0"><input class="in" id="xd" type="date" style="max-width:220px"><input class="in" id="xr" placeholder="Reason for extension (required)"></div>'
-     :'<p style="margin:0;font-size:13.5px;color:var(--mut)">This finding has been granted <b>'+r.ex+'</b> deadline extension(s). Current target due date: <b>'+e(r.due||r.dl)+'</b>.</p>')
-  +'</div>';
- }
-
- // SECTION 4: MONTHLY PROGRESS UPDATES OR IAD COMMENTS (NO MIDDLE BUTTONS)
  if(ad){
   html+='<div class="sec-card">'
    +'<div class="sec-title"><span>'+(secNum++)+'. IAD Notes &amp; Department Updates</span></div>'
-   +'<h4 style="margin-top:0">Add IAD Comment or Recommendation (submit via bottom bar)</h4>'
+   +'<h4 style="margin-top:0">Add IAD Comment or Recommendation</h4>'
    +'<div class="row" style="margin-top:0"><select class="in" id="inT" style="max-width:190px;flex:none"><option>Comment</option><option>Recommendation</option></select><input class="in" id="inX" placeholder="Enter note…"></div>'
    +'<h4>Department Monthly Status Log</h4>'
    +LH(uL,"No department updates submitted yet.")
@@ -1435,14 +1373,13 @@ function dr(){
   html+='<div class="sec-card">'
    +'<div class="sec-title"><span>'+(secNum++)+'. Monthly Progress Updates</span></div>'
    +LH(uL,"No monthly updates submitted yet.")
-   +(!locked?'<h4>New Monthly Update (submit via bottom bar)</h4>'
+   +(!locked?'<h4>New Monthly Update</h4>'
      +'<div class="row" style="margin-top:0"><select class="in" id="lm">'+monthOpts()+'</select><select class="in" id="ls"><option>On Track</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div>'
      +'<div class="row"><textarea class="in" id="ln" rows="3" placeholder="Enter progress narrative and key milestones…"></textarea></div>'
    :'')
   +'</div>';
  }
 
- // SECTION 5: SUPPORTING EVIDENCE (SHAREPOINT LINK — "VIEW")
  html+='<div class="sec-card">'
   +'<div class="sec-title"><span>'+(secNum++)+'. Supporting Evidence (SharePoint Link)</span><span>'+(r.at||[]).length+' link(s)</span></div>'
   +(!locked?'<div class="row" style="margin-top:0"><input class="in" id="lu" placeholder="Paste SharePoint document/folder https:// link"><button class="btn" style="flex:none" onclick="addLink()">Add link</button></div>':'')
@@ -1452,47 +1389,35 @@ function dr(){
   }).join("")||'<div style="color:var(--mut);margin-top:8px">No SharePoint links added yet.</div>')
  +'</div>';
 
- // SECTION 6: AUDIT TRAIL (ADMIN)
  if(ad){
   html+='<div class="sec-card">'
    +'<div class="sec-title"><span>'+(secNum++)+'. Full Audit Trail</span></div>'
-   +'<p style="margin:0 0 10px;color:var(--mut);font-size:13px">Chronological log of all workflow transitions, edits, and extensions.</p>'
    +LH(all,"No audit trail events recorded yet.")
   +'</div>';
  }
 
- // STICKY BOTTOM FOOTER WITH ALL SUBMIT & WORKFLOW BUTTONS
  var leftBtns=[];
  if(ad&&!locked){
   leftBtns.push('<button class="btn" onclick="del()" style="color:var(--danger);border-color:#fecaca">Delete</button>');
-  leftBtns.push('<button class="btn" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit full details</button>');
+  leftBtns.push('<button class="btn" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit</button>');
  }else if(ad){
   leftBtns.push('<span style="color:var(--mut);font-size:13px">Finding is Closed.</span>');
  }
- leftBtns.push('<button class="btn" onclick="dlSingleXl()">'+SVG.dl+' Excel</button>');
- leftBtns.push('<button class="btn" onclick="dlpdf()">'+SVG.dl+' PDF</button>');
 
- var submitBtns=[];
- if(ad&&isOD(r)){
-  submitBtns.push('<button class="btn v" onclick="ext()">Extend Deadline</button>');
- }
- if(ad&&!locked){
-  submitBtns.push('<button class="btn" onclick="saveAdminInline()">Save Changes</button>');
- }
+ var rightBtns=[];
  if(!ad&&!locked){
-  submitBtns.push('<button class="btn p" onclick="lg()">Submit Progress Update</button>');
+  rightBtns.push('<button class="btn p" onclick="lg()">Submit Update</button>');
  }
-
  var wfBtns=ad?wfBottomButtons(r,false):[];
 
  var foot='<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+leftBtns.join("")+'</div>'
          +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end">'
          +'<span id="wfSlot" style="display:inline-flex;gap:8px;flex-wrap:wrap">'+wfBtns.join("")+'</span>'
-         +submitBtns.join("")
+         +rightBtns.join("")
          +'</div>';
 
  var stg=(ad&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?'<span class="stage-badge">'+e(r.rv)+'</span>':(ad?'<span class="stage-badge">Issued To Department</span>':'');
- g("dr").innerHTML='<div class="dh"><div><small style="opacity:.85;font-family:var(--mono)">'+e(r.id)+' · '+e(r.cy)+'</small><div style="font-weight:800;font-size:20px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+stg+'</div><div style="display:flex;gap:8px;align-self:flex-start"><button class="btn h" onclick="cl()">'+SVG.close+'</button></div></div>'
+ g("dr").innerHTML='<div class="dh"><div><small style="opacity:.85;font-family:var(--mono)">'+e(r.id)+' · '+e(r.cy)+'</small><div style="font-weight:800;font-size:20px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+stg+'</div><div style="display:flex;gap:8px;align-self:flex-start"><button class="btn h" onclick="dlpdf()">'+SVG.dl+' PDF</button><button class="btn h" onclick="cl()">'+SVG.close+'</button></div></div>'
   +'<div class="db">'+html+'</div>'
   +'<div class="dfoot" id="dfootBar">'+foot+'</div>';
 
@@ -1500,20 +1425,6 @@ function dr(){
 }
 
 function upd(m){sv();rd();dr();toast(m);spUpdate(cur_())}
-
-async function ext(){
- var r=cur_(),d=g("xd").value.trim(),x=g("xr").value.trim();
- if(!d||!x){toast("New due date and reason are required");return}
- if((r.ex||0)>=3){toast("Maximum 3 deadline extensions reached");return}
- r.due=d;r.dl=d;r.st="Extended";r.ex=(r.ex||0)+1;
- r.rm=(r.rm&&r.rm!=="-"?r.rm+"\n":"")+"[Deadline Extended] "+x;
- r.lg.push({m:"Deadline Extension",s:"Extended",n:"New due date set to "+d+". Reason: "+x,a:U.name,d:stamp()});
- upd("Deadline extended successfully");
- if(r.oe){
-  try{await notifyMany(r.oe,"[Audit Deadline Updated] "+r.t,"<p>Your audit finding deadline has been updated by IAD Admin to <b>"+e(d)+"</b>.</p><p>Reason: "+e(x)+"</p>");}catch(err){}
- }
-}
-
 function da(i){cur_().at.splice(i,1);upd("Link removed")}
 async function del(){var r=cur_();if(!r||!confirm("Are you sure you want to delete this record?"))return;if(!(await spDelete(r)))return;D=D.filter(function(x){return x!==r});cl();rd();toast("Record deleted")}
 
