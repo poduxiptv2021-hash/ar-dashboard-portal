@@ -60,7 +60,7 @@ body.auth .pubo { display: none !important; }
   background: var(--card);
   border-radius: 22px;
   padding: 40px;
-  width: min(520px, 100%);
+  width: min(480px, 100%);
   box-shadow: 0 24px 60px rgba(14, 31, 51, 0.35);
   border: 1px solid var(--bd);
 }
@@ -151,6 +151,7 @@ body.auth .pubo { display: none !important; }
   align-items: center;
   justify-content: center;
   gap: 6px;
+  text-decoration: none;
 }
 .btn:hover { border-color: var(--g1); color: var(--g4); background: var(--soft); }
 .btn.p, .btn.s { background: var(--g1); border-color: var(--g1); color: #fff; }
@@ -350,7 +351,7 @@ tr.r:hover { background: #f5faee; }
 .s-Closed { background: var(--g3); color: var(--g4); }
 .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; }
 
-/* ===== SINGLE-PAGE DETAIL MODAL (NO TABS) ===== */
+/* ===== CLEAN SINGLE-PAGE DETAIL MODAL ===== */
 .ov {
   position: fixed;
   inset: 0;
@@ -362,7 +363,7 @@ tr.r:hover { background: #f5faee; }
 .ov.show { display: grid; place-items: center; padding: 16px; }
 .dr {
   position: relative;
-  width: min(940px, 100%);
+  width: min(880px, 100%);
   max-height: 90vh;
   border-radius: 18px;
   overflow: hidden;
@@ -384,17 +385,19 @@ tr.r:hover { background: #f5faee; }
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 22px 26px;
+  padding: 20px 24px;
+  background: #fafcf8;
 }
 .sec-card {
   border: 1px solid var(--bd);
   border-radius: 14px;
   padding: 18px 20px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   background: #fff;
 }
+.sec-card:last-child { margin-bottom: 0; }
 .sec-title {
-  margin: 0 0 12px;
+  margin: 0 0 14px;
   font-size: 15px;
   font-weight: 800;
   color: var(--navy);
@@ -404,11 +407,10 @@ tr.r:hover { background: #f5faee; }
   border-bottom: 1px solid var(--bd);
   padding-bottom: 8px;
 }
-.g4 {
+.g-meta {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 10px;
-  margin-bottom: 14px;
 }
 .f {
   background: var(--soft);
@@ -416,16 +418,17 @@ tr.r:hover { background: #f5faee; }
   border-radius: 10px;
   padding: 10px 12px;
 }
-.f small { display: block; color: var(--mut); font-size: 11.5px; font-weight: 700; margin-bottom: 2px; }
+.f small { display: block; color: var(--mut); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 3px; }
+.f b { font-size: 14px; color: var(--navy); }
 h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); }
-.box { background: var(--soft); border: 1px solid var(--bd); border-radius: 10px; padding: 12px 14px; font-size: 14px; }
-.adm { background: var(--soft); border: 1px solid #c7dfa3; border-radius: 12px; padding: 14px; margin-top: 12px; }
-.adm.od { background: #fef2f2; border-color: #fecaca; }
-.row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.box { background: var(--soft); border: 1px solid var(--bd); border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
+.adm { background: var(--soft); border: 1px solid #c7dfa3; border-radius: 12px; padding: 14px; margin-top: 14px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .row > * { flex: 1; }
 
 .tl { border-left: 2px solid var(--bd); margin-left: 6px; padding-left: 18px; }
 .tl > div { position: relative; margin-bottom: 14px; }
+.tl > div:last-child { margin-bottom: 0; }
 .tl > div:before {
   content: "";
   position: absolute;
@@ -441,21 +444,21 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 10px 14px;
   border: 1px solid var(--bd);
   border-radius: 10px;
   margin-top: 8px;
   background: var(--soft);
 }
-.drop { border: 2px dashed #b8cf99; border-radius: 12px; padding: 16px; text-align: center; background: var(--soft); }
 .dfoot {
   padding: 14px 24px;
   border-top: 1px solid var(--bd);
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  background: var(--soft);
+  background: #fff;
 }
 .dfoot .sp { margin-right: auto; }
 .stage-badge {
@@ -490,6 +493,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   border: 1px solid var(--bd);
   box-shadow: 0 24px 60px rgba(14, 31, 51, 0.35);
 }
+.drop { border: 2px dashed #b8cf99; border-radius: 12px; padding: 16px; text-align: center; background: var(--soft); }
 
 .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
 .st { padding: 22px; }
@@ -552,23 +556,20 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
 <!-- LOGIN OVERLAY -->
 <div id="lgn">
   <div class="lc">
-    <div style="text-align:center;margin-bottom:22px">
+    <div style="text-align:center;margin-bottom:24px">
       <div style="margin:0 auto 14px;background:#ffffff;border:1px solid var(--bd);border-radius:14px;padding:10px 20px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(23,47,75,0.06);">
         <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:40px;width:auto;object-fit:contain;display:block;">
       </div>
       <h2>Sign in to Audit Register</h2>
-      <p style="color:var(--mut);margin:4px 0 0;font-size:14px">Sign in with your company Microsoft 365 account</p>
+      <p style="color:var(--mut);margin:6px 0 0;font-size:14px">Sign in with your company Microsoft 365 account. Your department and assigned findings will load automatically from Outlook.</p>
     </div>
-    <label style="font-size:12px;font-weight:700;color:var(--navy);display:block;margin-bottom:4px">Department (for non-IAD staff)</label>
-    <input class="in" id="ldp" list="dpl" placeholder="Select or type your department (e.g., Finance, ITD, HRD)">
     <datalist id="dpl"></datalist>
-    <button class="msb" style="margin-top:16px" onclick="login()">
+    <button class="msb" onclick="login()">
       <i><b style="background:#f25022"></b><b style="background:#7fba00"></b><b style="background:#00a4ef"></b><b style="background:#ffb900"></b></i>
       Sign in with Microsoft
     </button>
-    <div id="lErr" style="color:var(--danger);font-size:13px;font-weight:600;margin-top:10px;min-height:18px"></div>
-    <div style="font-size:12.5px;color:var(--mut);margin-top:6px;line-height:1.45">IAD access is granted only to <b>Admin</b> users listed in <b>AuditUserDirectory</b>. All other staff sign in under their own department.</div>
-    <div id="lNote" style="font-size:12px;color:var(--mut);margin-top:8px"></div>
+    <div id="lErr" style="color:var(--danger);font-size:13px;font-weight:600;margin-top:12px;min-height:18px;text-align:center"></div>
+    <div id="lNote" style="font-size:12px;color:var(--mut);margin-top:6px;text-align:center"></div>
     <div class="phbf" style="padding-bottom:0"><b>WE ARE PHB</b><small>PROFESSIONAL | HARMONIOUS | BOLD</small></div>
   </div>
 </div>
@@ -604,7 +605,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
       <div>
         <div class="eb">PHB INTERNAL AUDIT REGISTER PORTAL</div>
         <h1>Audit findings, <em>closed on time.</em></h1>
-        <p class="lead">Track audit issues, submit monthly progress updates, attach OneDrive evidence, and complete the three-layer closure approval in one unified workspace.</p>
+        <p class="lead">Track audit issues, submit monthly progress updates, attach SharePoint evidence links, and monitor departmental audit actions in one unified workspace.</p>
       </div>
       <div>
         <button class="chp pubo" onclick="g('lgn').style.display='grid'">Sign in to open the register</button>
@@ -669,7 +670,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
               <th>Status</th>
               <th>Risk</th>
               <th>Deadline</th>
-              <th>Files</th>
+              <th>Links</th>
             </tr>
           </thead>
           <tbody id="tb"></tbody>
@@ -702,7 +703,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
 
 <div class="phbf"><b>WE ARE PHB</b><small>PROFESSIONAL | HARMONIOUS | BOLD</small></div>
 
-<!-- SINGLE-PAGE FINDING DETAIL DRAWER (NO TABS) -->
+<!-- SINGLE-PAGE FINDING DETAIL DRAWER -->
 <div class="ov" id="ov">
   <div style="position:absolute;inset:0" onclick="cl()"></div>
   <div class="dr" id="dr"></div>
@@ -761,7 +762,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   </div>
 </div>
 
-<!-- SINGLE-PAGE IMPORT HISTORICAL DATA MODAL (NO TABS) -->
+<!-- SINGLE-PAGE IMPORT HISTORICAL DATA MODAL -->
 <div class="md" id="impM">
   <div style="width:min(780px,100%);max-height:92vh;overflow-y:auto">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
@@ -852,26 +853,11 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   </div>
 </div>
 
-<!-- ONEDRIVE DOCUMENT PREVIEW MODAL -->
-<div class="md" id="vwM">
-  <div style="width:min(1000px,100%);height:88vh;display:flex;flex-direction:column;padding:0">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--bd);background:var(--soft)">
-      <b id="vwT" style="color:var(--navy)"></b>
-      <span style="display:flex;gap:8px">
-        <a id="vwO" class="btn p" target="_blank" rel="noopener">Open in OneDrive</a>
-        <button class="btn" onclick="g('vwF').src='about:blank';hide('vwM')">Close</button>
-      </span>
-    </div>
-    <iframe id="vwF" style="flex:1;border:0;width:100%" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
-  </div>
-</div>
-
 <div id="toast"></div>
 
 <script>
 var REM={days:7};try{REM.days=parseInt(localStorage.getItem("iar_rem"),10)||7}catch(x){}
-function remCfg(){var v=prompt("Repeat overdue reminders every how many days? (reminders only start once a finding is overdue)",REM.days);if(v===null)return;v=parseInt(v,10);if(!(v>0)){toast("Enter a number of days");return}REM.days=v;try{localStorage.setItem("iar_rem",v)}catch(x){}toast("Overdue reminders will repeat every "+v+" days")}
-var KEY="iar_v3",P="ADMIN",cur=null,F={};
+var KEY="iar_v3",P="ADMIN",cur=null;
 var CFG={USERS_LIST_URL:"",
  TENANT_ID:"cc9afa77-5900-4c38-8262-c226c4c2e27d",
  CLIENT_ID:"33869e2e-8bac-4522-bf68-947e2055eb29",
@@ -898,19 +884,18 @@ var FM={id:"AuditID",t:"Title",cy:"AuditCycle",dep:"Department",own:"Responsible
 var REQ=["TENANT_ID","CLIENT_ID","SP_SITE_ID","LIST_AUDIT_ID","F_GET_USER_ROLE"],U=null,MS=null;
 function isSet(v){return!!v&&String(v).indexOf("please input the api")<0&&String(v).charAt(0)!=="<"}
 function missing(){return REQ.filter(function(k){return!isSet(CFG[k])})}
-function live(){return true}
 function sx(v){v=String(v==null?"":v);return/^[=+\-@\t\r]/.test(v)?"'"+v:v}
 function normStatus(v){var t=String(v||"").toLowerCase();if(/clos|complet|resolv|done|settled/.test(t))return"Closed";if(/overdue|late/.test(t))return"Overdue";if(/extend/.test(t))return"Extended";if(/progress|ongoing|partial/.test(t))return"In Progress";return"Open"}
 async function notify(to,subject,html){var p={toEmail:to,subject:subject,body:html,sentBy:U&&U.email};if(isSet(CFG.F_NOTIFY))return callFlow("NOTIFY",p);if(isSet(CFG.F_SEND_EMAIL))return callFlow("SEND_EMAIL",p);throw new Error("F_NOTIFY: please input the api")}
 function stamp(){return new Date().toLocaleString("en-MY",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
 
-/* ── WORKFLOW PANEL: ADMIN / IAD / BOSS CLOSURE REVIEW ── */
+/* ── WORKFLOW PANEL: ADMIN / IAD REVIEW ── */
 function wfPanel(r){
  if(!U||!U.admin)return"";
  var boss=String(U.email||"").trim().toLowerCase()===String(CFG.IA_BOSS_EMAIL||"").trim().toLowerCase(),h="",st=[];
- var stage=r.rv||"In Progress";
- if(stage!=="Issued To Department"&&stage!=="Approved")st.push("Finding Stage: "+(stage==="Draft"?"Auditor Draft (In Progress)":stage));
- else st.push("Finding Stage: Issued To Department (Visible to Department)");
+ var stage=r.rv||"Draft";
+ if(stage!=="Issued To Department"&&stage!=="Approved")st.push("Finding Stage: "+(stage==="Draft"?"Auditor Draft":stage));
+ else st.push("Finding Stage: Issued To Department (Visible to Staff)");
  if(r.ap)st.push("Closure Stage: "+r.ap);
 
  var b=function(a,l,c){return"<button class='btn "+(c||"")+"' onclick=\"wf('"+a+"')\">"+l+"</button>"};
@@ -932,25 +917,25 @@ function wfPanel(r){
  if(r.ap==="Boss Approval"&&(boss||U.admin))h+=b("cl_boss","✓ Approve and close","p")+b("cl_back","Reject");
 
  if(!h&&!st.length)return"";
- var stHtml=st.length?'<div style="color:var(--mut);font-size:13px;margin:4px 0 8px">'+e(st.join(" · "))+'</div>':"";
- return"<div class='adm'><b style='color:var(--navy)'>Workflow Status &amp; Closure Review</b>"+stHtml+"<div style='display:flex;flex-wrap:wrap;gap:8px'>"+h+"</div></div>";
+ var stHtml=st.length?'<div style="color:var(--mut);font-size:13px;margin:4px 0 10px">'+e(st.join(" · "))+'</div>':"";
+ return"<div class='adm'><b style='color:var(--navy)'>Workflow Status &amp; IAD Review</b>"+stHtml+"<div style='display:flex;flex-wrap:wrap;gap:8px'>"+h+"</div></div>";
 }
 
 async function wf(a){
  var r=cur_(),who=U.name;
  var T={
-  submit_review:    ["rv","IAD Check",CFG.IA_PIC_EMAIL,"Auditor saved finding and submitted for IAD Check by "+who],
+  submit_review:    ["rv","IAD Check",CFG.IA_PIC_EMAIL,"Auditor submitted finding for IAD Check by "+who+" (Status set to Open)"],
   iad_return:       ["rv","Draft",r.mk||CFG.IA_PIC_EMAIL,"Returned by IAD Check to Auditor for revision by "+who],
   iad_approve_issue:["rv","Issued To Department","__issue__","IAD Check completed & approved. Finding issued to "+r.dep+" by "+who+"."],
   reissue:          ["rv","Issued To Department","__issue__","Finding re-issued to "+r.dep+" by "+who+"."],
-  cl_sub:           ["ap","IA Review",CFG.IA_PIC_EMAIL,"Closure requested by "+who+" ("+r.dep+")"],
   cl_ia:            ["ap","Boss Approval",CFG.IA_BOSS_EMAIL,"IAD recommends closure. Awaiting Head IAD approval."],
   cl_boss:          ["ap","",r.oe,"Closure approved by "+who+". Finding closed."],
   cl_back:          ["ap","",r.oe,"Closure returned by "+who+". Please re-submit when ready."]
  }[a];
  if(!T)return;
- if(a==="cl_sub"&&!(r.at||[]).length){toast("Please upload supporting evidence to OneDrive before submitting for closure.");return}
  r[T[0]]=T[1];
+ // Automatically set Status to Open once submitted to IAD Check
+ if(a==="submit_review"&&r.st!=="Closed"){r.st="Open";r.hist=false;}
  if(a==="cl_boss"){r.st="Closed";r.hist=true;}
  var note=T[3];
  r.lg.push({m:"Workflow",s:T[1]||a,n:note,a:who,d:stamp()});
@@ -973,38 +958,21 @@ async function wf(a){
  }
  if(emailTo&&emailTo!=="__issue__"&&String(emailTo).indexOf("@")>0){
   notifyMany(emailTo,"[Audit "+r.id+"] "+note,"<p>"+e(note)+"</p><p><b>"+e(r.t)+"</b><br>Department: "+e(r.dep)+"<br>Due: "+e(r.due||r.dl)+"</p><p>Log in to the Internal Audit Register Portal to view or update this finding.</p>")
-   .then(function(){toast(a==="cl_sub"?"Submitted for closure & IAD notified":"Workflow updated & notification sent")})
+   .then(function(){toast("Workflow updated & notification sent")})
    .catch(function(x){toast("Saved. Email notification failed: "+x.message)});
  }else if(emailTo==="__issue__"){
-  toast("Finding issued to "+r.dep+". Department users can now view it.");
+  toast("Finding issued to "+r.dep+". Department staff can now view it.");
  }else{
-  toast(a==="cl_sub"?"Submitted for closure":"Workflow stage updated to "+(T[1]||a));
+  toast("Workflow stage updated to "+(T[1]||a));
  }
 }
-
-async function attach(r,f){
- var rec={n:f.name,ms:"OneDrive",sz:Math.round(f.size/1024)+" KB",d:new Date().toISOString().slice(0,10)};
- if(isSet(CFG.DRIVE_ID)){
-  var it=await spUpload(r,f);rec.did=it.id;rec.url=it.webUrl;
- }else if(isSet(CFG.F_UPLOAD_EVIDENCE)){
-  var b64=await new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(String(fr.result).split(",")[1])};fr.onerror=rej;fr.readAsDataURL(f)});
-  var o=await callFlow("UPLOAD_EVIDENCE",{auditId:r.spId||r.id,auditRef:r.id,fileName:f.name,contentBase64:b64,uploadedBy:U.email});rec.url=o.url||o.webUrl||o.link||o.path||o.Path||"";
- }else{
-  throw new Error("OneDrive configuration required.");
- }
- rec.k=r.id+"_"+r.at.length;F[rec.k]=f;r.at.push(rec);
-}
-
-async function up(){var r=cur_(),f=g("uf").files[0];if(!f){toast("Please choose a file to upload");return}try{await attach(r,f);upd("File uploaded successfully via OneDrive");if(!U.admin)notifyPic(r,"Evidence uploaded","File: "+e(f.name))}catch(x){toast(x.message)}}
 
 async function lg(){
  if(U&&U.admin){toast("Admin cannot submit department monthly updates.");return}
  var r=cur_(),n=g("ln").value.trim();if(!n){toast("Please enter a progress narrative");return}
- var f=g("uf")&&g("uf").files[0];
  r.lg.push({m:g("lm")&&g("lm").value||"Update",s:g("ls").value,n:n,a:U.name,d:stamp()});
- if(f){try{await attach(r,f)}catch(x){toast("Evidence upload failed: "+x.message);r.lg.pop();return}}
  upd("Monthly update posted successfully");
- if(!U.admin)notifyPic(r,"Monthly update posted","Progress: "+e(r.lg[r.lg.length-1].s)+" - "+e(r.lg[r.lg.length-1].n)+(f?"<br>Evidence attached":""));
+ if(!U.admin)notifyPic(r,"Monthly update posted","Progress: "+e(r.lg[r.lg.length-1].s)+" - "+e(r.lg[r.lg.length-1].n));
 }
 
 function remTpl(r,k,daysLeft){
@@ -1012,7 +980,7 @@ function remTpl(r,k,daysLeft){
  var soonMsg=daysLeft===0?"is due <b>TODAY ("+e(r.due)+")</b>":"is due in <b>"+daysLeft+" day"+(daysLeft===1?"":"s")+" ("+e(r.due)+")</b>";
  return{
   s:(od?"[OVERDUE] ":"[Due in "+daysLeft+"d Reminder] ")+r.t+" - "+r.id,
-  h:"<p>Dear "+e(r.own)+",</p><p>Audit finding <b>"+e(r.t)+"</b> ("+e(r.id)+", "+e(r.dep)+") "+(od?"is <b style='color:#b91c1c'>OVERDUE</b> since "+e(r.due)+". Please submit your status update and supporting evidence immediately.":soonMsg+". Please submit your monthly status update and supporting evidence in the Internal Audit Register Portal before the deadline.")+"</p><p>Internal Audit Department</p>"
+  h:"<p>Dear "+e(r.own)+",</p><p>Audit finding <b>"+e(r.t)+"</b> ("+e(r.id)+", "+e(r.dep)+") "+(od?"is <b style='color:#b91c1c'>OVERDUE</b> since "+e(r.due)+". Please submit your status update and SharePoint evidence link immediately.":soonMsg+". Please submit your monthly status update and SharePoint evidence link in the Internal Audit Register Portal before the deadline.")+"</p><p>Internal Audit Department</p>"
  };
 }
 
@@ -1061,20 +1029,35 @@ async function runOverdue(){
 
 function isH(r){return!!r.hist||r.st==="Closed"}
 function monthOpts(){var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],d=new Date(),o="";for(var i=-2;i<10;i++){var x=new Date(d.getFullYear(),d.getMonth()+i,1);o+="<option"+(i===0?" selected":"")+">"+M[x.getMonth()]+" "+x.getFullYear()+"</option>"}return o}
-function addLink(){var r=cur_(),u=g("lu").value.trim();if(!/^https:\/\//i.test(u)){toast("Paste a full https:// link");return}r.at.push({n:u.replace(/^https:\/\//i,"").slice(0,55),ms:"Link",sz:"link",d:new Date().toISOString().slice(0,10),url:u});g("lu").value="";upd("Link added")}
+function addLink(){var r=cur_(),u=g("lu").value.trim();if(!/^https:\/\//i.test(u)){toast("Please paste a valid SharePoint https:// link");return}r.at.push({n:u.replace(/^https:\/\//i,"").slice(0,65),ms:"SharePoint",sz:"link",d:new Date().toISOString().slice(0,10),url:u});g("lu").value="";upd("SharePoint link added")}
 async function iadNote(){var r=cur_(),t=g("inT").value,x=g("inX").value.trim();if(!x){toast("Enter text first");return}var line="["+new Date().toDateString()+"] "+x;if(t==="Recommendation")r.rec=(r.rec&&r.rec!=="-"?r.rec+"\n":"")+line;else r.rm=(r.rm&&r.rm!=="-"?r.rm+"\n":"")+line;r.lg.push({m:"IAD "+t.toLowerCase(),s:"IAD",n:x,a:U.name,d:stamp()});g("inX").value="";upd("IAD "+t.toLowerCase()+" added")}
 async function notifyMany(to,subj,html){var l=String(to||"").split(/[;, ]+/).filter(function(x){return x.indexOf("@")>0&&x.indexOf("please")<0});for(var i=0;i<l.length;i++)await notify(l[i],subj,html)}
 function notifyPic(r,what,extra){return notifyMany(CFG.IA_PIC_EMAIL,"[Audit "+r.id+"] "+what,"<p><b>"+e(U.name)+"</b> ("+e(U.dep||"IAD")+") updated this finding.</p><p><b>"+e(r.t)+"</b><br>Status: "+e(r.st)+(extra?"<br>"+extra:"")+"</p>").catch(function(){})}
 async function mail(){if(!U.admin){toast("Only IAD can email other recipients");return}var r=cur_(),to=g("em").value.trim();if(!to||to.indexOf("@")<1){toast("Enter a valid email");return}try{await notifyMany(to,"[Audit "+r.id+"] "+r.t,"<p><b>"+e(r.t)+"</b> ("+e(r.id)+")</p><p>Department: "+e(r.dep)+"<br>Status: "+e(r.st)+"<br>Due: "+e(r.due||r.dl)+"</p><p>"+e(r.iss)+"</p>");toast("Email sent to "+to)}catch(x){toast("Email failed: "+x.message)}}
 
+function normDept(s){
+ return String(s||"").trim().toLowerCase().replace(/\s+/g," ");
+}
+function deptMatches(findingDept,userDept){
+ var a=normDept(findingDept),b=normDept(userDept);
+ if(!a||!b)return false;
+ if(a===b)return true;
+ var aCode=(a.match(/\(([^)]+)\)/)||[])[1]||"";
+ var bCode=(b.match(/\(([^)]+)\)/)||[])[1]||"";
+ if(aCode&&(aCode===b||aCode===bCode))return true;
+ if(bCode&&(bCode===a||bCode===aCode))return true;
+ return a.indexOf(b)>=0||b.indexOf(a)>=0;
+}
+
+/* ── STAFF VISIBILITY: OWN FINDINGS OR DEPARTMENT FINDINGS (FROM OUTLOOK) ── */
 function vis(r){
  if(!U)return false;
  if(U.admin)return true;
  var issued=r.rv==="Issued To Department"||r.rv==="Approved"||!!r.ap||r.st==="Closed";
  if(!issued)return false;
- var depOk=String(r.dep||"").trim().toLowerCase()===String(U.dep||"").trim().toLowerCase();
  var emailOk=String(r.oe||"").toLowerCase().split(/[;, ]+/).indexOf(String(U.email||"").toLowerCase())>=0;
- return depOk||emailOk;
+ var depOk=deptMatches(r.dep,U.dep);
+ return emailOk||depOk;
 }
 function V(){return D.filter(vis)}
 function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x=String(r.id).match(/^AUD-(\d{4})-(\d+)$/);if(x&&+x[1]===y&&+x[2]>m)m=+x[2]});return"AUD-"+y+"-"+("000"+(m+1)).slice(-3)}
@@ -1082,7 +1065,7 @@ function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x
 async function saveFile(name,data){
  var b=data instanceof Blob?data:new Blob([data]),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Saved "+name)}
 
-function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,OwnerEmail:r.oe,Deadline:r.dl,DueDate:r.due,Status:r.st,WorkflowStage:r.rv||"In Progress",ApprovalStage:r.ap||"-",Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
+function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,OwnerEmail:r.oe,Deadline:r.dl,DueDate:r.due,Status:r.st,WorkflowStage:r.rv||"Draft",ApprovalStage:r.ap||"-",Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(function(r){return!isH(r)}).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Active");
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(isH).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Historical");
  saveFile("audit_register_"+new Date().toISOString().slice(0,10)+".xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}))}
@@ -1092,7 +1075,7 @@ function dlSingleXl(){
  var W=XLSX.utils.book_new();
  var mainRow=[{
   AuditID:sx(r.id),Title:sx(r.t),Cycle:sx(r.cy),Department:sx(r.dep),Owner:sx(r.own),OwnerEmail:sx(r.oe),
-  Deadline:sx(r.dl),DueDate:sx(r.due),Status:sx(r.st),WorkflowStage:sx(r.rv||"In Progress"),
+  Deadline:sx(r.dl),DueDate:sx(r.due),Status:sx(r.st),WorkflowStage:sx(r.rv||"Draft"),
   ApprovalStage:sx(r.ap||"-"),Likelihood:sx(r.lk),Impact:sx(r.im),
   OpenIssues:sx(r.iss),Recommendations:sx(r.rec),IADRemarks:sx(r.rm)
  }];
@@ -1104,8 +1087,8 @@ function dlSingleXl(){
  var adLogs=chronoLogs((r.lg||[]).filter(function(l){return/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})).map(function(l){return{Type:sx(l.m),Details:sx(l.n),ActionBy:sx(l.a),Date:sx(l.d)}});
  if(adLogs.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(adLogs),"Workflow History");
 
- var atts=(r.at||[]).map(function(a){return{FileName:sx(a.n),Source:sx(a.ms),Size:sx(a.sz),URL:sx(a.url||"-"),Date:sx(a.d)}});
- if(atts.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(atts),"Evidence & Links");
+ var atts=(r.at||[]).map(function(a){return{LinkName:sx(a.n),Source:sx(a.ms),URL:sx(a.url||"-"),Date:sx(a.d)}});
+ if(atts.length)XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(atts),"SharePoint Links");
 
  saveFile(r.id+"_CompleteAuditFindingDetails.xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}));
 }
@@ -1168,13 +1151,11 @@ async function spDelete(r){
  }
 }
 
-async function spUpload(r,f){return graph("/drives/"+CFG.DRIVE_ID+"/root:/"+encodeURIComponent(r.id)+"/"+encodeURIComponent(f.name)+":/content",{method:"PUT",body:f,headers:{"Content-Type":f.type||"application/octet-stream"}})}
-
 async function reload(){try{await spLoad();rd();toast("Data refreshed from SharePoint")}catch(x){toast("Refresh failed: "+x.message)}}
 
 function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v){g(k).value=v==null?"":v};
  g("addT").textContent=id?"Edit audit finding":"Add audit finding";
- s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"In Progress");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
+ s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
 
 async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
  var id=g("n0").value,r=id?D.find(function(x){return x.id===id}):null,isNew=!r;
@@ -1185,7 +1166,7 @@ async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required"
   r.rv="Draft";
   r.mk=U.email;
   r.ex=0;
-  r.lg.push({m:"Workflow",s:"Draft",n:"Finding saved by Auditor ("+U.name+") - In Progress prior to IAD Check.",a:U.name,d:stamp()});
+  r.lg.push({m:"Workflow",s:"Draft",n:"Finding saved by Auditor ("+U.name+") prior to IAD Check.",a:U.name,d:stamp()});
   if(!(await spCreate(r)))return;
   D.unshift(r);
  }else{
@@ -1193,24 +1174,38 @@ async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required"
   if(df.length)r.lg.push({m:"IAD Edit",s:"Details",n:df.join("\n"),a:U.name,d:stamp()});
   await spUpdate(r);
  }
- hide("addM");rd();toast(isNew?"Finding saved (In Progress). Submit for IAD Check when ready.":"Finding updated")}
+ hide("addM");rd();toast(isNew?"Finding saved. Submit for IAD Check when ready.":"Finding updated")}
 
 async function getRole(email){var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
 
-async function login(){var er=g("lErr");er.textContent="";var m=missing();if(m.length){er.textContent="Please input configuration keys for: "+m.join(", ");return}
- try{await getToken();var a=MS.getAllAccounts()[0],email=(a.username||"").toLowerCase(),name=a.name||email,dep=g("ldp").value.trim();
-  try{var me=await graph("/me?$select=displayName,department,mail");name=me.displayName||name;dep=dep||me.department||""}catch(x){}
+/* ── AUTOMATIC OUTLOOK PROFILE DEPARTMENT DETECTION ── */
+async function login(){
+ var er=g("lErr");er.textContent="";
+ var m=missing();if(m.length){er.textContent="Please input configuration keys for: "+m.join(", ");return}
+ try{
+  await getToken();
+  var a=MS.getAllAccounts()[0],email=(a.username||"").toLowerCase(),name=a.name||email,dep="";
+  try{
+   var me=await graph("/me?$select=displayName,department,mail,officeLocation");
+   name=me.displayName||name;
+   dep=me.department||me.officeLocation||"";
+  }catch(x){}
   var ro=await getRole(email),isA=ro.found&&String(ro.role).toLowerCase()==="admin";
   if(isA&&!ro.active){er.textContent="Your IAD admin account is inactive.";return}
-  dep=ro.dep||dep;if(!isA&&!dep){er.textContent="Please enter your department to continue.";return}
-  U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};await enter()}catch(x){er.textContent=x.message||String(x)}}
+  dep=ro.dep||dep;
+  U={email:email,name:ro.name||name,dep:isA?"":dep,admin:isA};
+  await enter();
+ }catch(x){
+  er.textContent=x.message||String(x);
+ }
+}
 
 async function enter(){document.body.classList.add("auth");g("lgn").style.display="none";
- g("uchip").innerHTML="<b>"+e(U.name)+"</b><br><span style='opacity:.8'>"+(U.admin?"IAD Admin":"Dept · "+e(U.dep))+"</span>";
+ g("uchip").innerHTML="<b>"+e(U.name)+"</b><br><span style='opacity:.8'>"+(U.admin?"IAD Admin":(U.dep?"Dept · "+e(U.dep):"Staff · "+e(U.email)))+"</span>";
  setP(U.admin?"ADMIN":"PIC");try{await spLoad()}catch(x){D=[];toast("SharePoint load warning: "+x.message)}
  fillDeps();rd();toast("Signed in successfully")}
 
-function logout(){U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";g("ldp").value="";rd()}
+function logout(){U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";rd()}
 
 function fillDeps(){
 var l=["Risk, Compliance & Integrity Management Department (RCIMD)","Finance Department (FD)","Human Resource Department (HRD)","Internal Audit Department (IAD)","Investment Department (ID)","Learning & Development Department (LDD)","Corporate Administration Department (CAD)","Contract Management Department (CMD)","Procurement & Vendor Management Department (PVMD)","Information Technology Department (ITD)","Property Development Department (PDD)","PHB Asset Management (PAM)","PHB Facility Management (PFM)","PHB Property Ventures (PPV)","Portfolio Management Department (PMD)","Research Unit (RU)"];
@@ -1219,7 +1214,7 @@ g("dpl").innerHTML=l.map(function(d){return"<option value='"+e(d)+"'>"}).join(""
 g("n3").innerHTML="<option value=''>Select Department *</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
 }
 
-function boot(){fillDeps();g("lgn").style.display="grid";var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"Sign in with your corporate Microsoft 365 account.";}
+function boot(){fillDeps();g("lgn").style.display="grid";var m=missing();g("lNote").innerHTML=m.length?"<b style='color:#b45309'>Configuration needed:</b> set "+m.join(", "):"";}
 
 var D=[];function sv(){}function g(i){return document.getElementById(i)}
 function e(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
@@ -1241,7 +1236,7 @@ function saveRem(){REM.days=parseInt(g("rd7").value,10)||7;try{localStorage.setI
 function stg(){var fl=Object.keys(CFG).filter(function(k){return k.indexOf("F_")===0}),cd={};
  V().forEach(function(r){var c=cd[r.dep]=cd[r.dep]||{};if(r.oe)c[r.oe]=r.own});
  g("sg").innerHTML='<div class="steps"><div class="st"><span class="sn">REMINDERS</span><h3>Overdue reminders</h3><p>Start the day after the deadline, then repeat every:</p><div class="row" style="margin-top:12px"><input class="in" id="rd7" type="number" min="1" value="'+REM.days+'" style="max-width:110px"><span style="align-self:center;font-weight:600">days</span><button class="btn p" onclick="saveRem()">Save</button></div><div class="row" style="margin-top:10px"><button class="btn" onclick="sendReminders()">Send reminders now</button><button class="btn" onclick="runOverdue()">Run overdue check</button></div></div>'
- +'<div class="st"><span class="sn">CONNECTIONS</span><h3>Power Automate flows</h3>'+fl.map(function(k){var ok=isSet(CFG[k]);return'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px"><span>'+k.slice(2)+'</span><b style="color:'+(ok?"var(--g1)":"var(--danger)")+'">'+(ok?"Connected":"Not set")+"</b></div>"}).join("")+'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px"><span>OneDrive DRIVE_ID</span><b style="color:'+(isSet(CFG.DRIVE_ID)?"var(--g1)":"var(--danger)")+'">'+(isSet(CFG.DRIVE_ID)?"Connected":"Not set")+"</b></div></div>"
+ +'<div class="st"><span class="sn">CONNECTIONS</span><h3>Power Automate flows</h3>'+fl.map(function(k){var ok=isSet(CFG[k]);return'<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:14px"><span>'+k.slice(2)+'</span><b style="color:'+(ok?"var(--g1)":"var(--danger)")+'">'+(ok?"Connected":"Not set")+"</b></div>"}).join("")+'</div>'
  +'<div class="st"><span class="sn">USERS</span><h3>User directory</h3><p>Roles and access are managed in the SharePoint list <b>AuditUserDirectory</b>. Changes apply at next sign-in.</p>'+(isSet(CFG.USERS_LIST_URL)?'<a class="btn p" style="margin-top:12px;display:inline-block;text-decoration:none" target="_blank" rel="noopener" href="'+e(CFG.USERS_LIST_URL)+'">Open user directory in SharePoint</a>':'')+'</div>'
  +'<div class="st"><span class="sn">CONTACTS</span><h3>Department contacts</h3>'+(Object.keys(cd).sort().map(function(d){return'<div style="padding:5px 0;font-size:14px"><b>'+e(d)+"</b><br>"+Object.keys(cd[d]).map(function(m){return e(cd[d][m])+" · "+e(m)}).join("<br>")+"</div>"}).join("")||'<p>Contacts appear once findings have owner emails.</p>')+"</div></div>"}
 
@@ -1265,7 +1260,7 @@ function rd(){
  var sig=V().map(function(r){return r.id+r.st+r.dep}).join("|");
  if(window.__sig!==sig){var first=!window.__sig;window.__sig=sig;
   var dm={};V().forEach(function(r){if(r.st!=="Closed")dm[r.dep]=(dm[r.dep]||0)+1});var dk=Object.keys(dm).sort(function(a,b){return dm[b]-dm[a]}).slice(0,6),mx=Math.max(1,dk.length?dm[dk[0]]:1),nO=V().filter(function(r){return r.st!=="Closed"}).length,h=new Date().getHours();
-  g("hm").innerHTML='<h3>Good '+(h<12?"morning":h<18?"afternoon":"evening")+(U?", "+e(String(U.name||"").split(" ")[0]):"")+'</h3><p>'+(U&&U.admin?"Open findings across all departments.":"Open findings for "+e(U?U.dep:"your department")+".")+" "+nO+" still open.</p>"+(dk.map(function(k){return'<div class="hb"><span>'+e(k)+'</span><div class="bt"><i data-w="'+(dm[k]/mx*100)+'"></i></div><b>'+dm[k]+'</b></div>'}).join("")||'<div style="color:var(--mut)">No open findings.</div>');
+  g("hm").innerHTML='<h3>Good '+(h<12?"morning":h<18?"afternoon":"evening")+(U?", "+e(String(U.name||"").split(" ")[0]):"")+'</h3><p>'+(U&&U.admin?"Open findings across all departments.":"Open findings for "+(U&&U.dep?e(U.dep):"your scope")+".")+" "+nO+" still open.</p>"+(dk.map(function(k){return'<div class="hb"><span>'+e(k)+'</span><div class="bt"><i data-w="'+(dm[k]/mx*100)+'"></i></div><b>'+dm[k]+'</b></div>'}).join("")||'<div style="color:var(--mut)">No open findings.</div>');
   setTimeout(function(){document.querySelectorAll("#hm [data-w]").forEach(function(x){x.style.width=x.dataset.w+"%"})},60);
   if(first)document.querySelectorAll("#kp .k b").forEach(function(b){var n=+b.textContent,t0=performance.now();(function st(t){var p=Math.min(1,(t-t0)/900);b.textContent=Math.round(n*p);if(p<1)requestAnimationFrame(st)})(t0)})}
  var o=c("Overdue");g("al").style.display=o?"flex":"none";g("alT").textContent="Action required: "+o+" overdue finding"+(o>1?"s":"");
@@ -1273,7 +1268,7 @@ function rd(){
  var lastD=null,cntD={};L.sort(function(a,b){return String(a.dep).localeCompare(String(b.dep))});L.forEach(function(r){cntD[r.dep]=(cntD[r.dep]||0)+1});
  g("tb").innerHTML=L.map(function(r){var gh=r.dep!==lastD?(lastD=r.dep,'<tr class="grp"><td colspan="9">'+e(r.dep)+" · "+cntD[r.dep]+" finding(s)</td></tr>"):"";
   var stg=(U&&U.admin&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?' <span style="font-size:11px;background:var(--g3);color:var(--g4);padding:1px 7px;border-radius:4px;font-weight:700">'+e(r.rv)+'</span>':"";
-  return gh+'<tr class="r" data-id="'+e(r.id)+'"><td><div class="t">'+e(r.t)+'</div><div class="id">'+e(r.id)+stg+(r.sync===false?' <span style="color:#b45309">⚠ not confirmed</span>':'')+'</div></td><td style="white-space:nowrap"><b>'+e(r.cy)+'</b></td><td><div class="cl">'+e(r.iss)+'</div></td><td>'+e(r.dep)+'</td><td>'+e(r.own)+'</td><td>'+pill(r.st)+'</td><td style="white-space:nowrap">'+rk(r.lk,r.im)+'</td><td style="white-space:nowrap">'+e(r.dl)+'</td><td>📎 '+r.at.length+'</td></tr>';
+  return gh+'<tr class="r" data-id="'+e(r.id)+'"><td><div class="t">'+e(r.t)+'</div><div class="id">'+e(r.id)+stg+(r.sync===false?' <span style="color:#b45309">⚠ not confirmed</span>':'')+'</div></td><td style="white-space:nowrap"><b>'+e(r.cy)+'</b></td><td><div class="cl">'+e(r.iss)+'</div></td><td>'+e(r.dep)+'</td><td>'+e(r.own)+'</td><td>'+pill(r.st)+'</td><td style="white-space:nowrap">'+rk(r.lk,r.im)+'</td><td style="white-space:nowrap">'+e(r.dl)+'</td><td>🔗 '+r.at.length+'</td></tr>';
  }).join("")||'<tr><td colspan="9" style="text-align:center;color:var(--mut);padding:36px">No findings match your filters.</td></tr>';
 }
 
@@ -1291,61 +1286,57 @@ function chronoLogs(arr){
 
 function isOD(r){return r.st!=="Closed"&&(r.st==="Overdue"||(!!r.due&&r.due<new Date().toISOString().slice(0,10)))}
 
-/* ── SINGLE-PAGE FINDING DRAWER RENDERER (ALL SECTIONS IN ONE VIEW, NO TABS) ── */
+/* ── CLEAN SINGLE-PAGE FINDING DRAWER (ALL SUBMIT BUTTONS AT BOTTOM) ── */
 function dr(){
  var r=cur_();if(!r)return;
  var ad=P==="ADMIN",locked=r.st==="Closed",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
  var uL=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})),all=chronoLogs(r.lg||[]);
  var LH=function(a,em){return'<div class="tl">'+(a.length?a.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut);font-size:13px">'+e(l.s)+'</span><div style="white-space:pre-wrap;margin:2px 0">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">'+em+'</div>')+'</div>'};
 
- var canStat=ad?!locked:["Open","In Progress"].indexOf(r.st)>=0;
- var opts=ad?["Open","In Progress","Extended","Overdue","Closed"]:["Open","In Progress"];
-
+ var hasExt=(r.ex||0)>0;
+ var secNum=1;
  var html='';
 
- // SECTION 1: OVERVIEW, METADATA & WORKFLOW
+ // SECTION 1: OVERVIEW & READ-ONLY STATUS
  html+='<div class="sec-card">'
-  +'<div class="sec-title"><span>1. Finding Overview &amp; Status</span><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span></div>'
-  +'<div class="g4">'
+  +'<div class="sec-title"><span>'+(secNum++)+'. Finding Overview &amp; Status</span><span>Risk: <b>'+rk(r.lk,r.im)+'</b></span></div>'
+  +'<div class="g-meta">'
     +'<div class="f"><small>Department</small><b>'+e(r.dep)+'</b></div>'
     +'<div class="f"><small>Responsible Party</small><b>'+e(r.own)+'</b></div>'
-    +'<div class="f"><small>Owner Email</small>'+e(r.oe||"-")+'</div>'
-    +'<div class="f"><small>Deadline</small>'+e(r.dl)+'</div>'
+    +'<div class="f"><small>Owner Email</small><b>'+e(r.oe||"-")+'</b></div>'
+    +'<div class="f"><small>Deadline</small><b>'+e(r.dl)+'</b></div>'
     +'<div class="f"><small>Target Due Date</small><b>'+e(r.due||"-")+'</b></div>'
-    +'<div class="f"><small>Extensions Used</small><b>'+(r.ex||0)+' / 3</b></div>'
-  +'</div>'
-  +'<div class="row" style="align-items:center">'
-    +'<div style="font-weight:700;color:var(--navy)">Current Finding Status:</div>'
-    +'<select class="in" '+(canStat?"":"disabled")+' onchange="ss(this.value)" style="max-width:220px;flex:none">'+opts.map(function(s){return'<option'+(s===r.st?" selected":"")+'>'+s+'</option>'}).join("")+'</select>'
+    +'<div class="f"><small>Finding Status</small>'+pill(r.st)+'</div>'
+    +(hasExt?'<div class="f"><small>Extensions Used</small><b>'+r.ex+' / 3</b></div>':'')
   +'</div>'
   +(ad?wfPanel(r):"")
-  +(!ad&&(r.ap==="IA Review"||r.ap==="Boss Approval")?'<div class="adm"><b>Submitted for closure.</b> Currently under IAD review.</div>':"")
  +'</div>';
 
- // SECTION 2: DETAILS, RECOMMENDATIONS & REMARKS
+ // SECTION 2: AUDIT ISSUES & RECOMMENDATIONS
  html+='<div class="sec-card">'
-  +'<div class="sec-title"><span>2. Audit Issues &amp; Recommendations</span></div>'
+  +'<div class="sec-title"><span>'+(secNum++)+'. Audit Issues &amp; Recommendations</span></div>'
   +'<h4 style="margin-top:0">Details of Open Issues &amp; Risk</h4><div class="box" style="white-space:pre-wrap">'+e(r.iss)+'</div>'
   +'<h4>Recommendations Made</h4><div class="box" style="white-space:pre-wrap">'+e(r.rec)+'</div>'
   +'<h4>IAD Remarks</h4><div class="box" style="white-space:pre-wrap;font-style:italic">'+e(r.rm)+'</div>'
  +'</div>';
 
- // SECTION 3: DEADLINE EXTENSION (ADMIN ONLY WHEN OVERDUE)
- if(ad&&isOD(r)){
+ // SECTION 3: DEADLINE EXTENSION (SHOWN ONLY IF OVERDUE FOR ADMIN OR ALREADY EXTENDED)
+ if((ad&&isOD(r))||hasExt){
   html+='<div class="sec-card" style="border-color:#fecaca;background:#fffafa">'
-   +'<div class="sec-title" style="color:var(--danger)"><span>3. Overdue Deadline Extension ('+(r.ex||0)+'/3)</span></div>'
-   +'<p style="margin:0 0 10px;font-size:13.5px;color:var(--mut)">This finding is overdue. Set a new due date and provide a reason. The owner will be notified automatically.</p>'
-   +'<div class="row" style="margin-top:0"><input class="in" id="xd" type="date" style="max-width:220px"><input class="in" id="xr" placeholder="Reason for extension (required)"></div>'
-   +'<div style="margin-top:10px"><button class="btn v" onclick="ext()">Extend deadline and notify</button></div>'
+   +'<div class="sec-title" style="color:var(--danger)"><span>'+(secNum++)+'. Deadline Extension ('+(r.ex||0)+'/3)</span></div>'
+   +(ad&&isOD(r)
+     ?'<p style="margin:0 0 10px;font-size:13.5px;color:var(--mut)">This finding is overdue. Enter a new due date and reason below, then click <b>Extend Deadline</b> in the bottom bar.</p>'
+      +'<div class="row" style="margin-top:0"><input class="in" id="xd" type="date" style="max-width:220px"><input class="in" id="xr" placeholder="Reason for extension (required)"></div>'
+     :'<p style="margin:0;font-size:13.5px;color:var(--mut)">This finding has been granted <b>'+r.ex+'</b> deadline extension(s). Current target due date: <b>'+e(r.due||r.dl)+'</b>.</p>')
   +'</div>';
  }
 
  // SECTION 4: MONTHLY PROGRESS UPDATES OR IAD COMMENTS & EMAIL
  if(ad){
   html+='<div class="sec-card">'
-   +'<div class="sec-title"><span>IAD Comments, Email &amp; Department Updates</span></div>'
-   +'<h4 style="margin-top:0">Add IAD Comment or Recommendation</h4>'
-   +'<div class="row" style="margin-top:0"><select class="in" id="inT" style="max-width:190px;flex:none"><option>Comment</option><option>Recommendation</option></select><input class="in" id="inX" placeholder="Enter note…"><button class="btn p" style="flex:none" onclick="iadNote()">Add &amp; notify</button></div>'
+   +'<div class="sec-title"><span>'+(secNum++)+'. IAD Comments, Email &amp; Department Updates</span></div>'
+   +'<h4 style="margin-top:0">Add IAD Comment or Recommendation (submit via bottom bar)</h4>'
+   +'<div class="row" style="margin-top:0"><select class="in" id="inT" style="max-width:190px;flex:none"><option>Comment</option><option>Recommendation</option></select><input class="in" id="inX" placeholder="Enter note…"></div>'
    +'<h4>Email Respective Person</h4>'
    +'<div class="row" style="margin-top:0"><input class="in" id="em" value="'+e(r.oe||"")+'" placeholder="recipient@phb.com.my"><button class="btn v" style="flex:none" onclick="mail()">Send email</button></div>'
    +'<h4>Department Monthly Status Log</h4>'
@@ -1353,42 +1344,59 @@ function dr(){
   +'</div>';
  }else{
   html+='<div class="sec-card">'
-   +'<div class="sec-title"><span>3. Monthly Progress Updates</span></div>'
+   +'<div class="sec-title"><span>'+(secNum++)+'. Monthly Progress Updates</span></div>'
    +LH(uL,"No monthly updates submitted yet.")
-   +(!locked?'<h4>Post New Monthly Update</h4>'
+   +(!locked?'<h4>New Monthly Update (submit via bottom bar)</h4>'
      +'<div class="row" style="margin-top:0"><select class="in" id="lm">'+monthOpts()+'</select><select class="in" id="ls"><option>On Track</option><option>In Progress</option><option>Delayed</option><option>Completed</option></select></div>'
      +'<div class="row"><textarea class="in" id="ln" rows="3" placeholder="Enter progress narrative and key milestones…"></textarea></div>'
-     +'<div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn p" onclick="lg()">Post progress update</button>'+(!r.ap?'<button class="btn v" onclick="wf(\'cl_sub\')">Submit finding for closure</button>':'')+'</div>'
    :'')
   +'</div>';
  }
 
- // SECTION 5: SUPPORTING EVIDENCE (ONEDRIVE)
+ // SECTION 5: SUPPORTING EVIDENCE (SHAREPOINT LINK ONLY, OPENS IN NEW TAB)
  html+='<div class="sec-card">'
-  +'<div class="sec-title"><span>Supporting Evidence (OneDrive)</span><span>'+(r.at||[]).length+' file(s)</span></div>'
-  +(!locked?'<div class="drop"><div class="row" style="margin-top:0;align-items:center"><input type="file" id="uf" class="in"><button class="btn p" style="flex:none" onclick="up()">Upload to OneDrive</button></div>'
-    +'<div class="row" style="margin-top:8px"><input class="in" id="lu" placeholder="Or paste a OneDrive / SharePoint https:// link"><button class="btn" style="flex:none" onclick="addLink()">Add link</button></div></div>':'')
-  +'<p style="margin:10px 0 6px;color:var(--mut);font-size:13px">Files are stored in OneDrive.'+(ad?" Click View to preview documents inline.":"")+'</p>'
-  +(r.at.map(function(a,i){return'<div class="att"><div><b>📄 '+e(a.n)+'</b><div class="id">'+e(a.ms)+' · '+e(a.sz)+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><button class="btn" onclick="dl('+i+')">'+(ad?"View":"Open")+'</button>'+(ad&&!locked?'<button class="btn" onclick="da('+i+')">✕</button>':"")+'</div></div>'}).join("")||'<div style="color:var(--mut)">No evidence files attached yet.</div>')
+  +'<div class="sec-title"><span>'+(secNum++)+'. Supporting Evidence (SharePoint Link)</span><span>'+(r.at||[]).length+' link(s)</span></div>'
+  +(!locked?'<div class="row" style="margin-top:0"><input class="in" id="lu" placeholder="Paste SharePoint document/folder https:// link"><button class="btn p" style="flex:none" onclick="addLink()">Add link</button></div>':'')
+  +'<p style="margin:8px 0 6px;color:var(--mut);font-size:13px">All supporting evidence links open in a new SharePoint tab.</p>'
+  +(r.at.map(function(a,i){
+    var safeUrl=/^https?:\/\//i.test(a.url||"")?e(a.url):"#";
+    return'<div class="att"><div><b>🔗 '+e(a.n)+'</b><div class="id">'+e(a.ms||"SharePoint")+' · '+e(a.d)+'</div></div><div style="display:flex;gap:6px"><a class="btn" href="'+safeUrl+'" target="_blank" rel="noopener noreferrer">Open in new tab ↗</a>'+(ad&&!locked?'<button class="btn" onclick="da('+i+')">✕</button>':"")+'</div></div>';
+  }).join("")||'<div style="color:var(--mut)">No SharePoint links added yet.</div>')
  +'</div>';
 
  // SECTION 6: AUDIT TRAIL (ADMIN)
  if(ad){
-  html+='<div class="sec-card" style="margin-bottom:0">'
-   +'<div class="sec-title"><span>Full Audit Trail</span></div>'
-   +'<p style="margin:0 0 10px;color:var(--mut);font-size:13px">Chronological log of all workflow transitions, edits, extensions, and evidence views.</p>'
+  html+='<div class="sec-card">'
+   +'<div class="sec-title"><span>'+(secNum++)+'. Full Audit Trail</span></div>'
+   +'<p style="margin:0 0 10px;color:var(--mut);font-size:13px">Chronological log of all workflow transitions, edits, and extensions.</p>'
    +LH(all,"No audit trail events recorded yet.")
   +'</div>';
  }
 
- var foot='<button class="btn" onclick="dlSingleXl()">⬇ Excel</button><button class="btn" onclick="dlpdf()">⬇ PDF Report</button>';
+ // STICKY BOTTOM FOOTER WITH ALL SUBMIT BUTTONS
+ var leftBtns=[];
  if(ad&&!locked){
-  foot='<button class="btn sp" onclick="del()" style="color:var(--danger);border-color:#fecaca">Delete record</button>'+foot+'<button class="btn p" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit finding</button>';
+  leftBtns.push('<button class="btn" onclick="del()" style="color:var(--danger);border-color:#fecaca">Delete</button>');
+  leftBtns.push('<button class="btn" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit finding</button>');
  }else if(ad){
-  foot='<span class="sp" style="color:var(--mut);font-size:13px;align-self:center">Finding is Closed. Editing is locked.</span>'+foot;
- }else{
-  foot='<span class="sp"></span>'+foot;
+  leftBtns.push('<span style="color:var(--mut);font-size:13px">Finding is Closed.</span>');
  }
+ leftBtns.push('<button class="btn" onclick="dlSingleXl()">⬇ Excel</button>');
+ leftBtns.push('<button class="btn" onclick="dlpdf()">⬇ PDF</button>');
+
+ var submitBtns=[];
+ if(ad&&isOD(r)){
+  submitBtns.push('<button class="btn v" onclick="ext()">Extend Deadline</button>');
+ }
+ if(ad){
+  submitBtns.push('<button class="btn p" onclick="iadNote()">Submit IAD Note</button>');
+ }else if(!locked){
+  submitBtns.push('<button class="btn p" onclick="lg()">Submit Progress Update</button>');
+ }
+
+ var foot='<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+leftBtns.join("")+'</div>'
+         +'<span class="sp"></span>'
+         +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+submitBtns.join("")+'</div>';
 
  var stg=(ad&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?'<span class="stage-badge">'+e(r.rv)+'</span>':(ad?'<span class="stage-badge">Issued To Department</span>':'');
  g("dr").innerHTML='<div class="dh"><div><small style="opacity:.85;font-family:var(--mono)">'+e(r.id)+' · '+e(r.cy)+'</small><div style="font-weight:800;font-size:20px;margin:2px 0 8px">'+e(r.t)+'</div>'+pill(r.st)+stg+'</div><div style="display:flex;gap:8px;align-self:flex-start"><button class="btn h" onclick="cl()">✕</button></div></div>'
@@ -1399,7 +1407,6 @@ function dr(){
 }
 
 function upd(m){sv();rd();dr();toast(m);spUpdate(cur_())}
-function ss(v){var r=cur_();if(!r)return;if(!U.admin&&["Open","In Progress"].indexOf(v)<0){toast("Only IAD can set this status.");dr();return}r.st=v;upd("Status updated to "+v)}
 
 async function ext(){
  var r=cur_(),d=g("xd").value.trim(),x=g("xr").value.trim();
@@ -1414,11 +1421,7 @@ async function ext(){
  }
 }
 
-async function dl(i){var r=cur_(),a=r.at[i];if(!a||!a.url){toast("No OneDrive link saved for this file.");return}
- if(P!=="ADMIN"){window.open(a.url,"_blank","noopener");return}
- g("vwT").textContent=a.n;g("vwO").href=a.url;g("vwF").src=a.url.indexOf("embedview")<0?a.url+(a.url.indexOf("?")<0?"?":"&")+"action=embedview":a.url;show("vwM");
- r.lg.push({m:"IAD View",s:"Evidence",n:"Viewed attachment "+a.n,a:U.name,d:stamp()});spUpdate(r)}
-function da(i){cur_().at.splice(i,1);upd("Attachment removed")}
+function da(i){cur_().at.splice(i,1);upd("Link removed")}
 async function del(){var r=cur_();if(!r||!confirm("Are you sure you want to delete this record?"))return;if(!(await spDelete(r)))return;D=D.filter(function(x){return x!==r});cl();rd();toast("Record deleted")}
 
 function dlpdf(){
@@ -1430,7 +1433,7 @@ function dlpdf(){
   "Title: "+r.t,
   "Cycle: "+r.cy+"   |   Department: "+r.dep,
   "Owner: "+r.own+" ("+(r.oe||"-")+")",
-  "Status: "+r.st+"   |   Workflow Stage: "+(r.rv||"In Progress")+(r.ap?" | Closure Approval: "+r.ap:""),
+  "Status: "+r.st+"   |   Workflow Stage: "+(r.rv||"Draft"),
   "Risk: "+r.lk+" Likelihood / "+r.im+" Impact",
   "Deadline: "+r.dl+"   |   Target Due Date: "+(r.due||"-")
  ];
@@ -1457,7 +1460,7 @@ function dlpdf(){
   sec("Workflow History:",adLogs.map(function(l){return"["+l.d+"] "+l.m+" - "+l.a+": "+l.n}).join("\n"));
  }
  if(r.at&&r.at.length){
-  sec("Attached Evidence & Links:",r.at.map(function(a){return"• "+a.n+" ("+a.ms+": "+(a.url||a.sz)+")"}).join("\n"));
+  sec("SharePoint Evidence Links:",r.at.map(function(a){return"• "+a.n+" ("+(a.url||"-")+")"}).join("\n"));
  }
  doc.save(r.id+"_CompleteAuditFindingReport.pdf");
 }
