@@ -12,20 +12,19 @@
 <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js"></script>
 <style>
 :root {
-  --bg: #f6f9f2;
+  --bg: #f7f9fb;
   --card: #ffffff;
-  --tx: #0f1f18;
-  --mut: #52635a;
-  --bd: #dce5d1;
-  --soft: #f2f7eb;
-  --g1: #51920A;       /* PHB Primary Green */
-  --g2: #94D14F;       /* PHB Lime Accent */
-  --g3: #E3F0CE;       /* PHB Soft Sage */
-  --g4: #3D6E07;       /* PHB Dark Olive */
+  --tx: #172f4b;
+  --mut: #52647a;
+  --bd: #dce3ea;
+  --soft: #f1f5f9;
+  --g1: #51920A;       /* PHB Corporate Green */
+  --g4: #3b6b07;       /* PHB Deep Green */
+  --g3: #eef6e6;       /* Subtle Green Tint */
   --navy: #172F4B;     /* PHB Corporate Navy */
-  --navy-deep: #0E1F33;
+  --navy-deep: #0e1e31;
   --danger: #b91c1c;
-  --sh: 0 1px 3px rgba(23, 47, 75, 0.05), 0 8px 24px rgba(23, 47, 75, 0.06);
+  --sh: 0 2px 10px rgba(23, 47, 75, 0.05);
   --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
 }
 
@@ -47,7 +46,7 @@ svg.ico { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-wi
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: linear-gradient(125deg, var(--navy) 0%, #1d4240 55%, var(--g1) 100%);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 65%, var(--g4) 100%);
   display: grid;
   place-items: center;
   padding: 16px;
@@ -59,29 +58,30 @@ body.auth .pubo { display: none !important; }
 
 .lc {
   background: var(--card);
-  border-radius: 22px;
-  padding: 40px;
-  width: min(480px, 100%);
-  box-shadow: 0 24px 60px rgba(14, 31, 51, 0.35);
+  border-radius: 18px;
+  padding: 36px;
+  width: min(460px, 100%);
+  box-shadow: 0 20px 48px rgba(14, 30, 49, 0.28);
   border: 1px solid var(--bd);
 }
-.lc h2 { font-size: 26px; font-weight: 800; color: var(--navy); margin: 0; }
+.lc h2 { font-size: 25px; font-weight: 800; color: var(--navy); margin: 0; }
 .msb {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   width: 100%;
-  padding: 14px 18px;
+  padding: 13px 18px;
   border: 1px solid var(--bd);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--card);
   cursor: pointer;
   font-weight: 700;
   font-size: 15px;
+  color: var(--navy);
   transition: 0.15s;
 }
-.msb:hover { border-color: var(--g1); background: var(--soft); }
+.msb:hover { border-color: var(--navy); background: var(--soft); }
 .msb i { display: grid; grid-template-columns: repeat(2, 9px); gap: 2px; }
 .msb i b { width: 9px; height: 9px; display: block; }
 
@@ -90,8 +90,7 @@ body.auth .pubo { display: none !important; }
   position: sticky;
   top: 0;
   z-index: 30;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(8px);
+  background: var(--card);
   border-bottom: 1px solid var(--bd);
 }
 .nv {
@@ -99,23 +98,23 @@ body.auth .pubo { display: none !important; }
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 24px;
-  padding: 12px 28px;
+  padding: 11px 28px;
   max-width: 1360px;
   margin: 0 auto;
 }
 .brand { display: flex; align-items: center; gap: 14px; }
-.vr { width: 1px; height: 32px; background: var(--bd); }
-.pn { font-size: 26px; font-weight: 800; color: var(--g1); letter-spacing: -0.01em; line-height: 1; }
+.vr { width: 1px; height: 28px; background: var(--bd); }
+.pn { font-size: 24px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; line-height: 1; }
 .pp {
-  background: var(--g3);
-  border: 1px solid #c7dfa3;
-  color: var(--g4);
+  background: var(--soft);
+  border: 1px solid var(--bd);
+  color: var(--navy);
   border-radius: 999px;
   padding: 3px 12px;
   font-size: 12px;
   font-weight: 700;
 }
-.nl { display: flex; justify-content: center; gap: 36px; }
+.nl { display: flex; justify-content: center; gap: 32px; }
 .nl a {
   color: var(--navy);
   font-weight: 600;
@@ -143,7 +142,7 @@ body.auth .pubo { display: none !important; }
   background: var(--card);
   color: var(--navy);
   border-radius: 10px;
-  padding: 9px 16px;
+  padding: 9px 15px;
   cursor: pointer;
   font-weight: 700;
   font-size: 14px;
@@ -154,7 +153,7 @@ body.auth .pubo { display: none !important; }
   gap: 7px;
   text-decoration: none;
 }
-.btn:hover { border-color: var(--g1); color: var(--g4); background: var(--soft); }
+.btn:hover { border-color: var(--navy); background: var(--soft); }
 .btn.p, .btn.s { background: var(--g1); border-color: var(--g1); color: #fff; }
 .btn.p:hover, .btn.s:hover { background: var(--g4); border-color: var(--g4); color: #fff; }
 .btn.v { background: var(--navy); border-color: var(--navy); color: #fff; }
@@ -167,23 +166,36 @@ body.auth .pubo { display: none !important; }
   background: var(--soft);
   border: 1px solid var(--bd);
   border-radius: 10px;
-  padding: 9px 12px;
+  padding: 9px 14px;
   width: 100%;
   outline: none;
   transition: 0.15s;
 }
-.in:focus { border-color: var(--g1); background: #fff; }
+.in:focus { border-color: var(--navy); background: #fff; }
+.in-fit {
+  width: auto;
+  min-width: 120px;
+  max-width: 100%;
+  padding-inline: 14px;
+  letter-spacing: 0.01em;
+}
+.lookup-hint {
+  font-size: 12px;
+  color: var(--mut);
+  margin-top: 4px;
+  min-height: 16px;
+}
 
 /* ===== MAIN LAYOUT & BANNER ===== */
 .main { max-width: 1360px; margin: 24px auto 40px; padding: 0 28px; }
 section { scroll-margin-top: 86px; }
 
 .banner {
-  border-radius: 22px;
-  padding: 32px 36px;
+  border-radius: 18px;
+  padding: 30px 34px;
   color: #fff;
-  background: linear-gradient(105deg, var(--navy) 0%, #1d4a3e 55%, var(--g1) 100%);
-  box-shadow: 0 14px 32px rgba(23, 47, 75, 0.16);
+  background: linear-gradient(110deg, var(--navy) 0%, var(--navy-deep) 68%, var(--g4) 100%);
+  box-shadow: 0 10px 26px rgba(23, 47, 75, 0.14);
   margin-bottom: 24px;
 }
 .bt1 {
@@ -197,49 +209,49 @@ section { scroll-margin-top: 86px; }
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.18em;
-  color: var(--g2);
+  letter-spacing: 0.16em;
+  color: #b7e485;
   margin-bottom: 6px;
 }
 .banner h1 {
   margin: 0;
-  font-size: clamp(28px, 4vw, 44px);
+  font-size: clamp(28px, 3.8vw, 42px);
   font-weight: 800;
   letter-spacing: -0.02em;
-  line-height: 1.1;
+  line-height: 1.12;
 }
-.banner h1 em { font-style: normal; color: var(--g2); }
+.banner h1 em { font-style: normal; color: #b7e485; }
 .chp {
-  padding: 12px 20px;
-  border-radius: 12px;
-  background: var(--g2);
-  color: var(--navy-deep);
-  font-weight: 800;
+  padding: 11px 20px;
+  border-radius: 10px;
+  background: var(--g1);
+  color: #fff;
+  font-weight: 700;
   text-decoration: none;
   border: 0;
   cursor: pointer;
 }
-.chp:hover { background: #a5e062; }
+.chp:hover { background: var(--g4); }
 
 .sh {
-  border-left: 4px solid var(--g1);
+  border-left: 4px solid var(--navy);
   padding: 2px 0 2px 16px;
-  margin: 34px 0 18px;
+  margin: 32px 0 16px;
 }
 .eb2 {
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   color: var(--g1);
   text-transform: uppercase;
 }
-.sh h2 { margin: 2px 0; font-size: clamp(24px, 2.8vw, 32px); font-weight: 800; color: var(--navy); }
-.sh p { margin: 0; color: var(--mut); font-size: 15px; }
+.sh h2 { margin: 2px 0; font-size: clamp(23px, 2.6vw, 30px); font-weight: 800; color: var(--navy); }
+.sh p { margin: 0; color: var(--mut); font-size: 14.5px; }
 
-/* ===== CARDS & CLEAN MONOCHROME KPIS ===== */
+/* ===== CARDS & TWO-TONE CORPORATE KPIS ===== */
 .card, .k, .st {
-  border-radius: 16px;
+  border-radius: 14px;
   border: 1px solid var(--bd);
   background: var(--card);
   box-shadow: var(--sh);
@@ -254,10 +266,11 @@ section { scroll-margin-top: 86px; }
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 20px 22px;
+  padding: 18px 20px;
 }
-.k small { font-size: 14px; font-weight: 700; color: var(--mut); }
-.k b { font-size: 32px; font-weight: 800; font-family: var(--mono); color: var(--navy); }
+.k small { font-size: 13.5px; font-weight: 700; color: var(--mut); }
+.k b { font-size: 30px; font-weight: 800; font-family: var(--mono); color: var(--navy); }
+.k.active-stat b { color: var(--g1); }
 
 .hb {
   display: grid;
@@ -268,8 +281,8 @@ section { scroll-margin-top: 86px; }
   font-size: 14px;
   font-weight: 600;
 }
-.bt { height: 11px; background: var(--soft); border-radius: 8px; overflow: hidden; border: 1px solid var(--bd); }
-.bt i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--g1), var(--g2)); transition: width 1s cubic-bezier(.2, .8, .2, 1); }
+.bt { height: 10px; background: var(--soft); border-radius: 8px; overflow: hidden; border: 1px solid var(--bd); }
+.bt i { display: block; height: 100%; width: 0; background: var(--navy); transition: width 0.9s cubic-bezier(.2, .8, .2, 1); }
 
 .alert {
   display: none;
@@ -279,18 +292,39 @@ section { scroll-margin-top: 86px; }
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #991b1b;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 14px 18px;
   margin-bottom: 14px;
 }
 .alert.rem7 {
-  background: #fffbeb;
-  border-color: #fde68a;
-  color: #92400e;
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: var(--navy);
 }
 
-/* ===== TABLE & QUEUE ===== */
-.tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+/* ===== QUEUE TABS, FILTERS & TABLE ===== */
+.tools { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; align-items: center; }
+.view-tabs {
+  display: inline-flex;
+  background: var(--soft);
+  border: 1px solid var(--bd);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+  margin-right: auto;
+}
+.vtab {
+  border: 0;
+  background: transparent;
+  color: var(--mut);
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.vtab.on { background: var(--navy); color: #fff; }
+
 .bar {
   display: flex;
   gap: 10px;
@@ -313,8 +347,7 @@ th {
 }
 td { padding: 14px 16px; border-top: 1px solid var(--bd); vertical-align: top; }
 tr.r { cursor: pointer; transition: 0.12s; }
-tr.r:hover { background: #f5faee; }
-.grp td { background: var(--g3); color: var(--g4); font-weight: 800; padding: 9px 16px; border-top: 0; }
+tr.r:hover { background: var(--soft); }
 .t { font-weight: 800; color: var(--navy); }
 .id { font-size: 12px; color: var(--mut); font-family: var(--mono); margin-top: 2px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .cl {
@@ -346,8 +379,8 @@ tr.r:hover { background: #f5faee; }
 .ov {
   position: fixed;
   inset: 0;
-  background: rgba(14, 31, 51, 0.6);
-  backdrop-filter: blur(3px);
+  background: rgba(14, 30, 49, 0.58);
+  backdrop-filter: blur(2px);
   display: none;
   z-index: 40;
 }
@@ -356,16 +389,16 @@ tr.r:hover { background: #f5faee; }
   position: relative;
   width: min(880px, 100%);
   max-height: 90vh;
-  border-radius: 18px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 24px 60px rgba(14, 31, 51, 0.4);
+  box-shadow: 0 24px 60px rgba(14, 30, 49, 0.35);
   background: var(--card);
   display: flex;
   flex-direction: column;
   border: 1px solid var(--bd);
 }
 .dh {
-  background: linear-gradient(105deg, var(--navy) 0%, #1d4a3e 60%, var(--g1) 100%);
+  background: linear-gradient(110deg, var(--navy) 0%, var(--navy-deep) 72%, var(--g4) 100%);
   color: #fff;
   padding: 18px 24px;
   display: flex;
@@ -377,11 +410,11 @@ tr.r:hover { background: #f5faee; }
   min-height: 0;
   overflow-y: auto;
   padding: 20px 24px;
-  background: #fafcf8;
+  background: var(--bg);
 }
 .sec-card {
   border: 1px solid var(--bd);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 18px 20px;
   margin-bottom: 16px;
   background: #fff;
@@ -399,21 +432,23 @@ tr.r:hover { background: #f5faee; }
   padding-bottom: 8px;
 }
 .g-meta {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 .f {
   background: var(--soft);
   border: 1px solid var(--bd);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 10px 14px;
+  flex: 1 1 auto;
+  min-width: 170px;
 }
-.f small { display: block; color: var(--mut); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
-.f b { font-size: 14px; color: var(--navy); }
+.f small { display: block; color: var(--mut); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 5px; }
+.f b { font-size: 14px; color: var(--navy); letter-spacing: 0.01em; }
 h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); }
 .box { background: var(--soft); border: 1px solid var(--bd); border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
-.adm { background: var(--soft); border: 1px solid #c7dfa3; border-radius: 12px; padding: 12px 14px; margin-top: 14px; font-size: 13.5px; color: var(--navy); }
+.adm { background: var(--soft); border: 1px solid var(--bd); border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-size: 13.5px; color: var(--navy); }
 .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
 .row > * { flex: 1; }
 
@@ -428,7 +463,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   width: 12px;
   height: 12px;
   border-radius: 4px;
-  background: var(--g1);
+  background: var(--navy);
 }
 .att {
   display: flex;
@@ -456,7 +491,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   font-size: 11.5px;
   padding: 3px 10px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.16);
   margin-left: 6px;
   font-weight: 700;
 }
@@ -468,34 +503,34 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   z-index: 50;
   display: none;
   place-items: center;
-  background: rgba(14, 31, 51, 0.6);
-  backdrop-filter: blur(3px);
+  background: rgba(14, 30, 49, 0.58);
+  backdrop-filter: blur(2px);
   padding: 16px;
 }
 .md.show { display: grid; }
 .md > div {
   background: var(--card);
-  border-radius: 18px;
+  border-radius: 16px;
   padding: 26px;
   width: min(680px, 100%);
   max-height: 92vh;
   overflow-y: auto;
   border: 1px solid var(--bd);
-  box-shadow: 0 24px 60px rgba(14, 31, 51, 0.35);
+  box-shadow: 0 24px 60px rgba(14, 30, 49, 0.35);
 }
-.drop { border: 2px dashed #b8cf99; border-radius: 12px; padding: 18px; text-align: center; background: var(--soft); }
+.drop { border: 2px dashed var(--bd); border-radius: 12px; padding: 18px; text-align: center; background: var(--soft); }
 
 .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-.st { padding: 22px; }
+.st { padding: 20px; }
 .st h3 { margin: 12px 0 6px; font-size: 19px; color: var(--navy); }
 .sn {
   display: inline-block;
   font-family: var(--mono);
   font-weight: 700;
   font-size: 12px;
-  color: var(--g4);
-  background: var(--g3);
-  border: 1px solid #c7dfa3;
+  color: var(--navy);
+  background: var(--soft);
+  border: 1px solid var(--bd);
   border-radius: 999px;
   padding: 3px 12px;
 }
@@ -510,12 +545,12 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   right: 22px;
   background: var(--navy);
   color: #fff;
-  padding: 13px 20px;
+  padding: 12px 20px;
   border-radius: 999px;
   display: none;
   z-index: 90;
   font-weight: 700;
-  box-shadow: 0 10px 25px rgba(14, 31, 51, 0.25);
+  box-shadow: 0 10px 25px rgba(14, 30, 49, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 #toast:before {
@@ -524,7 +559,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: var(--g2);
+  background: var(--g1);
   margin-right: 10px;
 }
 
@@ -532,7 +567,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   .nl, .pp { display: none; }
   .nv { grid-template-columns: 1fr auto; padding: 12px 16px; }
   .main { padding: 0 14px; }
-  .banner { padding: 24px 20px; border-radius: 18px; }
+  .banner { padding: 24px 20px; border-radius: 16px; }
 }
 @media (max-width: 700px) {
   .hb { grid-template-columns: 110px 1fr 30px; }
@@ -546,7 +581,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
 <div id="lgn">
   <div class="lc">
     <div style="text-align:center;margin-bottom:24px">
-      <div style="margin:0 auto 14px;background:#ffffff;border:1px solid var(--bd);border-radius:14px;padding:10px 20px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(23,47,75,0.06);">
+      <div style="margin:0 auto 14px;background:#ffffff;border:1px solid var(--bd);border-radius:12px;padding:10px 20px;display:inline-flex;align-items:center;justify-content:center;">
         <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:40px;width:auto;object-fit:contain;display:block;">
       </div>
       <h2>Sign in to Audit Register</h2>
@@ -566,14 +601,14 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
 <header class="nav">
   <div class="nv">
     <div class="brand">
-      <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:44px;width:auto;display:block">
+      <img src="https://www.phb.com.my/clients/asset_E5316276-9983-47F1-A6C2-76D0C7985656/contentms/img/logo/logo-phb.svg" alt="PHB Logo" style="height:42px;width:auto;display:block">
       <i class="vr"></i>
       <b class="pn">IAR</b>
       <span class="pp">Internal Audit Register</span>
     </div>
     <nav class="nl">
       <a href="#top">Overview</a>
-      <a href="#s2" class="priv">Findings Queue</a>
+      <a href="#s2" class="priv">Tickets Queue</a>
       <a href="#s4" id="nl4" class="priv">Reports &amp; Analytics</a>
     </nav>
     <div class="nr">
@@ -598,7 +633,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
       </div>
       <div>
         <button class="chp pubo" onclick="g('lgn').style.display='grid'">Sign in to open the register</button>
-        <a class="chp priv" href="#s2">Open Findings Queue</a>
+        <a class="chp priv" href="#s2">Open Tickets Queue</a>
       </div>
     </div>
   </section>
@@ -631,14 +666,19 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
     <div class="kpis" id="kp"></div>
   </section>
 
-  <!-- SINGLE-PAGE FINDINGS QUEUE -->
+  <!-- ALL-TICKETS QUEUE (NO DEPT GROUPING, WITH RESOLVED TAB) -->
   <section id="s2" class="priv">
     <div class="sh">
-      <span class="eb2">Findings Queue</span>
-      <h2>Findings Register</h2>
-      <p>Grouped by department. Click any row to open the finding record.</p>
+      <span class="eb2">Tickets Queue</span>
+      <h2>All Audit Tickets</h2>
+      <p>All tickets listed together. Closed items automatically move to Resolved.</p>
     </div>
     <div class="tools">
+      <div class="view-tabs" role="tablist">
+        <button type="button" class="vtab on" id="tabAll" onclick="setQueueMode('active')">All Active Tickets</button>
+        <button type="button" class="vtab" id="tabResolved" onclick="setQueueMode('resolved')">Resolved (Closed)</button>
+        <button type="button" class="vtab" id="tabEvery" onclick="setQueueMode('all')">Everything</button>
+      </div>
       <button class="btn" id="impB" onclick="show('impM')">
         <svg class="ico" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Import historical data
@@ -661,7 +701,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
           <option>In Progress</option>
           <option>Extended</option>
           <option>Overdue</option>
-          <option>Closed</option>
+          <option value="Closed">Resolved (Closed)</option>
         </select>
         <select class="in" id="fd" onchange="rd()"></select>
       </div>
@@ -706,7 +746,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   <div class="dr" id="dr"></div>
 </div>
 
-<!-- ADD FINDING MODAL -->
+<!-- ADD / EDIT FINDING MODAL (OUTLOOK AUTO-POPULATE ON EMAIL) -->
 <div class="md" id="addM">
   <div>
     <h3 style="margin-top:0;margin-bottom:16px;font-size:20px;font-weight:800;color:var(--navy)" id="addT">Add audit finding</h3>
@@ -718,10 +758,13 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
         <select class="in" id="n3"><option value="">Select Department *</option></select>
       </div>
       <div class="row" style="margin-top:0">
-        <input class="in" id="n4" placeholder="Owner name">
+        <input class="in" id="n4" placeholder="Owner name (auto-fills from Outlook)">
         <input class="in" id="n5" placeholder="Deadline description (e.g., Quarter 4 2026)">
       </div>
-      <input class="in" id="n13" type="email" placeholder="Responsible owner email (e.g., owner@phb.com.my)">
+      <div>
+        <input class="in" id="n13" type="email" placeholder="Responsible owner email (e.g., owner@phb.com.my) — auto-fills name &amp; dept from Outlook" oninput="scheduleOwnerLookup(this.value)" onblur="lookupOwnerByEmail(this.value)">
+        <div class="lookup-hint" id="ownerLookupStatus"></div>
+      </div>
       <div class="row" style="margin-top:0">
         <div>
           <label style="font-size:12px;font-weight:700;color:var(--mut);display:block;margin-bottom:4px">Target Due Date (for 7-day reminder &amp; overdue triggers)</label>
@@ -734,7 +777,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
             <option>In Progress</option>
             <option>Extended</option>
             <option>Overdue</option>
-            <option>Closed</option>
+            <option value="Closed">Closed (Resolved)</option>
           </select>
         </div>
       </div>
@@ -766,21 +809,20 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
       <h3 style="margin:0;display:flex;align-items:center;gap:10px;color:var(--navy);font-weight:800">
         <svg class="ico" style="width:20px;height:20px" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         Import Historical Audit Data
-        <span style="background:var(--g3);color:var(--g4);font-size:11.5px;padding:3px 10px;border-radius:99px;font-weight:700">Admin only</span>
+        <span style="background:var(--soft);color:var(--navy);border:1px solid var(--bd);font-size:11.5px;padding:3px 10px;border-radius:99px;font-weight:700">Admin only</span>
       </h3>
       <button class="btn" onclick="hide('impM')">
         <svg class="ico" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
 
-    <!-- SECTION 1: BULK EXCEL / CSV UPLOAD -->
     <div class="sec-card">
       <div class="sec-title">1. Bulk Upload via Excel / CSV Spreadsheet</div>
-      <div style="background:var(--soft);border:1px solid #c7dfa3;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--navy)">
-        <b>Import Guidelines:</b> Rows with <b>Status = Closed</b> are automatically filed as historical records, while active statuses populate the live Findings Register.
+      <div style="background:var(--soft);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--navy)">
+        <b>Import Guidelines:</b> Rows with <b>Status = Closed</b> are automatically marked as Resolved.
       </div>
       <div class="drop" id="xlDrop" ondragover="event.preventDefault()" ondrop="xlDropEvt(event)" style="margin-bottom:12px">
-        <div style="display:inline-flex;padding:10px;border-radius:12px;background:#fff;border:1px solid var(--bd);margin-bottom:8px;color:var(--g1)">
+        <div style="display:inline-flex;padding:10px;border-radius:12px;background:#fff;border:1px solid var(--bd);margin-bottom:8px;color:var(--navy)">
           <svg class="ico" style="width:24px;height:24px" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
         </div>
         <div><b>Drag &amp; drop your Excel (.xlsx) or CSV file here</b></div>
@@ -812,7 +854,6 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
       </div>
     </div>
 
-    <!-- SECTION 2: MANUAL SINGLE ENTRY -->
     <div class="sec-card" style="margin-bottom:0">
       <div class="sec-title">2. Or Record a Single Historical / Active Finding Manually</div>
       <div style="display:flex;flex-direction:column;gap:12px">
@@ -827,7 +868,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
         <div class="row" style="margin-top:0">
           <input class="in" id="hf5" placeholder="Deadline description (e.g., Quarter 2 2024)">
           <select class="in" id="hf6">
-            <option value="Closed">Closed (Historical)</option>
+            <option value="Closed">Closed (Resolved)</option>
             <option value="Open">Open</option>
             <option value="In Progress">In Progress</option>
             <option value="Extended">Extended</option>
@@ -862,7 +903,7 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
 
 <script>
 var REM={days:7};try{REM.days=parseInt(localStorage.getItem("iar_rem"),10)||7}catch(x){}
-var KEY="iar_v3",P="ADMIN",cur=null;
+var KEY="iar_v3",P="ADMIN",cur=null,inlineEditing=false,queueMode="active",lookupTimer=null,lastLookedUpEmail="";
 var CFG={USERS_LIST_URL:"",
  TENANT_ID:"cc9afa77-5900-4c38-8262-c226c4c2e27d",
  CLIENT_ID:"33869e2e-8bac-4522-bf68-947e2055eb29",
@@ -921,6 +962,7 @@ function isSet(v){return!!v&&String(v).indexOf("please input the api")<0&&String
 function missing(){return REQ.filter(function(k){return!isSet(CFG[k])})}
 function sx(v){v=String(v==null?"":v);return/^[=+\-@\t\r]/.test(v)?"'"+v:v}
 function normStatus(v){var t=String(v||"").toLowerCase();if(/clos|complet|resolv|done|settled/.test(t))return"Closed";if(/overdue|late/.test(t))return"Overdue";if(/extend/.test(t))return"Extended";if(/progress|ongoing|partial/.test(t))return"In Progress";return"Open"}
+function displayStatus(s){return s==="Closed"?"Resolved (Closed)":s}
 async function notify(to,subject,html){var p={toEmail:to,subject:subject,body:html,sentBy:U&&U.email};if(isSet(CFG.F_NOTIFY))return callFlow("NOTIFY",p);if(isSet(CFG.F_SEND_EMAIL))return callFlow("SEND_EMAIL",p);throw new Error("F_NOTIFY: please input the api")}
 function stamp(){return new Date().toLocaleString("en-MY",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"})}
 
@@ -931,7 +973,90 @@ function deptList(sel){
  return l;
 }
 
-/* ── COMPACT WORKFLOW ACTION BUTTONS (MAX 2 ON RIGHT, 3 TOTAL WITH DELETE & EDIT) ── */
+function matchDeptOption(rawDept){
+ var n=normDept(rawDept);
+ if(!n)return "";
+ var all=deptList(rawDept);
+ for(var i=0;i<all.length;i++){
+  if(deptMatches(all[i],rawDept))return all[i];
+ }
+ return rawDept;
+}
+
+function scheduleOwnerLookup(val){
+ clearTimeout(lookupTimer);
+ var email=String(val||"").trim().toLowerCase();
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+  if(g("ownerLookupStatus"))g("ownerLookupStatus").textContent="";
+  return;
+ }
+ lookupTimer=setTimeout(function(){lookupOwnerByEmail(email);},400);
+}
+
+async function lookupOwnerByEmail(val){
+ var email=String(val||"").trim().toLowerCase();
+ var stEl=g("ownerLookupStatus");
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return;
+ if(email===lastLookedUpEmail)return;
+ lastLookedUpEmail=email;
+ if(stEl)stEl.textContent="Looking up Outlook profile…";
+ try{
+  var prof=await graph("/users/"+encodeURIComponent(email)+"?$select=displayName,department,mail,userPrincipalName");
+  var foundName=prof.displayName||"";
+  var foundDept=matchDeptOption(prof.department||"");
+  if(foundName&&g("n4"))g("n4").value=foundName;
+  if(foundDept&&g("n3")){
+   fillDeps(foundDept);
+   g("n3").value=foundDept;
+  }
+  if(stEl)stEl.textContent="Filled from Outlook: "+(foundName||email)+(foundDept?" · "+foundDept:"");
+ }catch(err){
+  if(stEl)stEl.textContent="Could not auto-fill from Outlook (you can enter name & department manually).";
+ }
+}
+
+function fitControlToText(el,extraCh){
+ if(!el)return;
+ var txt="";
+ if(el.tagName==="SELECT"){
+  var opt=el.options[el.selectedIndex];
+  txt=opt?(opt.text||opt.value||""):el.value||"";
+ }else{
+  txt=el.value||el.placeholder||"";
+ }
+ var ch=Math.max(12,txt.length+(extraCh||4));
+ el.style.width="min(100%, "+ch+"ch)";
+}
+
+function fitInputs(){
+ ["ed_dep","ed_own","ed_oe"].forEach(function(id,idx){
+  var el=g(id);
+  if(el)fitControlToText(el,idx===0?6:4);
+ });
+}
+
+function toggleInlineEdit(){
+ var r=cur_();if(!r||!U||!U.admin||r.st==="Closed")return;
+ inlineEditing=!inlineEditing;
+ dr();
+ if(inlineEditing){
+  setTimeout(function(){
+   fitInputs();
+   var dEl=g("ed_dep");
+   if(dEl)dEl.focus();
+  },20);
+ }
+}
+
+function setQueueMode(mode){
+ queueMode=mode;
+ ["tabAll","tabResolved","tabEvery"].forEach(function(id){if(g(id))g(id).classList.remove("on");});
+ if(mode==="active"&&g("tabAll"))g("tabAll").classList.add("on");
+ if(mode==="resolved"&&g("tabResolved"))g("tabResolved").classList.add("on");
+ if(mode==="all"&&g("tabEvery"))g("tabEvery").classList.add("on");
+ rd();
+}
+
 function wfBottomButtons(r,dirtyDeptOwner){
  if(!U||!U.admin)return[];
  var btns=[];
@@ -949,7 +1074,7 @@ function wfBottomButtons(r,dirtyDeptOwner){
 
  if(r.st!=="Closed"){
   if(r.ap==="Boss Approval"){
-   btns.push(b("cl_boss","Approve & Close","p",SVG.check));
+   btns.push(b("cl_boss","Resolve & Close","p",SVG.check));
   }else{
    btns.push(b("cl_ia","Submit Closure to Head IAD","v",SVG.check));
   }
@@ -975,12 +1100,13 @@ async function wf(a){
   iad_approve_issue:["rv","Issued To Department","__issue__","IAD Check completed & approved. Finding issued to "+r.dep+" by "+who+"."],
   reissue:          ["rv","Issued To Department","__issue__","Finding re-issued to "+r.dep+" ("+r.own+") by "+who+"."],
   cl_ia:            ["ap","Boss Approval",CFG.IA_BOSS_EMAIL,"Closure submitted for Head IAD approval by "+who+"."],
-  cl_boss:          ["ap","",firstEmail,"Closure approved by "+who+". Finding closed."]
+  cl_boss:          ["ap","",firstEmail,"Closure approved by "+who+". Finding resolved & closed."]
  }[a];
  if(!T)return;
  r[T[0]]=T[1];
  if(a==="submit_review"&&r.st!=="Closed"){r.st="Open";r.hist=false;}
  if(a==="cl_boss"){r.st="Closed";r.hist=true;}
+ inlineEditing=false;
  var note=T[3];
  r.lg.push({m:"Workflow",s:T[1]||a,n:note,a:who,d:stamp()});
  var ok=await spUpdate(r);
@@ -1006,7 +1132,7 @@ async function wf(a){
  }else if(emailTo==="__issue__"){
   toast("Finding issued to "+r.dep+". Department staff can now view it.");
  }else{
-  toast("Workflow stage updated to "+(T[1]||a));
+  toast("Finding moved to Resolved");
  }
 }
 
@@ -1042,6 +1168,8 @@ async function saveAdminInline(){
   return;
  }
 
+ inlineEditing=false;
+ if(newDep&&g("fd"))g("fd").value=newDep;
  upd(changes.length?"Changes saved":"IAD note saved");
  var targetEmail=String(r.oe||"").split(/[;, ]+/).filter(function(x){return x.indexOf("@")>0})[0]||"";
  if(noteTxt&&targetEmail){
@@ -1092,9 +1220,9 @@ function nextId(){var y=new Date().getFullYear(),m=0;D.forEach(function(r){var x
 async function saveFile(name,data){
  var b=data instanceof Blob?data:new Blob([data]),u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();toast("Saved "+name)}
 
-function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,OwnerEmail:r.oe,Deadline:r.dl,DueDate:r.due,Status:r.st,WorkflowStage:r.rv||"Draft",ApprovalStage:r.ap||"-",Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
+function xl(){var W=XLSX.utils.book_new(),m=function(r){return{AuditID:r.id,Title:r.t,Cycle:r.cy,Department:r.dep,Owner:r.own,OwnerEmail:r.oe,Deadline:r.dl,DueDate:r.due,Status:displayStatus(r.st),WorkflowStage:r.rv||"Draft",ApprovalStage:r.ap||"-",Likelihood:r.lk,Impact:r.im,OpenIssues:r.iss,Recommendations:r.rec,IADRemarks:r.rm}};
  XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(function(r){return!isH(r)}).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Active");
- XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(isH).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Historical");
+ XLSX.utils.book_append_sheet(W,XLSX.utils.json_to_sheet(V().filter(isH).map(m).map(function(o){for(var k in o)o[k]=sx(o[k]);return o})),"Resolved");
  saveFile("audit_register_"+new Date().toISOString().slice(0,10)+".xlsx",XLSX.write(W,{type:"array",bookType:"xlsx"}))}
 
 async function callFlow(n,p){var u=CFG["F_"+n];if(!isSet(u))throw new Error("F_"+n+": please input the api");
@@ -1157,16 +1285,23 @@ async function spDelete(r){
 
 async function reload(){try{await spLoad();rd();toast("Data refreshed from SharePoint")}catch(x){toast("Refresh failed: "+x.message)}}
 
-function fm(id){var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v){g(k).value=v==null?"":v};
- fillDeps();
+function fm(id){
+ var r=id?D.find(function(x){return x.id===id}):{},s=function(k,v){g(k).value=v==null?"":v};
+ fillDeps(r.dep);
+ lastLookedUpEmail=(r.oe||"").toLowerCase();
+ if(g("ownerLookupStatus"))g("ownerLookupStatus").textContent="";
  g("addT").textContent=id?"Edit audit finding":"Add audit finding";
- s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);show("addM")}
+ s("n0",id||"");s("n1",r.t);s("n2",r.cy);s("n3",r.dep);s("n4",r.own);s("n5",r.dl);s("n7",r.due);s("n8",r.st||"Open");s("n9",r.lk||"Medium");s("n10",r.im||"Medium");s("n6",r.iss);s("n11",r.rec);s("n12",r.rm);s("n13",r.oe);
+ show("addM");
+}
 
-async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required");return}if(!g("n3").value.trim()){toast("Department is required");return}
+async function add(){
+ var t=g("n1").value.trim();if(!t){toast("Title is required");return}
+ var depVal=g("n3").value.trim();if(!depVal){toast("Department is required");return}
  var id=g("n0").value,r=id?D.find(function(x){return x.id===id}):null,isNew=!r;
  var snap=function(x){return{Title:x.t,Cycle:x.cy,Department:x.dep,Owner:x.own,"Owner email":x.oe,"Due date":x.due,Status:x.st,Issues:x.iss,Recommendation:x.rec,Remarks:x.rm}},o0=r?snap(r):null;
  if(isNew)r={id:nextId(),lg:[],at:[]};
- r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=g("n3").value.trim()||"-";r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
+ r.t=t.toUpperCase();r.cy=g("n2").value.trim()||"-";r.dep=depVal;r.own=g("n4").value.trim()||"-";r.dl=g("n5").value.trim()||"-";r.due=g("n7").value;r.st=g("n8").value;r.lk=g("n9").value;r.im=g("n10").value;r.iss=g("n6").value.trim()||"-";r.rec=g("n11").value.trim()||"-";r.rm=g("n12").value.trim()||"-";r.oe=g("n13").value.trim();r.hist=r.st==="Closed";
  if(isNew){
   r.rv="Draft";
   r.mk=U.email;
@@ -1179,7 +1314,13 @@ async function add(){var t=g("n1").value.trim();if(!t){toast("Title is required"
   if(df.length)r.lg.push({m:"IAD Edit",s:"Details",n:df.join("\n"),a:U.name,d:stamp()});
   await spUpdate(r);
  }
- hide("addM");rd();toast(isNew?"Finding saved. Submit for IAD Check when ready.":"Finding updated")}
+ if(r.st==="Closed")setQueueMode("resolved");
+ else if(queueMode==="resolved")setQueueMode("active");
+ if(g("fd"))g("fd").value=r.dep;
+ hide("addM");
+ rd();
+ toast(isNew?"Finding saved & department filter updated":"Finding updated & department filter updated");
+}
 
 async function getRole(email){var r=await callFlow("GET_USER_ROLE",{email:email}),role=r.role||r.Role||"",a=r.active!==undefined?r.active:r.Active;return{found:!!role,role:role,active:a===undefined||a===true||a==="true"||a==="Yes"||a===1,name:r.name||r.Title||"",dep:r.department||r.Department||""}}
 
@@ -1209,10 +1350,10 @@ async function enter(){document.body.classList.add("auth");g("lgn").style.displa
  setP(U.admin?"ADMIN":"PIC");try{await spLoad()}catch(x){D=[];toast("SharePoint load warning: "+x.message)}
  fillDeps();rd();toast("Signed in successfully")}
 
-function logout(){U=null;D=[];cur=null;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";rd()}
+function logout(){U=null;D=[];cur=null;inlineEditing=false;document.body.classList.remove("auth");hide("ov");g("lgn").style.display="grid";rd()}
 
-function fillDeps(){
- var l=deptList();
+function fillDeps(extra){
+ var l=deptList(extra);
  var opts="<option value=''>Select Department *</option>"+l.map(function(d){return"<option value=\""+e(d)+"\">"+e(d)+"</option>"}).join("");
  if(g("n3"))g("n3").innerHTML=opts;
  if(g("hf3"))g("hf3").innerHTML=opts;
@@ -1223,7 +1364,7 @@ function boot(){fillDeps();g("lgn").style.display="grid";var m=missing();g("lNot
 var D=[];function sv(){}function g(i){return document.getElementById(i)}
 function e(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
 function sc(s){return"s-"+s.replace(" ","-")}
-function pill(s){s=String(s==null?"":s);return'<span class="pill '+e(sc(s))+'">'+e(s)+'</span>'}
+function pill(s){s=String(s==null?"":s);return'<span class="pill '+e(sc(s))+'">'+e(displayStatus(s))+'</span>'}
 function rk(l,i){var h=l==="High"||i==="High",m=l==="Medium"||i==="Medium";return'<span class="dot" style="background:'+(h?"#b91c1c":m?"#d97706":"#51920A")+'"></span>'+l[0]+" / "+i[0]}
 function toast(m){var t=g("toast");t.textContent=m;t.style.display="block";setTimeout(function(){t.style.display="none"},Math.max(2800,String(m).length*75))}
 function show(i){g(i).classList.add("show")}function hide(i){g(i).classList.remove("show")}
@@ -1240,30 +1381,32 @@ function rep(){
  var sts=["Open","In Progress","Extended","Overdue","Closed"],dm={},td=new Date().toISOString().slice(0,10),ag=[0,0,0];
  V().forEach(function(r){var d=dm[r.dep]=dm[r.dep]||{t:0};d[r.st]=(d[r.st]||0)+1;d.t++;if(r.st!=="Closed"&&r.due&&r.due<td){var n=Math.floor((new Date(td)-new Date(r.due))/864e5);ag[n<=7?0:n<=30?1:2]++}});
  var ks=Object.keys(dm).sort();
- g("rp").innerHTML='<div class="tw"><table><thead><tr><th>Department</th>'+sts.map(function(x){return"<th>"+x+"</th>"}).join("")+'<th>Total</th></tr></thead><tbody>'+(ks.map(function(k){return"<tr><td><b>"+e(k)+"</b></td>"+sts.map(function(x){return"<td>"+(dm[k][x]||0)+"</td>"}).join("")+"<td><b>"+dm[k].t+"</b></td></tr>"}).join("")||'<tr><td colspan="7" style="text-align:center;color:var(--mut)">No data yet.</td></tr>')+'</tbody></table></div><div class="steps" style="padding:18px">'+[["1 - 7 DAYS OVERDUE",ag[0]],["8 - 30 DAYS OVERDUE",ag[1]],["OVER 30 DAYS OVERDUE",ag[2]]].map(function(a){return'<div class="st"><span class="sn">'+a[0]+'</span><h3>'+a[1]+' finding(s)</h3></div>'}).join("")+"</div>";
+ g("rp").innerHTML='<div class="tw"><table><thead><tr><th>Department</th><th>Open</th><th>In Progress</th><th>Extended</th><th>Overdue</th><th>Resolved</th><th>Total</th></tr></thead><tbody>'+(ks.map(function(k){return"<tr><td><b>"+e(k)+"</b></td>"+sts.map(function(x){return"<td>"+(dm[k][x]||0)+"</td>"}).join("")+"<td><b>"+dm[k].t+"</b></td></tr>"}).join("")||'<tr><td colspan="7" style="text-align:center;color:var(--mut)">No data yet.</td></tr>')+'</tbody></table></div><div class="steps" style="padding:18px">'+[["1 - 7 DAYS OVERDUE",ag[0]],["8 - 30 DAYS OVERDUE",ag[1]],["OVER 30 DAYS OVERDUE",ag[2]]].map(function(a){return'<div class="st"><span class="sn">'+a[0]+'</span><h3>'+a[1]+' finding(s)</h3></div>'}).join("")+"</div>";
 }
 
 function rd(){
  var q=g("q").value.toLowerCase(),fs=g("fs").value,fd=g("fd").value;
- var deps=[];V().forEach(function(r){if(deps.indexOf(r.dep)<0)deps.push(r.dep)});
+ var deps=deptList();
  g("fd").innerHTML='<option value="">All departments</option>'+deps.map(function(d){return'<option'+(d===fd?" selected":"")+'>'+e(d)+'</option>'}).join("");
- 
+ if(fd&&g("fd").value!==fd)g("fd").value="";
+ fd=g("fd").value;
+
  var c=function(s){return V().filter(function(r){return r.st===s}).length};
  var K=[
-   ["Total findings",V().length],
-   ["Open",c("Open")],
-   ["In progress",c("In Progress")],
-   ["Extended",c("Extended")],
-   ["Overdue",c("Overdue")],
-   ["Closed",c("Closed")]
+   ["Total tickets",V().length,false],
+   ["Open",c("Open"),false],
+   ["In progress",c("In Progress"),false],
+   ["Extended",c("Extended"),false],
+   ["Overdue",c("Overdue"),false],
+   ["Resolved",c("Closed"),true]
  ];
- g("kp").innerHTML=K.map(function(k){return'<div class="k"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join("");
- 
+ g("kp").innerHTML=K.map(function(k){return'<div class="k'+(k[2]?" active-stat":"")+'"><small>'+k[0]+'</small><b>'+k[1]+'</b></div>'}).join("");
+
  if(U&&U.admin){
   rep();
   var dm={};V().forEach(function(r){if(r.st!=="Closed")dm[r.dep]=(dm[r.dep]||0)+1});
   var dk=Object.keys(dm).sort(function(a,b){return dm[b]-dm[a]}).slice(0,8),mx=Math.max(1,dk.length?dm[dk[0]]:1),nO=V().filter(function(r){return r.st!=="Closed"}).length;
-  g("hm").innerHTML='<h3 style="margin:0 0 4px;font-size:18px;color:var(--navy);font-weight:800">Open Findings by Department ('+nO+' active)</h3><p style="margin:0 0 12px;color:var(--mut);font-size:14px">Distribution of unclosed audit findings across departments.</p>'+(dk.map(function(k){return'<div class="hb"><span>'+e(k)+'</span><div class="bt"><i data-w="'+(dm[k]/mx*100)+'"></i></div><b>'+dm[k]+'</b></div>'}).join("")||'<div style="color:var(--mut)">No open findings.</div>');
+  g("hm").innerHTML='<h3 style="margin:0 0 4px;font-size:18px;color:var(--navy);font-weight:800">Open Findings by Department ('+nO+' active)</h3><p style="margin:0 0 12px;color:var(--mut);font-size:14px">Distribution of unresolved audit findings across departments.</p>'+(dk.map(function(k){return'<div class="hb"><span>'+e(k)+'</span><div class="bt"><i data-w="'+(dm[k]/mx*100)+'"></i></div><b>'+dm[k]+'</b></div>'}).join("")||'<div style="color:var(--mut)">No open findings.</div>');
   setTimeout(function(){document.querySelectorAll("#hm [data-w]").forEach(function(x){x.style.width=x.dataset.w+"%"})},60);
  }
 
@@ -1282,17 +1425,24 @@ function rd(){
  g("al").style.display=o?"flex":"none";
  g("alT").textContent="Action required: "+o+" overdue finding"+(o>1?"s":"");
 
- var L=D.filter(function(r){return(!fs||r.st===fs)&&(!fd||r.dep===fd)&&(r.t+r.iss+r.dep+r.own+r.id).toLowerCase().indexOf(q)>-1&&vis(r)});
- var lastD=null,cntD={};L.sort(function(a,b){return String(a.dep).localeCompare(String(b.dep))});L.forEach(function(r){cntD[r.dep]=(cntD[r.dep]||0)+1});
- g("tb").innerHTML=L.map(function(r){var gh=r.dep!==lastD?(lastD=r.dep,'<tr class="grp"><td colspan="9">'+e(r.dep)+" · "+cntD[r.dep]+" finding(s)</td></tr>"):"";
-  var stg=(U&&U.admin&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?' <span style="font-size:11px;background:var(--g3);color:var(--g4);padding:1px 7px;border-radius:4px;font-weight:700">'+e(r.rv)+'</span>':"";
-  return gh+'<tr class="r" data-id="'+e(r.id)+'"><td><div class="t">'+e(r.t)+'</div><div class="id">'+e(r.id)+stg+(r.sync===false?' <span style="color:#b45309;display:inline-flex;align-items:center;gap:3px">'+SVG.warn+' not confirmed</span>':'')+'</div></td><td style="white-space:nowrap"><b>'+e(r.cy)+'</b></td><td><div class="cl">'+e(r.iss)+'</div></td><td>'+e(r.dep)+'</td><td>'+e(r.own)+'</td><td>'+pill(r.st)+'</td><td style="white-space:nowrap">'+rk(r.lk,r.im)+'</td><td style="white-space:nowrap">'+e(r.dl)+'</td><td><span style="display:inline-flex;align-items:center;gap:5px">'+SVG.link+' '+r.at.length+'</span></td></tr>';
- }).join("")||'<tr><td colspan="9" style="text-align:center;color:var(--mut);padding:36px">No findings match your filters.</td></tr>';
+ var L=D.filter(function(r){
+  if(!vis(r))return false;
+  if(queueMode==="active"&&r.st==="Closed")return false;
+  if(queueMode==="resolved"&&r.st!=="Closed")return false;
+  if(fs&&r.st!==fs)return false;
+  if(fd&&!deptMatches(r.dep,fd))return false;
+  return(r.t+r.iss+r.dep+r.own+r.id).toLowerCase().indexOf(q)>-1;
+ });
+
+ g("tb").innerHTML=L.map(function(r){
+  var stg=(U&&U.admin&&r.rv&&r.rv!=="Issued To Department"&&r.rv!=="Approved")?' <span style="font-size:11px;background:var(--soft);color:var(--navy);border:1px solid var(--bd);padding:1px 7px;border-radius:4px;font-weight:700">'+e(r.rv)+'</span>':"";
+  return'<tr class="r" data-id="'+e(r.id)+'"><td><div class="t">'+e(r.t)+'</div><div class="id">'+e(r.id)+stg+(r.sync===false?' <span style="color:#b45309;display:inline-flex;align-items:center;gap:3px">'+SVG.warn+' not confirmed</span>':'')+'</div></td><td style="white-space:nowrap"><b>'+e(r.cy)+'</b></td><td><div class="cl">'+e(r.iss)+'</div></td><td>'+e(r.dep)+'</td><td>'+e(r.own)+'</td><td>'+pill(r.st)+'</td><td style="white-space:nowrap">'+rk(r.lk,r.im)+'</td><td style="white-space:nowrap">'+e(r.dl)+'</td><td><span style="display:inline-flex;align-items:center;gap:5px">'+SVG.link+' '+r.at.length+'</span></td></tr>';
+ }).join("")||'<tr><td colspan="9" style="text-align:center;color:var(--mut);padding:36px">No tickets match your current view or filters.</td></tr>';
 }
 
 function cur_(){return D.find(function(r){return r.id===cur})}
-function op(id){cur=id;dr();show("ov");}
-function cl(){hide("ov");cur=null}
+function op(id){cur=id;inlineEditing=false;dr();show("ov");}
+function cl(){hide("ov");cur=null;inlineEditing=false}
 
 function chronoLogs(arr){
  return(arr||[]).slice().sort(function(a,b){
@@ -1304,16 +1454,16 @@ function chronoLogs(arr){
 
 function checkReissueDirty(){
  var r=cur_();if(!r||!U||!U.admin)return;
+ fitInputs();
  var dEl=g("ed_dep"),oEl=g("ed_own"),eEl=g("ed_oe");
  var dirty=(dEl&&dEl.value!==r.dep)||(oEl&&oEl.value.trim()!==r.own)||(eEl&&eEl.value.trim()!==(r.oe||""));
  var slot=g("wfSlot");
  if(slot)slot.innerHTML=wfBottomButtons(r,dirty).join("");
 }
 
-/* ── SINGLE-PAGE FINDING DRAWER (PDF IN HEADER CARD, "EDIT" & CLEAN BOTTOM BAR) ── */
 function dr(){
  var r=cur_();if(!r)return;
- var ad=P==="ADMIN",locked=r.st==="Closed",o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
+ var ad=P==="ADMIN",locked=r.st==="Closed",canEditInline=ad&&!locked&&inlineEditing,o=g("dr").querySelector(".db"),y=o?o.scrollTop:0;
  var uL=chronoLogs((r.lg||[]).filter(function(l){return!/^(Workflow|Extension|IAD)/i.test(String(l.m||""))})),all=chronoLogs(r.lg||[]);
  var LH=function(a,em){return'<div class="tl">'+(a.length?a.map(function(l){return'<div><b>'+e(l.m)+'</b> <span style="color:var(--mut);font-size:13px">'+e(l.s)+'</span><div style="white-space:pre-wrap;margin:2px 0">'+e(l.n)+'</div><small style="color:var(--mut)">'+e(l.a)+' · '+e(l.d)+'</small></div>'}).join(""):'<div style="color:var(--mut)">'+em+'</div>')+'</div>'};
 
@@ -1321,16 +1471,16 @@ function dr(){
  var secNum=1;
  var html='';
 
- var depField=ad&&!locked
-  ?'<select class="in" id="ed_dep" onchange="checkReissueDirty()">'+deptList(r.dep).map(function(d){return'<option value="'+e(d)+'"'+(d===r.dep?' selected':'')+'>'+e(d)+'</option>'}).join("")+'</select>'
+ var depField=canEditInline
+  ?'<select class="in in-fit" id="ed_dep" onchange="checkReissueDirty()">'+deptList(r.dep).map(function(d){return'<option value="'+e(d)+'"'+(d===r.dep?' selected':'')+'>'+e(d)+'</option>'}).join("")+'</select>'
   :'<b>'+e(r.dep)+'</b>';
 
- var ownField=ad&&!locked
-  ?'<input class="in" id="ed_own" value="'+e(r.own)+'" oninput="checkReissueDirty()" placeholder="Responsible owner name">'
+ var ownField=canEditInline
+  ?'<input class="in in-fit" id="ed_own" value="'+e(r.own)+'" oninput="checkReissueDirty()" placeholder="Responsible owner name">'
   :'<b>'+e(r.own)+'</b>';
 
- var oeField=ad&&!locked
-  ?'<input class="in" id="ed_oe" type="email" value="'+e(r.oe||"")+'" oninput="checkReissueDirty()" placeholder="Leave blank to keep existing email">'
+ var oeField=canEditInline
+  ?'<input class="in in-fit" id="ed_oe" type="email" value="'+e(r.oe||"")+'" oninput="checkReissueDirty()" placeholder="Leave blank to keep existing email">'
   :'<b>'+e(r.oe||"-")+'</b>';
 
  var stageInfo="";
@@ -1399,9 +1549,9 @@ function dr(){
  var leftBtns=[];
  if(ad&&!locked){
   leftBtns.push('<button class="btn" onclick="del()" style="color:var(--danger);border-color:#fecaca">Delete</button>');
-  leftBtns.push('<button class="btn" data-id="'+e(r.id)+'" onclick="hide(\'ov\');cur=null;fm(this.dataset.id)">Edit</button>');
+  leftBtns.push('<button class="btn '+(inlineEditing?"p":"")+'" onclick="toggleInlineEdit()">'+(inlineEditing?"Done Editing":"Edit")+'</button>');
  }else if(ad){
-  leftBtns.push('<span style="color:var(--mut);font-size:13px">Finding is Closed.</span>');
+  leftBtns.push('<span style="color:var(--mut);font-size:13px">Ticket is Resolved (Closed).</span>');
  }
 
  var rightBtns=[];
@@ -1437,7 +1587,7 @@ function dlpdf(){
   "Title: "+r.t,
   "Cycle: "+r.cy+"   |   Department: "+r.dep,
   "Owner: "+r.own+" ("+(r.oe||"-")+")",
-  "Status: "+r.st+"   |   Workflow Stage: "+(r.rv||"Draft"),
+  "Status: "+displayStatus(r.st)+"   |   Workflow Stage: "+(r.rv||"Draft"),
   "Risk: "+r.lk+" Likelihood / "+r.im+" Impact",
   "Deadline: "+r.dl+"   |   Target Due Date: "+(r.due||"-")
  ];
