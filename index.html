@@ -496,6 +496,76 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
   font-weight: 700;
 }
 
+
+/* ===== ANALYTICS BAR CHARTS ===== */
+.ana-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.vchart-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.vchart-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 12px;
+  height: 195px;
+  padding: 24px 12px 0;
+  border-bottom: 2px solid var(--bd);
+  background: linear-gradient(to top, var(--soft) 1px, transparent 1px);
+  background-size: 100% 42px;
+  border-radius: 8px 8px 0 0;
+}
+.vbar-col {
+  flex: 1;
+  max-width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.vbar-val {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.vbar-fill {
+  width: 100%;
+  border-radius: 7px 7px 0 0;
+  min-height: 4px;
+  transition: height 0.7s cubic-bezier(.2, .8, .2, 1);
+}
+.vbar-lbl {
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mut);
+  text-align: center;
+  line-height: 1.25;
+}
+.ext-panel {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+}
+.ext-panel h4 {
+  margin: 0 0 8px;
+  color: #991b1b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 /* ===== MODALS & ANALYTICS ===== */
 .md {
   position: fixed;
@@ -731,10 +801,14 @@ h4 { margin: 14px 0 6px; font-size: 13px; font-weight: 700; color: var(--navy); 
     <div class="sh">
       <span class="eb2">Reports &amp; Analytics</span>
       <h2>Reports &amp; Analytics</h2>
-      <p>Open findings breakdown, department status distribution, and overdue aging analysis.</p>
+      <p>Visual bar analytics of status distribution, overdue aging, and department breakdown.</p>
+    </div>
+    <div class="ana-grid">
+      <div class="card" id="statusBarCard" style="padding:20px 24px"></div>
+      <div class="card" id="agingBarCard" style="padding:20px 24px"></div>
     </div>
     <div class="card" id="hm" style="padding:20px 24px;margin-bottom:18px"></div>
-    <div class="card" id="rp"></div>
+    <div class="card" id="rp" style="padding:20px 24px"></div>
   </section>
 </div>
 
@@ -1033,9 +1107,9 @@ function fitControlToText(el,extraCh){
 }
 
 function fitInputs(){
- ["ed_dep","ed_own","ed_oe"].forEach(function(id,idx){
+ ["ed_dep","ed_own","ed_oe","ed_st"].forEach(function(id,idx){
   var el=g(id);
-  if(el)fitControlToText(el,idx===0?6:4);
+  if(el)fitControlToText(el,(idx===0||idx===3)?6:4);
  });
 }
 
@@ -1089,12 +1163,16 @@ function wfBottomButtons(r,dirtyDeptOwner){
 async function wf(a){
  var r=cur_(),who=U.name;
  if(U&&U.admin){
-  var dEl=g("ed_dep"),oEl=g("ed_own"),eEl=g("ed_oe");
+  var dEl=g("ed_dep"),oEl=g("ed_own"),eEl=g("ed_oe"),sEl=g("ed_st");
   if(dEl&&dEl.value.trim())r.dep=dEl.value.trim();
   if(oEl&&oEl.value.trim())r.own=oEl.value.trim();
   if(eEl){
    var newOe=eEl.value.trim();
    if(newOe)r.oe=newOe;
+  }
+  if(sEl&&sEl.value){
+   r.st=sEl.value;
+   r.hist=(r.st==="Closed");
   }
  }
  var firstEmail=String(r.oe||"").split(/[;, ]+/).filter(function(x){return x.indexOf("@")>0})[0]||"";
@@ -1140,18 +1218,65 @@ async function wf(a){
  }
 }
 
+
+async function extendOverdue(){
+ var r=cur_();if(!r||!U||!U.admin)return;
+ if(r.st!=="Overdue"){toast("Extensions are only available when status is Overdue.");return;}
+ var used=Number(r.ex)||0;
+ if(used>=3){toast("Maximum of 3 extensions has already been reached.");return;}
+ var newDueEl=g("extDueInput"),reasonEl=g("extReasonInput");
+ var newDue=newDueEl?newDueEl.value.trim():"";
+ var reason=reasonEl?reasonEl.value.trim():"";
+ if(!newDue){toast("Please select a new extended due date.");return;}
+ if(!reason){toast("Please provide a reason for extending this overdue finding.");return;}
+
+ var oldDue=r.due||r.dl||"-";
+ r.ex=used+1;
+ r.due=newDue;
+ r.dl="Extended ("+newDue+")";
+ r.st="Extended";
+ r.hist=false;
+ r.lg.push({
+  m:"Extension",
+  s:"Extension "+r.ex+" of 3",
+  n:"Due date extended from "+oldDue+" to "+newDue+". Reason: "+reason,
+  a:U.name,
+  d:stamp()
+ });
+
+ var ok=await spUpdate(r);
+ rd();dr();
+ if(!ok)return;
+
+ var targetEmail=String(r.oe||"").split(/[;, ]+/).filter(function(x){return x.indexOf("@")>0})[0]||"";
+ if(targetEmail){
+  notifyMany(
+   targetEmail,
+   "[Audit "+r.id+"] Overdue Deadline Extended ("+r.ex+"/3)",
+   "<p>Your overdue audit finding <b>"+e(r.t)+"</b> ("+e(r.id)+") has been granted extension <b>"+r.ex+" of 3</b> by "+e(U.name)+".</p><p>New Target Due Date: <b>"+e(newDue)+"</b><br>Reason: "+e(reason)+"</p>"
+  ).catch(function(){});
+ }
+ toast("Extension "+r.ex+" of 3 granted. Status updated to Extended.");
+}
+
 async function saveAdminInline(){
  var r=cur_();if(!r||!U||!U.admin)return;
- var oldDep=r.dep,oldOwn=r.own,oldOe=r.oe;
+ var oldDep=r.dep,oldOwn=r.own,oldOe=r.oe,oldSt=r.st;
  var newDep=g("ed_dep")?g("ed_dep").value.trim():r.dep;
  var newOwn=g("ed_own")?g("ed_own").value.trim():r.own;
  var inputOe=g("ed_oe")?g("ed_oe").value.trim():"";
  var newOe=inputOe||oldOe;
+ var newSt=g("ed_st")?g("ed_st").value:r.st;
 
  var changes=[];
  if(newDep&&newDep!==oldDep){r.dep=newDep;changes.push("Department: "+oldDep+" → "+newDep);}
  if(newOwn&&newOwn!==oldOwn){r.own=newOwn;changes.push("Owner: "+oldOwn+" → "+newOwn);}
  if(newOe!==oldOe){r.oe=newOe;changes.push("Owner Email: "+(oldOe||"-")+" → "+newOe);}
+ if(newSt&&newSt!==oldSt){
+  r.st=newSt;
+  r.hist=(newSt==="Closed");
+  changes.push("Status: "+displayStatus(oldSt)+" → "+displayStatus(newSt));
+ }
 
  var noteTxt=g("inX")?g("inX").value.trim():"";
  var noteType=g("inT")?g("inT").value:"Comment";
@@ -1383,9 +1508,87 @@ function setP(p){
 function rep(){
  if(!U||!U.admin)return;
  var sts=["Open","In Progress","Extended","Overdue","Closed"],dm={},td=new Date().toISOString().slice(0,10),ag=[0,0,0];
- V().forEach(function(r){var d=dm[r.dep]=dm[r.dep]||{t:0};d[r.st]=(d[r.st]||0)+1;d.t++;if(r.st!=="Closed"&&r.due&&r.due<td){var n=Math.floor((new Date(td)-new Date(r.due))/864e5);ag[n<=7?0:n<=30?1:2]++}});
- var ks=Object.keys(dm).sort();
- g("rp").innerHTML='<div class="tw"><table><thead><tr><th>Department</th><th>Open</th><th>In Progress</th><th>Extended</th><th>Overdue</th><th>Resolved</th><th>Total</th></tr></thead><tbody>'+(ks.map(function(k){return"<tr><td><b>"+e(k)+"</b></td>"+sts.map(function(x){return"<td>"+(dm[k][x]||0)+"</td>"}).join("")+"<td><b>"+dm[k].t+"</b></td></tr>"}).join("")||'<tr><td colspan="7" style="text-align:center;color:var(--mut)">No data yet.</td></tr>')+'</tbody></table></div><div class="steps" style="padding:18px">'+[["1 - 7 DAYS OVERDUE",ag[0]],["8 - 30 DAYS OVERDUE",ag[1]],["OVER 30 DAYS OVERDUE",ag[2]]].map(function(a){return'<div class="st"><span class="sn">'+a[0]+'</span><h3>'+a[1]+' finding(s)</h3></div>'}).join("")+"</div>";
+ var scnt={Open:0,"In Progress":0,Extended:0,Overdue:0,Closed:0};
+ V().forEach(function(r){
+  var d=dm[r.dep]=dm[r.dep]||{t:0};
+  d[r.st]=(d[r.st]||0)+1;
+  d.t++;
+  if(scnt[r.st]!==undefined)scnt[r.st]++;
+  if(r.st!=="Closed"&&r.due&&r.due<td){
+   var n=Math.floor((new Date(td)-new Date(r.due))/864e5);
+   ag[n<=7?0:n<=30?1:2]++;
+  }
+ });
+
+ // Bar Chart 1: Findings by Status
+ var stMeta=[
+  {k:"Open",lbl:"Open",col:"#d97706"},
+  {k:"In Progress",lbl:"In Progress",col:"#0284c7"},
+  {k:"Extended",lbl:"Extended",col:"#7c3aed"},
+  {k:"Overdue",lbl:"Overdue",col:"#b91c1c"},
+  {k:"Closed",lbl:"Resolved",col:"#51920A"}
+ ];
+ var maxSt=Math.max(1,Math.max.apply(null,stMeta.map(function(m){return scnt[m.k]||0})));
+ if(g("statusBarCard")){
+  g("statusBarCard").innerHTML='<h3 style="margin:0 0 4px;font-size:18px;color:var(--navy);font-weight:800">Findings by Status</h3>'
+   +'<p style="margin:0 0 14px;color:var(--mut);font-size:14px">Total count across each ticket status.</p>'
+   +'<div class="vchart-wrap"><div class="vchart-bars">'
+   +stMeta.map(function(m){
+     var val=scnt[m.k]||0;
+     var pct=Math.round((val/maxSt)*100);
+     return'<div class="vbar-col"><div class="vbar-val">'+val+'</div><div class="vbar-fill" data-h="'+pct+'" style="height:0%;background:'+m.col+'"></div></div>';
+    }).join("")
+   +'</div><div style="display:flex;justify-content:space-around;gap:12px;padding:0 12px">'
+   +stMeta.map(function(m){return'<div class="vbar-lbl" style="flex:1;max-width:72px">'+m.lbl+'</div>'}).join("")
+   +'</div></div>';
+ }
+
+ // Bar Chart 2: Overdue Aging Analysis
+ var agMeta=[
+  {lbl:"1 - 7 Days",val:ag[0],col:"#f59e0b"},
+  {lbl:"8 - 30 Days",val:ag[1],col:"#ea580c"},
+  {lbl:"Over 30 Days",val:ag[2],col:"#b91c1c"}
+ ];
+ var maxAg=Math.max(1,Math.max.apply(null,ag));
+ if(g("agingBarCard")){
+  g("agingBarCard").innerHTML='<h3 style="margin:0 0 4px;font-size:18px;color:var(--navy);font-weight:800">Overdue Aging Breakdown</h3>'
+   +'<p style="margin:0 0 14px;color:var(--mut);font-size:14px">Past-due unresolved findings by days overdue.</p>'
+   +'<div class="vchart-wrap"><div class="vchart-bars">'
+   +agMeta.map(function(m){
+     var pct=Math.round((m.val/maxAg)*100);
+     return'<div class="vbar-col"><div class="vbar-val">'+m.val+'</div><div class="vbar-fill" data-h="'+pct+'" style="height:0%;background:'+m.col+'"></div></div>';
+    }).join("")
+   +'</div><div style="display:flex;justify-content:space-around;gap:12px;padding:0 12px">'
+   +agMeta.map(function(m){return'<div class="vbar-lbl" style="flex:1;max-width:72px">'+m.lbl+'</div>'}).join("")
+   +'</div></div>';
+ }
+
+ // Bar Chart 3: All Departments Total & Status Stacked Bar Chart
+ var ks=Object.keys(dm).sort(function(a,b){return dm[b].t-dm[a].t});
+ var maxDept=Math.max(1,ks.length?dm[ks[0]].t:1);
+ var segColors={Open:"#d97706","In Progress":"#0284c7",Extended:"#7c3aed",Overdue:"#b91c1c",Closed:"#51920A"};
+ g("rp").innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">'
+  +'<div><h3 style="margin:0 0 4px;font-size:18px;color:var(--navy);font-weight:800">Department Findings Breakdown</h3>'
+  +'<p style="margin:0;color:var(--mut);font-size:14px">Stacked bar comparison by status across all departments.</p></div>'
+  +'<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;font-weight:700">'
+  +stMeta.map(function(m){return'<span style="display:inline-flex;align-items:center;gap:5px"><i style="width:10px;height:10px;border-radius:3px;background:'+m.col+';display:inline-block"></i>'+m.lbl+'</span>'}).join("")
+  +'</div></div>'
+  +(ks.length?ks.map(function(k){
+    var d=dm[k];
+    var segs=sts.map(function(st){
+     var v=d[st]||0;
+     if(!v)return"";
+     var w=(v/maxDept)*100;
+     return'<i title="'+e(displayStatus(st))+': '+v+'" style="display:inline-block;height:100%;width:'+w+'%;background:'+segColors[st]+'"></i>';
+    }).join("");
+    return'<div class="hb" style="grid-template-columns:minmax(160px,320px) 1fr 44px"><span title="'+e(k)+'">'+e(k)+'</span><div class="bt" style="display:flex;height:14px">'+segs+'</div><b>'+d.t+'</b></div>';
+   }).join(""):'<div style="color:var(--mut)">No data yet.</div>');
+
+ setTimeout(function(){
+  document.querySelectorAll("#s4 [data-h]").forEach(function(el){
+   el.style.height=el.dataset.h+"%";
+  });
+ },60);
 }
 
 function rd(){
@@ -1487,11 +1690,38 @@ function dr(){
   ?'<input class="in in-fit" id="ed_oe" type="email" value="'+e(r.oe||"")+'" oninput="checkReissueDirty()" placeholder="Leave blank to keep existing email">'
   :'<b>'+e(r.oe||"-")+'</b>';
 
+ var stOpts=["Open","In Progress","Extended","Overdue","Closed"];
+ var stField=canEditInline
+  ?'<select class="in in-fit" id="ed_st" onchange="checkReissueDirty()">'+stOpts.map(function(st){return'<option value="'+st+'"'+(st===r.st?' selected':'')+'>'+e(displayStatus(st))+'</option>'}).join("")+'</select>'
+  :pill(r.st);
+
  var stageInfo="";
  if(ad){
   var stList=["Finding Stage: "+(!r.rv||r.rv==="Draft"?"Auditor Draft":r.rv)];
   if(r.ap)stList.push("Closure Stage: "+r.ap);
   stageInfo='<div class="adm"><b>Workflow Status:</b> '+e(stList.join(" · "))+'</div>';
+ }
+
+ var extHtml="";
+ if(ad&&r.st==="Overdue"){
+  var extUsed=Number(r.ex)||0;
+  var remExt=Math.max(0,3-extUsed);
+  if(extUsed<3){
+   extHtml='<div class="ext-panel">'
+    +'<h4><span>Overdue Deadline Extension</span><span class="pill s-Overdue">Extensions Used: '+extUsed+' / 3 ('+remExt+' remaining)</span></h4>'
+    +'<div style="font-size:13px;color:#7f1d1d;margin-bottom:10px">Admin can extend an overdue finding up to 3 times. Extending updates the due date and sets status to Extended.</div>'
+    +'<div class="row" style="margin-top:0">'
+      +'<input class="in" type="date" id="extDueInput" style="max-width:190px;flex:none;background:#fff" min="'+new Date().toISOString().slice(0,10)+'">'
+      +'<input class="in" id="extReasonInput" style="background:#fff" placeholder="Reason for extension (required)...">'
+      +'<button class="btn d" style="flex:none" onclick="extendOverdue()">Grant Extension ('+(extUsed+1)+'/3)</button>'
+    +'</div>'
+   +'</div>';
+  }else{
+   extHtml='<div class="ext-panel">'
+    +'<h4><span>Overdue Deadline Extension</span><span class="pill s-Overdue">3 / 3 Extensions Used (Limit Reached)</span></h4>'
+    +'<div style="font-size:13px;color:#7f1d1d">Maximum limit of 3 extensions has been reached for this overdue finding.</div>'
+   +'</div>';
+  }
  }
 
  html+='<div class="sec-card">'
@@ -1502,10 +1732,11 @@ function dr(){
     +'<div class="f"><small>Owner Email</small>'+oeField+'</div>'
     +'<div class="f"><small>Deadline</small><b>'+e(r.dl)+'</b></div>'
     +'<div class="f"><small>Target Due Date</small><b>'+e(r.due||"-")+'</b></div>'
-    +'<div class="f"><small>Finding Status</small>'+pill(r.st)+'</div>'
+    +'<div class="f"><small>Finding Status</small>'+stField+'</div>'
     +(hasExt?'<div class="f"><small>Extensions Used</small><b>'+r.ex+' / 3</b></div>':'')
   +'</div>'
   +stageInfo
+  +extHtml
  +'</div>';
 
  html+='<div class="sec-card">'
